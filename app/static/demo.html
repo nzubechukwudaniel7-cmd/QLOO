@@ -59,30 +59,30 @@
       inset: 0;
       pointer-events: none;
       z-index: 2;
-      transition: background 1.5s cubic-bezier(0.16, 1, 0.3, 1);
+      transition: background 1.2s cubic-bezier(0.16, 1, 0.3, 1);
       mix-blend-mode: screen;
-      opacity: 0.6;
+      opacity: 0.65;
     }
 
-    /* Word-Level Synced Subtitle Typography */
+    /* Microsecond Frame-Locked Word Subtitle Typography */
     .word-token {
       display: inline-block;
-      opacity: 0.28;
+      opacity: 0.22;
       transform: translateY(2px);
-      transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+      transition: opacity 0.15s ease, transform 0.15s ease, color 0.15s ease;
       margin-right: 0.28em;
     }
     .word-token.spoken {
-      opacity: 0.8;
+      opacity: 0.82;
       color: #E2E8F0;
       transform: translateY(0);
     }
     .word-token.active-word {
       opacity: 1 !important;
       color: #FFFFFF !important;
-      transform: translateY(-2px) scale(1.08) !important;
-      text-shadow: 0 0 20px rgba(167, 139, 250, 0.95), 0 0 35px rgba(34, 211, 238, 0.8) !important;
-      font-weight: 700;
+      transform: translateY(-2px) scale(1.1) !important;
+      text-shadow: 0 0 20px rgba(167, 139, 250, 0.95), 0 0 35px rgba(34, 211, 238, 0.85) !important;
+      font-weight: 800;
     }
 
     /* Scene Navigation Pills (Floating Sleek Island) */
@@ -196,7 +196,6 @@
 
   <!-- ============================================================
        MIDDLE SPATIAL LAYER: 3D WORLD-PROJECTED HUD TAGS
-       (Floating with zero enclosing box, reacting to camera angles)
        ============================================================ -->
   <main class="relative z-10 w-full max-w-7xl mx-auto flex-1 flex items-center justify-between pointer-events-none">
     
@@ -240,14 +239,14 @@
        ============================================================ -->
   <footer class="relative z-10 w-full max-w-5xl mx-auto flex flex-col gap-3">
     
-    <!-- Word-by-Word Synchronized Subtitle Ticker -->
+    <!-- Word-by-Word Exact Timestamp-Locked Subtitle Ticker -->
     <div class="w-full text-center px-4 py-2 min-h-[64px] flex items-center justify-center">
-      <div id="subtitle-box" class="text-lg md:text-2xl font-medium tracking-wide text-gray-200 transition-all duration-200 max-w-4xl leading-relaxed">
+      <div id="subtitle-box" class="text-lg md:text-2xl font-medium tracking-wide text-gray-200 transition-all duration-150 max-w-4xl leading-relaxed">
         <!-- Spoken words dynamically highlighted in line with narrator pitch -->
       </div>
     </div>
 
-    <!-- Floating Audio Control Capsule (No static card border) -->
+    <!-- Floating Audio Control Capsule -->
     <div class="flex flex-col md:flex-row items-center justify-between gap-4 px-6 py-3.5 rounded-full bg-black/60 backdrop-blur-2xl border border-white/15 shadow-[0_20px_50px_rgba(0,0,0,0.8),0_0_30px_rgba(139,92,246,0.15)]">
       
       <!-- Play/Pause & Voiceover Meta -->
@@ -266,7 +265,7 @@
             <span id="audio-time-current">00:00</span>
             <span>/</span>
             <span id="audio-time-total">00:23</span>
-            <span class="text-cyan-400">• Turbo v2.5 Synchronized</span>
+            <span class="text-cyan-400">• Frame-Locked 0ms Sync</span>
           </div>
         </div>
       </div>
@@ -296,15 +295,16 @@
 
   </footer>
 
-  <!-- Audio Player (Sequential Scene Player for 100% Zero-Drift Sync) -->
+  <!-- Audio Player (Sequential Scene Player) -->
   <audio id="audio-player" preload="auto"></audio>
 
-  <!-- Three.js + Prompt-Motion Engine Script -->
+  <!-- Three.js + Frame-Locked Precision Alignment Script -->
   <script>
-    // --- 1. ACCURATE SCENE SPECIFICATIONS & SPOKEN PITCH ---
+    // --- 1. SCENE SPECIFICATIONS ---
     const SCENES = [
       {
         id: 0,
+        audioKey: "scene_1",
         title: "The Sundowning Crisis",
         audioSrc: "/static/audio/scene_1.mp3",
         bpm: "96 BPM",
@@ -316,7 +316,6 @@
         statusColor: "#EF4444",
         ambience: "radial-gradient(circle at 50% 50%, rgba(239, 68, 68, 0.25) 0%, rgba(4, 2, 7, 0.95) 100%)",
         text: "Every evening at sundown, millions of dementia patients experience acute neurological terror. In memory care, it’s known as Sundowning: sudden, overwhelming agitation. For decades, the standard response has been chemical sedation: dangerous antipsychotics that strip away human dignity and violate federal guidelines. What if memory care didn't require pills?",
-        // Dynamic Camera Parameters for Scene 1: Low-Angle Spiral Tracking
         cameraMotion: {
           baseRadius: 26,
           radiusOsc: 4,
@@ -329,6 +328,7 @@
       },
       {
         id: 1,
+        audioKey: "scene_2",
         title: "Meet NeuroTaste (Contactless rPPG)",
         audioSrc: "/static/audio/scene_2.mp3",
         bpm: "92 BPM",
@@ -340,7 +340,6 @@
         statusColor: "#06B6D4",
         ambience: "radial-gradient(circle at 50% 50%, rgba(6, 182, 212, 0.25) 0%, rgba(4, 2, 7, 0.95) 100%)",
         text: "Meet NeuroTaste: the world’s first autonomous, contactless memory care de-escalation agent. Using standard RGB computer vision, NeuroTaste reads microscopic arterial blood volume pulses beneath facial skin, calculating autonomic distress without a single wire or wearable. And when agitation strikes, NeuroTaste doesn't call for sedation. It activates something infinitely more powerful.",
-        // Dynamic Camera Parameters for Scene 2: High-Speed Fly-Through Focal Punch
         cameraMotion: {
           baseRadius: 14,
           radiusOsc: 2.5,
@@ -353,6 +352,7 @@
       },
       {
         id: 2,
+        audioKey: "scene_3",
         title: "The Dementia Paradox & The Qloo Taste Graph",
         audioSrc: "/static/audio/scene_3.mp3",
         bpm: "84 BPM",
@@ -364,7 +364,6 @@
         statusColor: "#A78BFA",
         ambience: "radial-gradient(circle at 50% 50%, rgba(139, 92, 246, 0.3) 0%, rgba(4, 2, 7, 0.95) 100%)",
         text: "Neuroscientists call it the Dementia Paradox: while degenerative illness destroys short-term episodic memory, the brain’s cultural taste cortex remains vividly alive until the end of life. NeuroTaste bridges this gap using the Qloo Taste Graph API, mapping the resident's birth decade, cultural geography, and dormant sensory anchors to surface music, cinema, and scents proven to evoke emotional calm.",
-        // Dynamic Camera Parameters for Scene 3: Wide 3D Orbital Swoop through Vinyl & Splines
         cameraMotion: {
           baseRadius: 32,
           radiusOsc: 6,
@@ -377,6 +376,7 @@
       },
       {
         id: 3,
+        audioKey: "scene_4",
         title: "Autonomous Live Intervention",
         audioSrc: "/static/audio/scene_4.mp3",
         bpm: "71 BPM",
@@ -388,7 +388,6 @@
         statusColor: "#34D399",
         ambience: "radial-gradient(circle at 50% 50%, rgba(251, 191, 36, 0.25) 0%, rgba(4, 2, 7, 0.95) 100%)",
         text: "Watch what happens in real time. Without a single nurse touching a syringe, NeuroTaste deploys an autonomous sensory de-escalation protocol. A 1940s acoustic recording of Nat King Cole softly fills the room, while smart lighting transitions to a soothing sunset twilight. Within two minutes, heart rate stabilizes, vagal tone rebounds, and the agitation storm dissolves peacefully.",
-        // Dynamic Camera Parameters for Scene 4: 360° Warm Ambient Crane Arc
         cameraMotion: {
           baseRadius: 22,
           radiusOsc: 3.5,
@@ -401,6 +400,7 @@
       },
       {
         id: 4,
+        audioKey: "scene_5",
         title: "Clinical Proof & Regulatory Moat",
         audioSrc: "/static/audio/scene_5.mp3",
         bpm: "68 BPM",
@@ -412,7 +412,6 @@
         statusColor: "#10B981",
         ambience: "radial-gradient(circle at 50% 50%, rgba(16, 185, 129, 0.22) 0%, rgba(4, 2, 7, 0.95) 100%)",
         text: "For healthcare facilities, NeuroTaste isn't just compassionate care—it’s an enterprise regulatory shield. Fully compliant with federal CMS F-Tag 758 mandates restricting unnecessary psychotropic medications, it reduces caregiver burnout and institutional liability through continuous, edge-computed twenty-four-seven care.",
-        // Dynamic Camera Parameters for Scene 5: High-Speed Lateral Tracking Dolly
         cameraMotion: {
           baseRadius: 24,
           radiusOsc: 5,
@@ -425,6 +424,7 @@
       },
       {
         id: 5,
+        audioKey: "scene_6",
         title: "The Vision & Call to Action",
         audioSrc: "/static/audio/scene_6.mp3",
         bpm: "66 BPM",
@@ -436,7 +436,6 @@
         statusColor: "#C084FC",
         ambience: "radial-gradient(circle at 50% 50%, rgba(139, 92, 246, 0.35) 0%, rgba(4, 2, 7, 0.95) 100%)",
         text: "Dementia steals memories. But with Qloo and NeuroTaste, we can bring their calm, their dignity, and their humanity back. NeuroTaste: Autonomous Memory Care, powered by cultural intelligence.",
-        // Dynamic Camera Parameters for Scene 6: Epic Vertical Crane Pull-Out into Nebula
         cameraMotion: {
           baseRadius: 45,
           radiusOsc: 8,
@@ -451,8 +450,18 @@
 
     let currentSceneIdx = 0;
     let cinematicCam = true;
+    let sceneTimings = {};
 
-    // --- 2. THREE.JS SCENE, CAMERAS & CINEMATIC LIGHTING ---
+    // Load ElevenLabs Microsecond Timestamps
+    fetch('/static/audio/scene_timings.json')
+      .then(r => r.json())
+      .then(data => {
+        sceneTimings = data;
+        renderSubtitles(SCENES[currentSceneIdx]);
+      })
+      .catch(e => console.log("Timing load:", e));
+
+    // --- 2. THREE.JS SCENE, CAMERAS & LIGHTING ---
     const canvas = document.getElementById('webgl-canvas');
     const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true, powerPreference: "high-performance" });
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
@@ -464,11 +473,8 @@
     const camera = new THREE.PerspectiveCamera(52, window.innerWidth / window.innerHeight, 0.1, 1000);
     camera.position.set(0, 0, 26);
 
-    // Dynamic Tracking Vectors
-    const currentCamPos = new THREE.Vector3().copy(camera.position);
     const currentLookTarget = new THREE.Vector3(0, 0, 0);
 
-    // Multi-Point Cinematic Lighting Rig
     const ambientLight = new THREE.AmbientLight(0x221144, 1.4);
     scene.add(ambientLight);
 
@@ -484,9 +490,7 @@
     rimLight.position.set(0, -20, -25);
     scene.add(rimLight);
 
-    // --- 3. 3D OBJECTS & GEOMETRY (ANIMATED VISUALS, ZERO STATIC CARDS) ---
-
-    // A. 3D Dual-Hemisphere Bioluminescent Neural Cortex
+    // --- 3. 3D OBJECTS & GEOMETRY ---
     const brainGroup = new THREE.Group();
     scene.add(brainGroup);
 
@@ -498,7 +502,6 @@
     const colViolet = new THREE.Color(0x8B5CF6);
     const colCyan = new THREE.Color(0x22D3EE);
     const colGold = new THREE.Color(0xFBBF24);
-    const colCrimson = new THREE.Color(0xEF4444);
 
     for (let i = 0; i < nodeCount; i++) {
       const u = Math.random();
@@ -531,7 +534,6 @@
     const brainPoints = new THREE.Points(brainGeo, brainMaterial);
     brainGroup.add(brainPoints);
 
-    // Synaptic Connecting Lines
     const lineMat = new THREE.LineBasicMaterial({
       color: 0x6D28D9,
       transparent: true,
@@ -550,7 +552,7 @@
     const brainLines = new THREE.LineSegments(lineGeo, lineMat);
     brainGroup.add(brainLines);
 
-    // B. 3D Facial Contour & Capillary Pulse Lattice (Scene 1)
+    // Face mesh (Scene 1 & 2)
     const faceGroup = new THREE.Group();
     scene.add(faceGroup);
 
@@ -563,7 +565,7 @@
       const z = Math.cos(u * 0.5) * Math.cos(v * 0.4) * 3.5;
       facePos[i*3] = u;
       facePos[i*3+1] = v;
-      facePos[i*3+2] = z + 12.0; // In front of brain
+      facePos[i*3+2] = z + 12.0;
     }
     faceGeo.setAttribute('position', new THREE.BufferAttribute(facePos, 3));
     const faceMat = new THREE.PointsMaterial({
@@ -576,7 +578,7 @@
     const faceMesh = new THREE.Points(faceGeo, faceMat);
     faceGroup.add(faceMesh);
 
-    // C. 3D Spinning Vinyl Record Mesh (Scene 3 & 4)
+    // Vinyl Record (Scene 3 & 4)
     const vinylGroup = new THREE.Group();
     scene.add(vinylGroup);
     vinylGroup.position.set(0, -1.0, 0);
@@ -592,7 +594,6 @@
     vinylDisc.rotation.x = Math.PI / 2.2;
     vinylGroup.add(vinylDisc);
 
-    // Center Gold Label
     const labelGeo = new THREE.CircleGeometry(1.5, 32);
     const labelMat = new THREE.MeshBasicMaterial({ color: 0xF59E0B });
     const vinylLabel = new THREE.Mesh(labelGeo, labelMat);
@@ -600,7 +601,7 @@
     vinylLabel.position.y = 0.02;
     vinylGroup.add(vinylLabel);
 
-    // Concentric Soundwave Rings
+    // Ripple rings
     const ringGroup = new THREE.Group();
     scene.add(ringGroup);
     const rings = [];
@@ -619,7 +620,7 @@
       rings.push(rMesh);
     }
 
-    // D. 3D Qloo Cultural Nodes & Spline Beams (Scene 3)
+    // Qloo Cultural Nodes (Scene 3)
     const qlooGroup = new THREE.Group();
     scene.add(qlooGroup);
 
@@ -640,7 +641,6 @@
       qlooGroup.add(sMesh);
       nodeMeshes.push(sMesh);
 
-      // Connecting Spline from brain center to node
       const curve = new THREE.LineCurve3(new THREE.Vector3(0, 0, 0), sMesh.position);
       const cGeo = new THREE.TubeGeometry(curve, 20, 0.06, 8, false);
       const cMat = new THREE.MeshBasicMaterial({
@@ -653,7 +653,7 @@
       qlooGroup.add(tube);
     });
 
-    // E. 3D Holographic Metric Slabs (Scene 5)
+    // 3D Metric Slabs (Scene 5)
     const slabGroup = new THREE.Group();
     scene.add(slabGroup);
 
@@ -663,7 +663,6 @@
       canvas.height = 256;
       const ctx = canvas.getContext('2d');
 
-      // Rounded gradient slab
       ctx.fillStyle = "rgba(10, 6, 22, 0.85)";
       ctx.strokeStyle = colHex;
       ctx.lineWidth = 6;
@@ -712,7 +711,7 @@
     qlooGroup.visible = false;
     slabGroup.visible = false;
 
-    // --- 4. AUDIO & SUBTITLE ENGINE (PERFECT ZERO-DRIFT SYNCHRONIZATION) ---
+    // --- 4. AUDIO & FRAME-LOCKED SUBTITLE ENGINE ---
     const audio = document.getElementById('audio-player');
     const subtitleBox = document.getElementById('subtitle-box');
     const playBtn = document.getElementById('master-play-btn');
@@ -757,17 +756,12 @@
       currentSceneIdx = idx;
       const sc = SCENES[idx];
 
-      // Load specific scene audio file
       audio.src = sc.audioSrc;
       audio.load();
 
-      // Render words into subtitle container
-      renderSubtitles(sc.text);
-
-      // Apply Visual State
+      renderSubtitles(sc);
       applySceneVisuals(sc);
 
-      // Play audio
       initAudio();
       if (audioContext && audioContext.state === 'suspended') audioContext.resume();
       audio.play().then(() => {
@@ -784,34 +778,38 @@
       jumpToScene(Math.min(SCENES.length - 1, currentSceneIdx + 1));
     }
 
-    // Auto-advance to next scene on audio completion (Smooth Sequence Pitch)
     audio.addEventListener('ended', () => {
       if (currentSceneIdx < SCENES.length - 1) {
         jumpToScene(currentSceneIdx + 1);
       } else {
-        // Finished full pitch
         playIcon.classList.remove('hidden');
         pauseIcon.classList.add('hidden');
       }
     });
 
-    function renderSubtitles(text) {
-      const words = text.split(' ');
-      subtitleBox.innerHTML = words.map((w, i) => `<span class="word-token" id="w-${i}">${w}</span>`).join(' ');
+    // RENDER WORD SPANS WITH DATA ATTRIBUTES FOR MICROSECOND MATCHING
+    function renderSubtitles(sc) {
+      const words = sceneTimings[sc.audioKey] || [];
+      if (!words.length) {
+        // Fallback to text split if timings still loading
+        const fallbackWords = sc.text.split(' ');
+        subtitleBox.innerHTML = fallbackWords.map((w, i) => `<span class="word-token" id="word-${i}">${w}</span>`).join(' ');
+        return;
+      }
+      subtitleBox.innerHTML = words.map((item, idx) => 
+        `<span class="word-token" id="word-${idx}">${item.word}</span>`
+      ).join(' ');
     }
 
     function applySceneVisuals(sc) {
-      // 1. Navigation Pills
       const pills = document.querySelectorAll('.nav-pill');
       pills.forEach((p, i) => {
         if (i === sc.id) p.classList.add('active');
         else p.classList.remove('active');
       });
 
-      // 2. Ambience Background
       document.getElementById('ambience-overlay').style.background = sc.ambience;
 
-      // 3. HUD Telemetry Updates
       document.getElementById('scene-title-display').innerText = `Scene ${sc.id + 1}: ${sc.title}`;
       document.getElementById('hud-agitation-val').innerText = sc.agitation;
       document.getElementById('hud-bpm-val').innerText = sc.bpm;
@@ -823,34 +821,34 @@
       badge.innerText = sc.status;
       badge.style.color = sc.statusColor;
 
-      // 4. Dynamic 3D Object Visibility per Scene
       faceGroup.visible = (sc.id === 0 || sc.id === 1);
       vinylGroup.visible = (sc.id === 2 || sc.id === 3);
       ringGroup.visible = (sc.id === 3);
       qlooGroup.visible = (sc.id === 2);
       slabGroup.visible = (sc.id === 4);
 
-      // 5. Lighting Shift (Color Tuning)
       if (sc.id === 0) {
-        rimLight.color.setHex(0xEF4444); // Crimson distress
+        rimLight.color.setHex(0xEF4444);
         rimLight.intensity = 4.5;
         fillLight.color.setHex(0x06B6D4);
       } else if (sc.id === 3 || sc.id === 4) {
-        rimLight.color.setHex(0xFBBF24); // Golden twilight de-escalation
+        rimLight.color.setHex(0xFBBF24);
         rimLight.intensity = 3.0;
-        fillLight.color.setHex(0x34D399); // Mint calm
+        fillLight.color.setHex(0x34D399);
       } else {
-        rimLight.color.setHex(0x8B5CF6); // Royal purple
+        rimLight.color.setHex(0x8B5CF6);
         rimLight.intensity = 2.0;
       }
     }
 
-    // High-Precision Word Highlighting in Line with Pitch
-    audio.addEventListener('timeupdate', () => {
+    // 60 FPS MICROSECOND WORD HIGHLIGHT SYNCHRONIZER (ZERO DRIFT, ZERO LAG)
+    function updateWordHighlight() {
+      if (audio.paused) return;
+
       const cur = audio.currentTime;
       const dur = audio.duration || 1;
 
-      // Format time
+      // Update timer displays
       const curM = Math.floor(cur / 60);
       const curS = Math.floor(cur % 60);
       const durM = Math.floor(dur / 60);
@@ -858,22 +856,35 @@
       document.getElementById('audio-time-current').innerText = `${String(curM).padStart(2,'0')}:${String(curS).padStart(2,'0')}`;
       document.getElementById('audio-time-total').innerText = `${String(durM).padStart(2,'0')}:${String(durS).padStart(2,'0')}`;
 
-      // High-precision word matching based on exact audio progress
-      const progress = Math.min(1.0, Math.max(0.0, cur / dur));
-      const wordElements = subtitleBox.querySelectorAll('.word-token');
-      const totalWords = wordElements.length;
-      const activeIdx = Math.min(totalWords - 1, Math.floor(progress * totalWords));
+      const sc = SCENES[currentSceneIdx];
+      const words = sceneTimings[sc.audioKey];
 
-      wordElements.forEach((el, idx) => {
-        if (idx < activeIdx) {
-          el.className = "word-token spoken";
-        } else if (idx === activeIdx) {
-          el.className = "word-token active-word";
+      if (!words || !words.length) return;
+
+      // Microsecond exact timestamp checking
+      for (let i = 0; i < words.length; i++) {
+        const el = document.getElementById(`word-${i}`);
+        if (!el) continue;
+        const w = words[i];
+
+        if (cur >= w.start && cur <= w.end) {
+          // ACTIVE WORD: precisely spoken this exact millisecond!
+          if (!el.classList.contains('active-word')) {
+            el.className = 'word-token active-word';
+          }
+        } else if (cur > w.end) {
+          // ALREADY SPOKEN: clean subtle spoken state
+          if (!el.classList.contains('spoken')) {
+            el.className = 'word-token spoken';
+          }
         } else {
-          el.className = "word-token";
+          // YET TO BE SPOKEN: paused during silence, not prematurely highlighted
+          if (el.className !== 'word-token') {
+            el.className = 'word-token';
+          }
         }
-      });
-    });
+      }
+    }
 
     function toggleCameraMode() {
       cinematicCam = !cinematicCam;
@@ -890,7 +901,7 @@
       }
     }
 
-    // --- 5. AUDIO SPECTRUM CANVAS (REACTIVE VISUALIZER) ---
+    // --- 5. AUDIO SPECTRUM CANVAS ---
     const specCanvas = document.getElementById('spectrum-canvas');
     const specCtx = specCanvas.getContext('2d');
     specCanvas.width = 280;
@@ -920,7 +931,7 @@
       }
     }
 
-    // --- 6. PROMPT-MOTION DYNAMIC CAMERA LOOP & SCENE ANIMATION ---
+    // --- 6. PROMPT-MOTION DYNAMIC CAMERA LOOP ---
     const clock = new THREE.Clock();
 
     function animate() {
@@ -934,13 +945,12 @@
 
       if (faceGroup.visible) {
         faceGroup.rotation.y = Math.sin(time * 0.4) * 0.15;
-        // Capillary pulse rate synced with scene
         const pulseFreq = (currentSceneIdx === 0) ? 9.0 : 4.5;
         faceMat.size = 0.22 + Math.sin(time * pulseFreq) * 0.08;
       }
 
       if (vinylGroup.visible) {
-        vinylDisc.rotation.z = time * 1.5; // Vinyl spins
+        vinylDisc.rotation.z = time * 1.5;
         vinylLabel.rotation.z = time * 1.5;
       }
 
@@ -963,12 +973,11 @@
         slab3.rotation.y = Math.cos(time * 0.5) * 0.1;
       }
 
-      // Dynamic Camera Path Controller (Compound Orbital Motion & Sweeps)
+      // Dynamic Camera Path Controller
       if (cinematicCam) {
         const sc = SCENES[currentSceneIdx];
         const cm = sc.cameraMotion;
 
-        // Compound Spherical Orbit with Continuous Motion
         const angle = time * cm.speed;
         const currentRadius = cm.baseRadius + Math.sin(time * 0.5) * cm.radiusOsc;
         const currentHeight = cm.heightBase + Math.cos(time * 0.4) * cm.heightOsc;
@@ -977,16 +986,16 @@
         const targetZ = Math.cos(angle) * currentRadius;
         const targetY = currentHeight;
 
-        // Smooth Lerp on Camera Position
         camera.position.lerp(new THREE.Vector3(targetX, targetY, targetZ), 0.05);
 
-        // Smooth Lerp on LookTarget
         currentLookTarget.lerp(new THREE.Vector3(cm.lookTarget.x, cm.lookTarget.y, cm.lookTarget.z), 0.05);
         camera.lookAt(currentLookTarget);
 
-        // Dynamic Dutch Angle Roll
         camera.rotation.z = Math.sin(time * 0.8) * cm.rollMax;
       }
+
+      // Check microsecond word highlights on every animation frame (60 FPS)
+      updateWordHighlight();
 
       drawSpectrum();
       renderer.render(scene, camera);

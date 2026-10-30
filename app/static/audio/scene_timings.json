@@ -1,0 +1,1394 @@
+{
+  "scene_1": [
+    {
+      "word": "Every",
+      "start": 0.0,
+      "end": 0.302
+    },
+    {
+      "word": "evening",
+      "start": 0.383,
+      "end": 0.697
+    },
+    {
+      "word": "at",
+      "start": 0.743,
+      "end": 0.813
+    },
+    {
+      "word": "sundown,",
+      "start": 0.871,
+      "end": 1.486
+    },
+    {
+      "word": "millions",
+      "start": 1.695,
+      "end": 2.113
+    },
+    {
+      "word": "of",
+      "start": 2.148,
+      "end": 2.206
+    },
+    {
+      "word": "dementia",
+      "start": 2.264,
+      "end": 2.67
+    },
+    {
+      "word": "patients",
+      "start": 2.728,
+      "end": 3.193
+    },
+    {
+      "word": "experience",
+      "start": 3.274,
+      "end": 3.936
+    },
+    {
+      "word": "acute",
+      "start": 3.971,
+      "end": 4.389
+    },
+    {
+      "word": "neurological",
+      "start": 4.458,
+      "end": 5.143
+    },
+    {
+      "word": "terror.",
+      "start": 5.213,
+      "end": 5.782
+    },
+    {
+      "word": "In",
+      "start": 6.223,
+      "end": 6.385
+    },
+    {
+      "word": "memory",
+      "start": 6.444,
+      "end": 6.734
+    },
+    {
+      "word": "care,",
+      "start": 6.792,
+      "end": 7.117
+    },
+    {
+      "word": "it\u2019s",
+      "start": 7.163,
+      "end": 7.338
+    },
+    {
+      "word": "known",
+      "start": 7.384,
+      "end": 7.593
+    },
+    {
+      "word": "as",
+      "start": 7.639,
+      "end": 7.721
+    },
+    {
+      "word": "Sundowning:",
+      "start": 7.767,
+      "end": 8.684
+    },
+    {
+      "word": "sudden,",
+      "start": 9.009,
+      "end": 9.45
+    },
+    {
+      "word": "overwhelming",
+      "start": 9.508,
+      "end": 10.147
+    },
+    {
+      "word": "agitation.",
+      "start": 10.216,
+      "end": 10.971
+    },
+    {
+      "word": "For",
+      "start": 11.18,
+      "end": 11.331
+    },
+    {
+      "word": "decades,",
+      "start": 11.377,
+      "end": 11.865
+    },
+    {
+      "word": "the",
+      "start": 11.888,
+      "end": 11.969
+    },
+    {
+      "word": "standard",
+      "start": 12.027,
+      "end": 12.422
+    },
+    {
+      "word": "response",
+      "start": 12.469,
+      "end": 12.933
+    },
+    {
+      "word": "has",
+      "start": 12.956,
+      "end": 13.049
+    },
+    {
+      "word": "been",
+      "start": 13.096,
+      "end": 13.293
+    },
+    {
+      "word": "chemical",
+      "start": 13.351,
+      "end": 13.757
+    },
+    {
+      "word": "sedation:",
+      "start": 13.827,
+      "end": 14.477
+    },
+    {
+      "word": "dangerous",
+      "start": 14.756,
+      "end": 15.232
+    },
+    {
+      "word": "antipsychotics",
+      "start": 15.301,
+      "end": 16.404
+    },
+    {
+      "word": "that",
+      "start": 16.486,
+      "end": 16.66
+    },
+    {
+      "word": "strip",
+      "start": 16.706,
+      "end": 16.962
+    },
+    {
+      "word": "away",
+      "start": 17.02,
+      "end": 17.275
+    },
+    {
+      "word": "human",
+      "start": 17.356,
+      "end": 17.658
+    },
+    {
+      "word": "dignity",
+      "start": 17.716,
+      "end": 18.192
+    },
+    {
+      "word": "and",
+      "start": 18.285,
+      "end": 18.425
+    },
+    {
+      "word": "violate",
+      "start": 18.483,
+      "end": 18.924
+    },
+    {
+      "word": "federal",
+      "start": 18.97,
+      "end": 19.33
+    },
+    {
+      "word": "guidelines.",
+      "start": 19.388,
+      "end": 20.154
+    },
+    {
+      "word": "What",
+      "start": 20.596,
+      "end": 20.781
+    },
+    {
+      "word": "if",
+      "start": 20.828,
+      "end": 20.897
+    },
+    {
+      "word": "memory",
+      "start": 20.967,
+      "end": 21.246
+    },
+    {
+      "word": "care",
+      "start": 21.304,
+      "end": 21.548
+    },
+    {
+      "word": "didn't",
+      "start": 21.594,
+      "end": 21.826
+    },
+    {
+      "word": "require",
+      "start": 21.873,
+      "end": 22.256
+    },
+    {
+      "word": "pills?",
+      "start": 22.302,
+      "end": 23.08
+    }
+  ],
+  "scene_2": [
+    {
+      "word": "Meet",
+      "start": 0.0,
+      "end": 0.302
+    },
+    {
+      "word": "NeuroTaste:",
+      "start": 0.395,
+      "end": 1.312
+    },
+    {
+      "word": "the",
+      "start": 1.591,
+      "end": 1.683
+    },
+    {
+      "word": "world\u2019s",
+      "start": 1.741,
+      "end": 2.09
+    },
+    {
+      "word": "first",
+      "start": 2.148,
+      "end": 2.438
+    },
+    {
+      "word": "autonomous,",
+      "start": 2.485,
+      "end": 3.1
+    },
+    {
+      "word": "contactless",
+      "start": 3.216,
+      "end": 3.901
+    },
+    {
+      "word": "memory",
+      "start": 3.982,
+      "end": 4.284
+    },
+    {
+      "word": "care",
+      "start": 4.342,
+      "end": 4.598
+    },
+    {
+      "word": "de-escalation",
+      "start": 4.667,
+      "end": 5.48
+    },
+    {
+      "word": "agent.",
+      "start": 5.561,
+      "end": 6.153
+    },
+    {
+      "word": "Using",
+      "start": 6.594,
+      "end": 6.885
+    },
+    {
+      "word": "standard",
+      "start": 6.954,
+      "end": 7.407
+    },
+    {
+      "word": "RGB",
+      "start": 7.477,
+      "end": 7.953
+    },
+    {
+      "word": "computer",
+      "start": 8.069,
+      "end": 8.522
+    },
+    {
+      "word": "vision,",
+      "start": 8.557,
+      "end": 8.951
+    },
+    {
+      "word": "NeuroTaste",
+      "start": 9.16,
+      "end": 9.915
+    },
+    {
+      "word": "reads",
+      "start": 9.973,
+      "end": 10.24
+    },
+    {
+      "word": "microscopic",
+      "start": 10.298,
+      "end": 11.018
+    },
+    {
+      "word": "arterial",
+      "start": 11.111,
+      "end": 11.715
+    },
+    {
+      "word": "blood",
+      "start": 11.785,
+      "end": 12.005
+    },
+    {
+      "word": "volume",
+      "start": 12.052,
+      "end": 12.481
+    },
+    {
+      "word": "pulses",
+      "start": 12.632,
+      "end": 13.05
+    },
+    {
+      "word": "beneath",
+      "start": 13.12,
+      "end": 13.398
+    },
+    {
+      "word": "facial",
+      "start": 13.456,
+      "end": 13.805
+    },
+    {
+      "word": "skin,",
+      "start": 13.863,
+      "end": 14.35
+    },
+    {
+      "word": "calculating",
+      "start": 14.559,
+      "end": 15.198
+    },
+    {
+      "word": "autonomic",
+      "start": 15.256,
+      "end": 15.767
+    },
+    {
+      "word": "distress",
+      "start": 15.825,
+      "end": 16.371
+    },
+    {
+      "word": "without",
+      "start": 16.44,
+      "end": 16.754
+    },
+    {
+      "word": "a",
+      "start": 16.8,
+      "end": 16.823
+    },
+    {
+      "word": "single",
+      "start": 16.893,
+      "end": 17.241
+    },
+    {
+      "word": "wire",
+      "start": 17.288,
+      "end": 17.624
+    },
+    {
+      "word": "or",
+      "start": 17.682,
+      "end": 17.81
+    },
+    {
+      "word": "wearable.",
+      "start": 17.868,
+      "end": 18.518
+    },
+    {
+      "word": "And",
+      "start": 19.029,
+      "end": 19.169
+    },
+    {
+      "word": "when",
+      "start": 19.227,
+      "end": 19.377
+    },
+    {
+      "word": "agitation",
+      "start": 19.447,
+      "end": 20.039
+    },
+    {
+      "word": "strikes,",
+      "start": 20.109,
+      "end": 20.713
+    },
+    {
+      "word": "NeuroTaste",
+      "start": 20.829,
+      "end": 21.525
+    },
+    {
+      "word": "doesn't",
+      "start": 21.56,
+      "end": 21.839
+    },
+    {
+      "word": "call",
+      "start": 21.885,
+      "end": 22.048
+    },
+    {
+      "word": "for",
+      "start": 22.106,
+      "end": 22.199
+    },
+    {
+      "word": "sedation.",
+      "start": 22.245,
+      "end": 22.93
+    },
+    {
+      "word": "It",
+      "start": 23.255,
+      "end": 23.395
+    },
+    {
+      "word": "activates",
+      "start": 23.441,
+      "end": 23.917
+    },
+    {
+      "word": "something",
+      "start": 23.94,
+      "end": 24.254
+    },
+    {
+      "word": "infinitely",
+      "start": 24.335,
+      "end": 24.834
+    },
+    {
+      "word": "more",
+      "start": 24.892,
+      "end": 25.043
+    },
+    {
+      "word": "powerful.",
+      "start": 25.09,
+      "end": 25.914
+    }
+  ],
+  "scene_3": [
+    {
+      "word": "Neuroscientists",
+      "start": 0.0,
+      "end": 0.964
+    },
+    {
+      "word": "call",
+      "start": 1.022,
+      "end": 1.219
+    },
+    {
+      "word": "it",
+      "start": 1.277,
+      "end": 1.347
+    },
+    {
+      "word": "the",
+      "start": 1.393,
+      "end": 1.463
+    },
+    {
+      "word": "Dementia",
+      "start": 1.509,
+      "end": 1.916
+    },
+    {
+      "word": "Paradox:",
+      "start": 1.974,
+      "end": 2.717
+    },
+    {
+      "word": "while",
+      "start": 3.158,
+      "end": 3.437
+    },
+    {
+      "word": "degenerative",
+      "start": 3.483,
+      "end": 4.11
+    },
+    {
+      "word": "illness",
+      "start": 4.145,
+      "end": 4.493
+    },
+    {
+      "word": "destroys",
+      "start": 4.54,
+      "end": 5.05
+    },
+    {
+      "word": "short-term",
+      "start": 5.097,
+      "end": 5.608
+    },
+    {
+      "word": "episodic",
+      "start": 5.677,
+      "end": 6.177
+    },
+    {
+      "word": "memory,",
+      "start": 6.246,
+      "end": 6.815
+    },
+    {
+      "word": "the",
+      "start": 7.059,
+      "end": 7.152
+    },
+    {
+      "word": "brain\u2019s",
+      "start": 7.198,
+      "end": 7.523
+    },
+    {
+      "word": "cultural",
+      "start": 7.581,
+      "end": 7.976
+    },
+    {
+      "word": "taste",
+      "start": 8.034,
+      "end": 8.336
+    },
+    {
+      "word": "cortex",
+      "start": 8.371,
+      "end": 8.847
+    },
+    {
+      "word": "remains",
+      "start": 8.963,
+      "end": 9.311
+    },
+    {
+      "word": "vividly",
+      "start": 9.37,
+      "end": 9.729
+    },
+    {
+      "word": "alive",
+      "start": 9.776,
+      "end": 10.229
+    },
+    {
+      "word": "until",
+      "start": 10.264,
+      "end": 10.519
+    },
+    {
+      "word": "the",
+      "start": 10.565,
+      "end": 10.635
+    },
+    {
+      "word": "end",
+      "start": 10.705,
+      "end": 10.844
+    },
+    {
+      "word": "of",
+      "start": 10.902,
+      "end": 10.96
+    },
+    {
+      "word": "life.",
+      "start": 11.041,
+      "end": 11.529
+    },
+    {
+      "word": "NeuroTaste",
+      "start": 12.04,
+      "end": 12.829
+    },
+    {
+      "word": "bridges",
+      "start": 12.876,
+      "end": 13.236
+    },
+    {
+      "word": "this",
+      "start": 13.282,
+      "end": 13.433
+    },
+    {
+      "word": "gap",
+      "start": 13.514,
+      "end": 13.816
+    },
+    {
+      "word": "using",
+      "start": 13.932,
+      "end": 14.211
+    },
+    {
+      "word": "the",
+      "start": 14.257,
+      "end": 14.327
+    },
+    {
+      "word": "Qloo",
+      "start": 14.408,
+      "end": 14.699
+    },
+    {
+      "word": "Taste",
+      "start": 14.757,
+      "end": 15.035
+    },
+    {
+      "word": "Graph",
+      "start": 15.07,
+      "end": 15.384
+    },
+    {
+      "word": "API,",
+      "start": 15.453,
+      "end": 16.115
+    },
+    {
+      "word": "mapping",
+      "start": 16.359,
+      "end": 16.695
+    },
+    {
+      "word": "the",
+      "start": 16.73,
+      "end": 16.8
+    },
+    {
+      "word": "resident's",
+      "start": 16.846,
+      "end": 17.264
+    },
+    {
+      "word": "birth",
+      "start": 17.322,
+      "end": 17.566
+    },
+    {
+      "word": "decade,",
+      "start": 17.624,
+      "end": 18.17
+    },
+    {
+      "word": "cultural",
+      "start": 18.286,
+      "end": 18.716
+    },
+    {
+      "word": "geography,",
+      "start": 18.774,
+      "end": 19.424
+    },
+    {
+      "word": "and",
+      "start": 19.459,
+      "end": 19.598
+    },
+    {
+      "word": "dormant",
+      "start": 19.668,
+      "end": 20.027
+    },
+    {
+      "word": "sensory",
+      "start": 20.097,
+      "end": 20.492
+    },
+    {
+      "word": "anchors",
+      "start": 20.573,
+      "end": 20.968
+    },
+    {
+      "word": "to",
+      "start": 21.142,
+      "end": 21.258
+    },
+    {
+      "word": "surface",
+      "start": 21.328,
+      "end": 21.723
+    },
+    {
+      "word": "music,",
+      "start": 21.769,
+      "end": 22.21
+    },
+    {
+      "word": "cinema,",
+      "start": 22.28,
+      "end": 22.814
+    },
+    {
+      "word": "and",
+      "start": 22.849,
+      "end": 23.0
+    },
+    {
+      "word": "scents",
+      "start": 23.081,
+      "end": 23.464
+    },
+    {
+      "word": "proven",
+      "start": 23.58,
+      "end": 23.94
+    },
+    {
+      "word": "to",
+      "start": 23.986,
+      "end": 24.045
+    },
+    {
+      "word": "evoke",
+      "start": 24.114,
+      "end": 24.416
+    },
+    {
+      "word": "emotional",
+      "start": 24.463,
+      "end": 24.904
+    },
+    {
+      "word": "calm.",
+      "start": 24.973,
+      "end": 25.682
+    }
+  ],
+  "scene_4": [
+    {
+      "word": "Watch",
+      "start": 0.0,
+      "end": 0.29
+    },
+    {
+      "word": "what",
+      "start": 0.325,
+      "end": 0.453
+    },
+    {
+      "word": "happens",
+      "start": 0.499,
+      "end": 0.848
+    },
+    {
+      "word": "in",
+      "start": 0.917,
+      "end": 0.998
+    },
+    {
+      "word": "real",
+      "start": 1.068,
+      "end": 1.3
+    },
+    {
+      "word": "time.",
+      "start": 1.37,
+      "end": 1.962
+    },
+    {
+      "word": "Without",
+      "start": 2.403,
+      "end": 2.717
+    },
+    {
+      "word": "a",
+      "start": 2.763,
+      "end": 2.786
+    },
+    {
+      "word": "single",
+      "start": 2.856,
+      "end": 3.181
+    },
+    {
+      "word": "nurse",
+      "start": 3.239,
+      "end": 3.576
+    },
+    {
+      "word": "touching",
+      "start": 3.622,
+      "end": 3.971
+    },
+    {
+      "word": "a",
+      "start": 4.017,
+      "end": 4.04
+    },
+    {
+      "word": "syringe,",
+      "start": 4.098,
+      "end": 4.76
+    },
+    {
+      "word": "NeuroTaste",
+      "start": 5.004,
+      "end": 5.909
+    },
+    {
+      "word": "deploys",
+      "start": 5.979,
+      "end": 6.478
+    },
+    {
+      "word": "an",
+      "start": 6.525,
+      "end": 6.594
+    },
+    {
+      "word": "autonomous",
+      "start": 6.641,
+      "end": 7.14
+    },
+    {
+      "word": "sensory",
+      "start": 7.187,
+      "end": 7.605
+    },
+    {
+      "word": "de-escalation",
+      "start": 7.686,
+      "end": 8.406
+    },
+    {
+      "word": "protocol.",
+      "start": 8.475,
+      "end": 9.265
+    },
+    {
+      "word": "A",
+      "start": 9.961,
+      "end": 10.043
+    },
+    {
+      "word": "1940s",
+      "start": 10.159,
+      "end": 10.948
+    },
+    {
+      "word": "acoustic",
+      "start": 10.994,
+      "end": 11.47
+    },
+    {
+      "word": "recording",
+      "start": 11.54,
+      "end": 12.016
+    },
+    {
+      "word": "of",
+      "start": 12.225,
+      "end": 12.341
+    },
+    {
+      "word": "Nat",
+      "start": 12.411,
+      "end": 12.585
+    },
+    {
+      "word": "King",
+      "start": 12.666,
+      "end": 12.887
+    },
+    {
+      "word": "Cole",
+      "start": 12.968,
+      "end": 13.282
+    },
+    {
+      "word": "softly",
+      "start": 13.328,
+      "end": 13.7
+    },
+    {
+      "word": "fills",
+      "start": 13.769,
+      "end": 14.048
+    },
+    {
+      "word": "the",
+      "start": 14.106,
+      "end": 14.176
+    },
+    {
+      "word": "room,",
+      "start": 14.222,
+      "end": 14.686
+    },
+    {
+      "word": "while",
+      "start": 14.861,
+      "end": 15.093
+    },
+    {
+      "word": "smart",
+      "start": 15.139,
+      "end": 15.453
+    },
+    {
+      "word": "lighting",
+      "start": 15.522,
+      "end": 15.882
+    },
+    {
+      "word": "transitions",
+      "start": 15.94,
+      "end": 16.567
+    },
+    {
+      "word": "to",
+      "start": 16.625,
+      "end": 16.707
+    },
+    {
+      "word": "a",
+      "start": 16.776,
+      "end": 16.799
+    },
+    {
+      "word": "soothing",
+      "start": 16.858,
+      "end": 17.252
+    },
+    {
+      "word": "sunset",
+      "start": 17.334,
+      "end": 17.81
+    },
+    {
+      "word": "twilight.",
+      "start": 17.856,
+      "end": 18.564
+    },
+    {
+      "word": "Within",
+      "start": 19.075,
+      "end": 19.342
+    },
+    {
+      "word": "two",
+      "start": 19.389,
+      "end": 19.528
+    },
+    {
+      "word": "minutes,",
+      "start": 19.597,
+      "end": 20.004
+    },
+    {
+      "word": "heart",
+      "start": 20.085,
+      "end": 20.317
+    },
+    {
+      "word": "rate",
+      "start": 20.364,
+      "end": 20.561
+    },
+    {
+      "word": "stabilizes,",
+      "start": 20.608,
+      "end": 21.49
+    },
+    {
+      "word": "vagal",
+      "start": 21.734,
+      "end": 22.094
+    },
+    {
+      "word": "tone",
+      "start": 22.152,
+      "end": 22.454
+    },
+    {
+      "word": "rebounds,",
+      "start": 22.512,
+      "end": 23.173
+    },
+    {
+      "word": "and",
+      "start": 23.347,
+      "end": 23.475
+    },
+    {
+      "word": "the",
+      "start": 23.522,
+      "end": 23.591
+    },
+    {
+      "word": "agitation",
+      "start": 23.649,
+      "end": 24.253
+    },
+    {
+      "word": "storm",
+      "start": 24.323,
+      "end": 24.671
+    },
+    {
+      "word": "dissolves",
+      "start": 24.729,
+      "end": 25.228
+    },
+    {
+      "word": "peacefully.",
+      "start": 25.286,
+      "end": 26.192
+    }
+  ],
+  "scene_5": [
+    {
+      "word": "For",
+      "start": 0.0,
+      "end": 0.174
+    },
+    {
+      "word": "healthcare",
+      "start": 0.221,
+      "end": 0.639
+    },
+    {
+      "word": "facilities,",
+      "start": 0.673,
+      "end": 1.358
+    },
+    {
+      "word": "NeuroTaste",
+      "start": 1.509,
+      "end": 2.276
+    },
+    {
+      "word": "isn't",
+      "start": 2.31,
+      "end": 2.554
+    },
+    {
+      "word": "just",
+      "start": 2.601,
+      "end": 2.786
+    },
+    {
+      "word": "compassionate",
+      "start": 2.844,
+      "end": 3.46
+    },
+    {
+      "word": "care\u2014it\u2019s",
+      "start": 3.506,
+      "end": 4.296
+    },
+    {
+      "word": "an",
+      "start": 4.319,
+      "end": 4.377
+    },
+    {
+      "word": "enterprise",
+      "start": 4.435,
+      "end": 4.969
+    },
+    {
+      "word": "regulatory",
+      "start": 5.039,
+      "end": 5.631
+    },
+    {
+      "word": "shield.",
+      "start": 5.689,
+      "end": 6.235
+    },
+    {
+      "word": "Fully",
+      "start": 6.745,
+      "end": 7.012
+    },
+    {
+      "word": "compliant",
+      "start": 7.07,
+      "end": 7.558
+    },
+    {
+      "word": "with",
+      "start": 7.605,
+      "end": 7.744
+    },
+    {
+      "word": "federal",
+      "start": 7.802,
+      "end": 8.162
+    },
+    {
+      "word": "CMS",
+      "start": 8.231,
+      "end": 8.8
+    },
+    {
+      "word": "F-Tag",
+      "start": 8.916,
+      "end": 9.415
+    },
+    {
+      "word": "758",
+      "start": 9.497,
+      "end": 10.251
+    },
+    {
+      "word": "mandates",
+      "start": 10.332,
+      "end": 10.878
+    },
+    {
+      "word": "restricting",
+      "start": 11.122,
+      "end": 11.644
+    },
+    {
+      "word": "unnecessary",
+      "start": 11.737,
+      "end": 12.411
+    },
+    {
+      "word": "psychotropic",
+      "start": 12.469,
+      "end": 13.13
+    },
+    {
+      "word": "medications,",
+      "start": 13.189,
+      "end": 14.024
+    },
+    {
+      "word": "it",
+      "start": 14.35,
+      "end": 14.466
+    },
+    {
+      "word": "reduces",
+      "start": 14.512,
+      "end": 14.953
+    },
+    {
+      "word": "caregiver",
+      "start": 15.011,
+      "end": 15.476
+    },
+    {
+      "word": "burnout",
+      "start": 15.534,
+      "end": 16.033
+    },
+    {
+      "word": "and",
+      "start": 16.149,
+      "end": 16.323
+    },
+    {
+      "word": "institutional",
+      "start": 16.381,
+      "end": 17.066
+    },
+    {
+      "word": "liability",
+      "start": 17.124,
+      "end": 17.728
+    },
+    {
+      "word": "through",
+      "start": 17.798,
+      "end": 18.03
+    },
+    {
+      "word": "continuous,",
+      "start": 18.065,
+      "end": 18.785
+    },
+    {
+      "word": "edge-computed",
+      "start": 18.831,
+      "end": 19.562
+    },
+    {
+      "word": "twenty-four-seven",
+      "start": 19.62,
+      "end": 20.433
+    },
+    {
+      "word": "care.",
+      "start": 20.503,
+      "end": 21.223
+    }
+  ],
+  "scene_6": [
+    {
+      "word": "Dementia",
+      "start": 0.0,
+      "end": 0.65
+    },
+    {
+      "word": "steals",
+      "start": 0.72,
+      "end": 1.115
+    },
+    {
+      "word": "memories.",
+      "start": 1.184,
+      "end": 1.881
+    },
+    {
+      "word": "But",
+      "start": 2.055,
+      "end": 2.194
+    },
+    {
+      "word": "with",
+      "start": 2.229,
+      "end": 2.368
+    },
+    {
+      "word": "Qloo",
+      "start": 2.426,
+      "end": 3.019
+    },
+    {
+      "word": "and",
+      "start": 3.088,
+      "end": 3.204
+    },
+    {
+      "word": "NeuroTaste,",
+      "start": 3.286,
+      "end": 4.168
+    },
+    {
+      "word": "we",
+      "start": 4.319,
+      "end": 4.447
+    },
+    {
+      "word": "can",
+      "start": 4.493,
+      "end": 4.609
+    },
+    {
+      "word": "bring",
+      "start": 4.656,
+      "end": 4.818
+    },
+    {
+      "word": "their",
+      "start": 4.876,
+      "end": 5.05
+    },
+    {
+      "word": "calm,",
+      "start": 5.108,
+      "end": 5.515
+    },
+    {
+      "word": "their",
+      "start": 5.584,
+      "end": 5.77
+    },
+    {
+      "word": "dignity,",
+      "start": 5.817,
+      "end": 6.351
+    },
+    {
+      "word": "and",
+      "start": 6.374,
+      "end": 6.513
+    },
+    {
+      "word": "their",
+      "start": 6.56,
+      "end": 6.699
+    },
+    {
+      "word": "humanity",
+      "start": 6.734,
+      "end": 7.221
+    },
+    {
+      "word": "back.",
+      "start": 7.291,
+      "end": 7.837
+    },
+    {
+      "word": "NeuroTaste:",
+      "start": 8.348,
+      "end": 9.23
+    },
+    {
+      "word": "Autonomous",
+      "start": 9.381,
+      "end": 9.961
+    },
+    {
+      "word": "Memory",
+      "start": 10.019,
+      "end": 10.333
+    },
+    {
+      "word": "Care,",
+      "start": 10.403,
+      "end": 10.809
+    },
+    {
+      "word": "powered",
+      "start": 10.983,
+      "end": 11.32
+    },
+    {
+      "word": "by",
+      "start": 11.355,
+      "end": 11.471
+    },
+    {
+      "word": "cultural",
+      "start": 11.552,
+      "end": 11.947
+    },
+    {
+      "word": "intelligence.",
+      "start": 12.005,
+      "end": 13.05
+    }
+  ]
+}
