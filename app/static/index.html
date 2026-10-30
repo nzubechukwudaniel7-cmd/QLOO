@@ -1,0 +1,870 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NeuroTaste — Autonomous AI Caregiving Agent powered by Qloo Taste Graph</title>
+  
+  <!-- Embedded High-Resolution Brand Favicon (4-Strand Sensory Synapse) -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64' fill='none'%3E%3Crect width='64' height='64' rx='16' fill='%2308060F'/%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%2322D3EE'/%3E%3Cstop offset='50%25' stop-color='%238B5CF6'/%3E%3Cstop offset='100%25' stop-color='%23C084FC'/%3E%3C/linearGradient%3E%3C/defs%3E%3Cpath d='M16 46 C6 35 6 17 19 8 C32 -1 52 2 56 19 C60 36 40 54 25 50' stroke='url(%23g)' stroke-width='3.2' stroke-linecap='round' fill='none'/%3E%3Cpath d='M21 42 C14 33 14 20 24 13 C34 7 48 9 51 22 C54 35 39 47 28 44' stroke='url(%23g)' stroke-width='2.6' stroke-linecap='round' fill='none' opacity='0.8'/%3E%3Ccircle cx='35' cy='25' r='5' fill='%23FFB829'/%3E%3Ccircle cx='35' cy='25' r='2' fill='%23FFFFFF'/%3E%3C/svg%3E" />
+  
+  <!-- Tailwind CSS & Google Fonts -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Three.js for 3D Brain WebGL Particle Visualization -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            obsidian: '#07050E',
+            surface: 'rgba(255,255,255,0.035)',
+            violet: { glow: '#8B5CF6', accent: '#A855F7', soft: '#C4B5FD' },
+            cyan: { action: '#06B6D4', mint: '#22D3EE' },
+            golden: '#FFB829',
+            clinical: '#10B981',
+          },
+          boxShadow: {
+            'glow-v': '0 0 50px rgba(139,92,246,0.35)',
+            'glow-c': '0 0 35px rgba(6,182,212,0.35)',
+            'card': '0 1px 0 rgba(255,255,255,0.06), 0 12px 36px rgba(0,0,0,0.65)',
+          },
+          fontFamily: {
+            display: ['Inter', 'system-ui', 'sans-serif'],
+            editorial: ['"Playfair Display"', 'Georgia', 'serif'],
+          }
+        }
+      }
+    }
+  </script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Playfair+Display:ital,wght@0,600;0,700;0,800;0,900;1,600;1,700&display=swap" rel="stylesheet" />
+
+  <style>
+    :root {
+      --bg-base: #07050E;
+      --border: rgba(255,255,255,0.08);
+      --violet: #8B5CF6;
+      --cyan: #06B6D4;
+      --golden: #FFB829;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--bg-base);
+      color: #F8FAFC;
+      font-family: 'Inter', system-ui, sans-serif;
+      overflow-x: hidden;
+    }
+    .ambient-violet {
+      position: fixed; top: -15%; left: 25%; width: 65vw; height: 65vh;
+      background: radial-gradient(ellipse, rgba(139,92,246,0.13) 0%, transparent 70%);
+      pointer-events: none; z-index: 0;
+    }
+    .ambient-cyan {
+      position: fixed; bottom: -10%; right: -5%; width: 45vw; height: 45vh;
+      background: radial-gradient(ellipse, rgba(6,182,212,0.08) 0%, transparent 70%);
+      pointer-events: none; z-index: 0;
+    }
+    .glass {
+      background: rgba(255,255,255,0.035);
+      border: 1px solid rgba(255,255,255,0.07);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+    }
+    .glass-strong {
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.11);
+      backdrop-filter: blur(32px);
+    }
+    .pill {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 4px 12px; border-radius: 999px; font-size: 11px; font-weight: 600;
+      letter-spacing: 0.05em; text-transform: uppercase;
+    }
+    .pill-violet { background: rgba(139,92,246,0.15); color: #C4B5FD; border: 1px solid rgba(139,92,246,0.3); }
+    .pill-cyan   { background: rgba(6,182,212,0.12);  color: #67E8F9; border: 1px solid rgba(6,182,212,0.25); }
+    .pill-gold   { background: rgba(255,184,41,0.12); color: #FFB829; border: 1px solid rgba(255,184,41,0.25); }
+    .pill-green  { background: rgba(16,185,129,0.12); color: #34D399; border: 1px solid rgba(16,185,129,0.25); }
+
+    .pulse-dot {
+      width: 7px; height: 7px; border-radius: 50%;
+      animation: pulse-ring 2s infinite;
+    }
+    @keyframes pulse-ring {
+      0%   { box-shadow: 0 0 0 0 currentColor; opacity: 1; }
+      70%  { box-shadow: 0 0 0 6px transparent; opacity: 0.7; }
+      100% { box-shadow: 0 0 0 0 transparent; opacity: 1; }
+    }
+
+    .btn-primary {
+      display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 13px 28px;
+      background: linear-gradient(135deg, #8B5CF6, #A855F7);
+      border-radius: 12px; font-weight: 700; font-size: 14px; cursor: pointer;
+      border: none; color: white; transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+      box-shadow: 0 4px 24px rgba(139,92,246,0.45); letter-spacing: 0.02em;
+    }
+    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 32px rgba(139,92,246,0.6); }
+
+    .btn-secondary {
+      display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 11px 22px;
+      background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 12px; font-weight: 600; font-size: 13px; cursor: pointer;
+      color: #CBD5E1; transition: all 0.2s;
+    }
+    .btn-secondary:hover { background: rgba(255,255,255,0.09); border-color: rgba(255,255,255,0.2); color: white; transform: translateY(-1px); }
+
+    .btn-cyan {
+      display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 12px 26px;
+      background: linear-gradient(135deg, #06B6D4, #22D3EE);
+      border-radius: 12px; font-weight: 700; font-size: 14px; cursor: pointer;
+      border: none; color: #08060F; transition: all 0.2s;
+      box-shadow: 0 4px 20px rgba(6,182,212,0.35);
+    }
+    .btn-cyan:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(6,182,212,0.5); }
+
+    .divider { height: 1px; background: linear-gradient(90deg, transparent, rgba(139,92,246,0.25), transparent); }
+
+    #brain-3d-container {
+      width: 100%;
+      height: 540px;
+      position: relative;
+      touch-action: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: transparent;
+    }
+    #brain-3d-container canvas {
+      display: block;
+      width: 100% !important;
+      height: 100% !important;
+      background: transparent !important;
+    }
+
+    ::-webkit-scrollbar { width: 5px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: rgba(139,92,246,0.4); border-radius: 3px; }
+  </style>
+</head>
+<body>
+
+<div class="ambient-violet"></div>
+<div class="ambient-cyan"></div>
+
+<!-- ============================================================
+     NAVIGATION BAR (Floating Island Capsule - Inspired by Modern Minimalist Reference)
+     ============================================================ -->
+<header class="sticky top-4 md:top-6 z-50 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full transition-all duration-300">
+  <nav class="relative flex items-center justify-between px-4 sm:px-6 md:px-8 py-3 md:py-3.5 rounded-full bg-[#080512]/85 backdrop-blur-2xl border border-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.7),0_0_25px_rgba(139,92,246,0.15)]">
+    
+    <!-- LEFT: Sleek Brand Logo -->
+    <a href="#" onclick="window.scrollTo({top:0, behavior:'smooth'}); return false;" class="flex items-center gap-3 group cursor-pointer">
+      <div class="relative w-9 h-9 rounded-xl flex items-center justify-center p-1.5 bg-gradient-to-br from-violet-600/30 to-cyan-500/20 border border-white/15 shadow-[0_0_15px_rgba(139,92,246,0.35)] group-hover:scale-105 group-hover:border-violet-400/50 transition-all duration-300">
+        <svg class="w-full h-full" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="nav-syn-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#22D3EE"/>
+              <stop offset="60%" stop-color="#8B5CF6"/>
+              <stop offset="100%" stop-color="#C084FC"/>
+            </linearGradient>
+          </defs>
+          <path d="M10 30 C4 22 4 11 12 6 C20 1 32 3 35 13 C37 23 25 35 16 32" stroke="url(#nav-syn-grad)" stroke-width="2.6" stroke-linecap="round"/>
+          <path d="M14 27 C10 21 10 13 16 9 C22 5 31 7 33 15" stroke="url(#nav-syn-grad)" stroke-width="2.2" stroke-linecap="round" opacity="0.8"/>
+          <circle cx="23" cy="17" r="3.5" fill="#FFB829"/>
+          <circle cx="23" cy="17" r="1.5" fill="#FFFFFF"/>
+        </svg>
+      </div>
+
+      <div class="flex items-center">
+        <span class="text-lg md:text-xl font-extrabold tracking-tight text-white">Neuro</span>
+        <span class="text-lg md:text-xl font-extrabold tracking-tight bg-gradient-to-r from-violet-400 to-cyan-400 bg-clip-text text-transparent ml-0.5">Taste</span>
+      </div>
+
+      <div class="hidden sm:flex items-center gap-1.5 ml-1 px-2 py-0.5 rounded-full bg-white/[0.04] border border-white/10 text-[9px] font-mono text-gray-400">
+        <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+        <span class="text-emerald-400 font-bold uppercase tracking-wider">Live</span>
+      </div>
+    </a>
+
+    <!-- CENTER: Minimal Uppercase Navigation Links (Inspired by fitup) -->
+    <div class="hidden md:flex items-center gap-6 lg:gap-8 text-[11px] font-semibold text-gray-400 tracking-[0.14em] uppercase">
+      <a href="#science" class="hover:text-white transition-colors duration-200">The Science</a>
+      <a href="#pillars" class="hover:text-white transition-colors duration-200">4 Pillars</a>
+      <a href="#qloo" class="hover:text-white transition-colors duration-200">Taste Graph</a>
+      <a href="#compliance" class="hover:text-white transition-colors duration-200">CMS Audit</a>
+    </div>
+
+    <!-- RIGHT: Capsule CTA (Directly Inspired by fitup Pin) -->
+    <div class="flex items-center gap-3">
+      <div id="api-status-badge" class="hidden xl:inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-[10px] font-mono border border-emerald-500/25 bg-emerald-500/10 text-emerald-300">
+        <span class="pulse-dot" style="background:#10B981;color:#10B981;width:6px;height:6px;"></span>
+        <span>Qloo Cloud Connected</span>
+      </div>
+
+      <a href="/app" class="group relative inline-flex items-center gap-2.5 px-4 md:px-5 py-2 rounded-full border border-white/20 bg-white/[0.05] hover:bg-white/[0.1] hover:border-cyan-400/60 hover:shadow-[0_0_25px_rgba(34,211,238,0.35)] transition-all duration-300">
+        <span class="w-6 h-6 rounded-full bg-white/10 group-hover:bg-cyan-500/20 border border-white/20 group-hover:border-cyan-400/50 flex items-center justify-center text-gray-200 group-hover:text-cyan-300 transition-colors">
+          <svg class="w-3.5 h-3.5 transform group-hover:translate-x-0.5 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3"/>
+          </svg>
+        </span>
+        <span class="text-xs font-bold tracking-wider uppercase text-white group-hover:text-cyan-100 transition-colors">Launch Console</span>
+      </a>
+    </div>
+
+  </nav>
+</header>
+
+<!-- ============================================================
+     HERO SECTION WITH 3D FULL BRAIN VISUALIZATION
+     ============================================================ -->
+<section class="relative z-10 px-6 md:px-12 lg:px-20 pt-10 pb-20 min-h-[90vh] flex flex-col justify-center">
+  <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center max-w-7xl mx-auto w-full">
+    
+    <div class="lg:col-span-6 space-y-7 text-left">
+      <div class="space-y-4">
+        <div class="pill pill-violet">
+          <svg class="w-3.5 h-3.5 text-violet-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+          Qloo Agentic Hackathon 2026 Submission
+        </div>
+
+        <h1 class="text-5xl sm:text-6xl md:text-7xl font-black text-white tracking-tight leading-[1.05]" style="font-family: 'Playfair Display', Georgia, serif;">
+          Unlock<br/>
+          <span style="background: linear-gradient(135deg, #C4B5FD 0%, #22D3EE 60%, #FFB829 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Cognitive</span><br/>
+          Lucidity.
+        </h1>
+
+        <p class="text-gray-300 text-base sm:text-lg leading-relaxed font-light max-w-xl">
+          An autonomous caregiving agent that transforms fragmented youth memories into non-pharmacological sensory de-escalation protocols for dementia residents — powered strictly by <span class="text-white font-semibold">Qloo's 250M+ Taste Graph</span> and contactless optical <span class="text-cyan-300 font-semibold">rPPG biofeedback</span>.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-2">
+        <div class="glass rounded-xl p-3.5 border border-white/5">
+          <p class="text-2xl font-black text-white font-mono">0</p>
+          <p class="text-[11px] text-gray-400 mt-0.5 leading-tight">Chemical Sedatives</p>
+        </div>
+        <div class="glass rounded-xl p-3.5 border border-white/5">
+          <p class="text-2xl font-black text-violet-400 font-mono">4</p>
+          <p class="text-[11px] text-gray-400 mt-0.5 leading-tight">Sensory Pillars</p>
+        </div>
+        <div class="glass rounded-xl p-3.5 border border-white/5">
+          <p class="text-2xl font-black text-cyan-300 font-mono">100%</p>
+          <p class="text-[11px] text-gray-400 mt-0.5 leading-tight">CMS F-Tag 758</p>
+        </div>
+        <div class="glass rounded-xl p-3.5 border border-white/5">
+          <p class="text-2xl font-black text-amber-300 font-mono">250M+</p>
+          <p class="text-[11px] text-gray-400 mt-0.5 leading-tight">Qloo Entities</p>
+        </div>
+      </div>
+
+      <div class="flex flex-wrap gap-3.5 pt-2 items-center">
+        <a href="/app" class="btn-primary text-sm">
+          <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/><path stroke-linecap="round" stroke-linejoin="round" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          Open Clinical Console
+        </a>
+        <a href="#qloo" class="btn-secondary text-sm">
+          Try Live Qloo Search
+          <svg class="w-3.5 h-3.5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+        </a>
+        <a href="/docs" target="_blank" class="text-xs text-gray-400 hover:text-white transition-colors flex items-center gap-1 ml-2 font-mono">
+          API Specs
+          <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+        </a>
+      </div>
+    </div>
+
+    <div class="lg:col-span-6 relative flex items-center justify-center">
+      <!-- 3D WebGL Neural Brain Animation (Floating Freely on its Own) -->
+      <div id="brain-3d-container"></div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ============================================================
+     THE CLINICAL PARADOX & CONTACTLESS BREAKTHROUGH
+     ============================================================ -->
+<section id="science" class="relative z-10 px-6 md:px-12 lg:px-20 py-20 border-t border-white/5 bg-white/[0.01]">
+  <div class="max-w-7xl mx-auto">
+    <div class="text-center max-w-3xl mx-auto mb-16 space-y-3">
+      <span class="pill pill-cyan">Zero-Touch Autonomic Telemetry</span>
+      <h2 class="text-3xl md:text-4xl font-black text-white" style="font-family: 'Playfair Display', Georgia, serif;">
+        The Dementia Paradox & The Optical Solution
+      </h2>
+      <p class="text-gray-400 text-sm md:text-base leading-relaxed">
+        Why traditional medical vitals fail in late-stage memory care, and how passive computer vision unlocks calm without chemical restraints.
+      </p>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div class="glass rounded-2xl p-6 border border-red-500/20 relative group hover:border-red-500/40 transition-colors">
+        <div class="w-10 h-10 rounded-xl bg-red-500/10 border border-red-500/20 flex items-center justify-center mb-4 text-red-400">
+          <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+        </div>
+        <h3 class="text-base font-bold text-white mb-2">Sundowning Distress</h3>
+        <p class="text-xs text-gray-300 leading-relaxed">
+          At 4:30 PM circadian disorientation strikes. Residents cannot articulate internal distress, manifesting symptoms as hallway pacing, exit-seeking, and acute panic.
+        </p>
+      </div>
+
+      <div class="glass rounded-2xl p-6 border border-amber-500/20 relative group hover:border-amber-500/40 transition-colors">
+        <div class="w-10 h-10 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center mb-4 text-amber-400">
+          <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"/></svg>
+        </div>
+        <h3 class="text-base font-bold text-white mb-2">The Wire Phobia</h3>
+        <p class="text-xs text-gray-300 leading-relaxed">
+          Physical hospital electrodes, chest leads, and finger pulse-oximeters cause intense paranoia in dementia patients, triggering combative resistance and physical defense.
+        </p>
+      </div>
+
+      <div class="glass rounded-2xl p-6 border border-cyan-500/20 relative group hover:border-cyan-500/40 transition-colors">
+        <div class="w-10 h-10 rounded-xl bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center mb-4 text-cyan-400">
+          <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+        </div>
+        <h3 class="text-base font-bold text-white mb-2">Contactless rPPG</h3>
+        <p class="text-xs text-gray-300 leading-relaxed">
+          Using standard cameras, our Plane-Orthogonal-to-Skin algorithm extracts pulse and vagal HRV from microscopic facial capillary green-light absorption without touching the resident.
+        </p>
+      </div>
+
+      <div class="glass rounded-2xl p-6 border border-emerald-500/20 relative group hover:border-emerald-500/40 transition-colors">
+        <div class="w-10 h-10 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center mb-4 text-emerald-400">
+          <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+        </div>
+        <h3 class="text-base font-bold text-white mb-2">Chemical Avoidance</h3>
+        <p class="text-xs text-gray-300 leading-relaxed">
+          Objective autonomic proof (94 BPM → 68 BPM) allows nurses to prove non-pharmacological behavioral calming, eliminating off-label antipsychotic sedation.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     THE 4-PILLAR SENSORY ENGINE
+     ============================================================ -->
+<section id="pillars" class="relative z-10 px-6 md:px-12 lg:px-20 py-20 border-t border-white/5">
+  <div class="max-w-7xl mx-auto">
+    <div class="text-center max-w-3xl mx-auto mb-16 space-y-3">
+      <span class="pill pill-violet">Autonomous Multi-Sensory Care</span>
+      <h2 class="text-3xl md:text-4xl font-black text-white" style="font-family: 'Playfair Display', Georgia, serif;">
+        Four Pillars of Memory Reminiscence
+      </h2>
+      <p class="text-gray-400 text-sm md:text-base leading-relaxed">
+        Qloo's Taste Graph resolves deep cultural affinities from a resident's youth into a synchronous, 4-pillar calming protocol.
+      </p>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div class="glass rounded-2xl p-6 border border-violet-500/25 relative flex flex-col justify-between" style="background: radial-gradient(circle at top left, rgba(139,92,246,0.12) 0%, transparent 70%);">
+        <div>
+          <div class="w-12 h-12 rounded-xl bg-violet-500/15 border border-violet-500/30 flex items-center justify-center mb-4 text-violet-300">
+            <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3"/></svg>
+          </div>
+          <span class="pill pill-violet text-[10px] mb-2">Pillar 01</span>
+          <h3 class="text-lg font-bold text-white mb-2">Auditory Reminiscence</h3>
+          <p class="text-xs text-gray-300 leading-relaxed mb-4">
+            Golden-era jazz, big-band vocals, and acoustic ballads mapped directly to the resident's teenage decade to stimulate intact auditory cortex memories.
+          </p>
+        </div>
+        <div class="pt-3 border-t border-white/5 text-[11px] text-violet-300 font-mono">
+          Avg 97.8% Qloo Affinity
+        </div>
+      </div>
+
+      <div class="glass rounded-2xl p-6 border border-cyan-500/25 relative flex flex-col justify-between" style="background: radial-gradient(circle at top left, rgba(6,182,212,0.12) 0%, transparent 70%);">
+        <div>
+          <div class="w-12 h-12 rounded-xl bg-cyan-500/15 border border-cyan-500/30 flex items-center justify-center mb-4 text-cyan-300">
+            <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M7 4v16M17 4v16M3 8h4m10 0h4M3 12h18M3 16h4m10 0h4M4 20h16a1 1 0 001-1V5a1 1 0 00-1-1H4a1 1 0 00-1 1v14a1 1 0 001 1z"/></svg>
+          </div>
+          <span class="pill pill-cyan text-[10px] mb-2">Pillar 02</span>
+          <h3 class="text-lg font-bold text-white mb-2">Visual Reassurance</h3>
+          <p class="text-xs text-gray-300 leading-relaxed mb-4">
+            Classic Hollywood cinematography, soothing mid-century photographic landscapes, and familiar golden-age stars projected to provide continuous visual grounding.
+          </p>
+        </div>
+        <div class="pt-3 border-t border-white/5 text-[11px] text-cyan-300 font-mono">
+          Avg 94.2% Qloo Affinity
+        </div>
+      </div>
+
+      <div class="glass rounded-2xl p-6 border border-amber-500/25 relative flex flex-col justify-between" style="background: radial-gradient(circle at top left, rgba(255,184,41,0.12) 0%, transparent 70%);">
+        <div>
+          <div class="w-12 h-12 rounded-xl bg-amber-500/15 border border-amber-500/30 flex items-center justify-center mb-4 text-amber-300">
+            <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
+          </div>
+          <span class="pill pill-gold text-[10px] mb-2">Pillar 03</span>
+          <h3 class="text-lg font-bold text-white mb-2">Culinary & Olfactory</h3>
+          <p class="text-xs text-gray-300 leading-relaxed mb-4">
+            Direct stimulation of the limbic system through heritage aromas—warm cinnamon apple, roasted vanilla, and vintage bakery scents matched to birthplace roots.
+          </p>
+        </div>
+        <div class="pt-3 border-t border-white/5 text-[11px] text-amber-300 font-mono">
+          Avg 91.5% Qloo Affinity
+        </div>
+      </div>
+
+      <div class="glass rounded-2xl p-6 border border-emerald-500/25 relative flex flex-col justify-between" style="background: radial-gradient(circle at top left, rgba(16,185,129,0.12) 0%, transparent 70%);">
+        <div>
+          <div class="w-12 h-12 rounded-xl bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center mb-4 text-emerald-300">
+            <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
+          </div>
+          <span class="pill pill-green text-[10px] mb-2">Pillar 04</span>
+          <h3 class="text-lg font-bold text-white mb-2">Verbal Validation</h3>
+          <p class="text-xs text-gray-300 leading-relaxed mb-4">
+            Dementia-certified caregiver conversational scripts that enter the resident's cognitive timeframe rather than disorienting them with reality confrontations.
+          </p>
+        </div>
+        <div class="pt-3 border-t border-white/5 text-[11px] text-emerald-300 font-mono">
+          Dementia Care Certified
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     INTERACTIVE LIVE QLOO TASTE GRAPH EXPLORER
+     ============================================================ -->
+<section id="qloo" class="relative z-10 px-6 md:px-12 lg:px-20 py-20 border-t border-white/5 bg-white/[0.015]">
+  <div class="max-w-5xl mx-auto">
+    <div class="text-center max-w-2xl mx-auto mb-12 space-y-3">
+      <span class="pill pill-gold">Live Taste Graph API</span>
+      <h2 class="text-3xl md:text-4xl font-black text-white" style="font-family: 'Playfair Display', Georgia, serif;">
+        Explore Qloo Developer Cloud Live
+      </h2>
+      <p class="text-gray-400 text-sm">
+        Type any artist, movie, or culinary anchor to test our live backend connection to Qloo's 250M+ entity graph.
+      </p>
+    </div>
+
+    <div class="glass-strong rounded-3xl p-6 md:p-8 shadow-card border border-white/10">
+      <div class="relative mb-6">
+        <input 
+          id="landing-search-input" 
+          type="text" 
+          placeholder="Search cultural anchors (e.g. Frank Sinatra, Casablanca, Miles Davis, Apple Pie)..." 
+          class="w-full bg-white/5 border border-white/10 rounded-xl px-5 py-3.5 text-white placeholder-gray-500 text-sm focus:outline-none focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20"
+        />
+        <div id="search-spinner" class="absolute right-4 top-3.5 hidden">
+          <svg class="animate-spin h-5 w-5 text-violet-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+          </svg>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-2 flex-wrap mb-6 text-xs text-gray-400">
+        <span>Quick Samples:</span>
+        <button onclick="runLandingSearch('Ella Fitzgerald')" class="px-2.5 py-1 rounded-lg bg-white/5 hover:bg-white/10 text-violet-300 font-medium transition-colors">Ella Fitzgerald</button>
+        <button onclick="runLandingSearch('Casablanca')" class="px-2.5 py-1 rounded-lg bg-white/5 hover:bg-white/10 text-cyan-300 font-medium transition-colors">Casablanca</button>
+        <button onclick="runLandingSearch('Nat King Cole')" class="px-2.5 py-1 rounded-lg bg-white/5 hover:bg-white/10 text-amber-300 font-medium transition-colors">Nat King Cole</button>
+        <button onclick="runLandingSearch('Chicago Jazz')" class="px-2.5 py-1 rounded-lg bg-white/5 hover:bg-white/10 text-emerald-300 font-medium transition-colors">Chicago Jazz</button>
+      </div>
+
+      <div id="landing-search-results" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3.5">
+        <div class="col-span-full py-8 text-center text-xs text-gray-500 font-mono">
+          Enter an anchor above to query https://hackathon.api.qloo.com
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     CMS F-TAG 758 REGULATORY COMPLIANCE
+     ============================================================ -->
+<section id="compliance" class="relative z-10 px-6 md:px-12 lg:px-20 py-20 border-t border-white/5">
+  <div class="max-w-5xl mx-auto">
+    <div class="glass-strong rounded-3xl p-8 md:p-12 border border-emerald-500/30 shadow-card relative overflow-hidden" style="background: radial-gradient(circle at top right, rgba(16,185,129,0.12) 0%, #07050E 75%);">
+      <div class="flex items-center gap-2 mb-3">
+        <span class="pill pill-green">Federal Regulatory Mandate</span>
+        <span class="text-xs text-gray-400 font-mono">42 CFR § 483.45(e)</span>
+      </div>
+      <h2 class="text-3xl md:text-4xl font-black text-white mb-4" style="font-family: 'Playfair Display', Georgia, serif;">
+        CMS F-Tag 758 Compliant Audit Trail
+      </h2>
+      <p class="text-gray-300 text-sm md:text-base leading-relaxed mb-8 max-w-3xl">
+        Federal law imposes strict monetary penalties and citations on long-term care facilities that administer chemical sedatives without documented, prior non-pharmacological interventions. NeuroTaste automatically records objective autonomic heart-rate telemetry into verified surveyor audit logs.
+      </p>
+
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
+        <div class="glass p-4 rounded-xl border border-white/5">
+          <p class="text-xs text-emerald-400 font-bold mb-1">State Surveyor Ready</p>
+          <p class="text-xs text-gray-400">One-click formatted Markdown & printable clinical charts for state inspectors.</p>
+        </div>
+        <div class="glass p-4 rounded-xl border border-white/5">
+          <p class="text-xs text-cyan-400 font-bold mb-1">Autonomic Verification</p>
+          <p class="text-xs text-gray-400">Proves physical de-escalation via pre- and post-intervention heart rate & HRV RMSSD.</p>
+        </div>
+        <div class="glass p-4 rounded-xl border border-white/5">
+          <p class="text-xs text-amber-400 font-bold mb-1">Zero Antipsychotics</p>
+          <p class="text-xs text-gray-400">Protects residents from off-label Haldol, Ativan, and chemical sedation side effects.</p>
+        </div>
+      </div>
+
+      <div class="flex flex-wrap gap-4 items-center">
+        <a href="/app" class="btn-primary">
+          Launch Console & Generate Audit
+          <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+        </a>
+        <a href="/docs" target="_blank" class="btn-secondary">
+          Review Audit API Schema
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     FOOTER
+     ============================================================ -->
+<footer class="relative z-10 px-6 md:px-12 lg:px-20 py-12 border-t border-white/5 bg-obsidian">
+  <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
+    <div class="flex items-center gap-3">
+      <div class="w-8 h-8 rounded-lg bg-violet-500/10 border border-violet-500/20 flex items-center justify-center text-violet-400">
+        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+      </div>
+      <div>
+        <p class="text-sm font-bold text-white">NeuroTaste</p>
+        <p class="text-[11px] text-gray-500">Autonomous Caregiving Agent · Qloo Developer Cloud Hackathon 2026</p>
+      </div>
+    </div>
+
+    <div class="flex items-center gap-6 text-xs text-gray-400">
+      <a href="/app" class="hover:text-white transition-colors">Clinical Console</a>
+      <a href="/docs" target="_blank" class="hover:text-white transition-colors">API Docs</a>
+      <span class="text-gray-600">|</span>
+      <span class="font-mono text-violet-300">https://hackathon.api.qloo.com</span>
+    </div>
+  </div>
+</footer>
+
+<!-- ============================================================
+     SCRIPTS: THREE.JS 3D BRAIN ENGINE + LIVE QLOO SEARCH
+     ============================================================ -->
+<script>
+const API_BASE = (window.location.protocol === 'file:' || (window.location.port && window.location.port !== '8000'))
+  ? 'http://localhost:8000'
+  : '';
+
+let apiCheckAttempts = 0;
+async function checkApiStatus() {
+  const badge = document.getElementById('api-status-badge');
+  if (!badge) return;
+
+  try {
+    const res = await fetch(`${API_BASE}/api/status`);
+    if (res.ok) {
+      const data = await res.json();
+      const latency = data.latency_ms != null ? `${data.latency_ms}ms` : 'Live';
+      badge.innerHTML = `
+        <span class="pulse-dot" style="background:#10B981;color:#10B981;width:6px;height:6px;"></span>
+        <span>Qloo Cloud · ${latency}</span>
+      `;
+      badge.className = 'hidden xl:inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-[10px] font-mono border border-emerald-500/25 bg-emerald-500/10 text-emerald-300';
+      return;
+    }
+
+    const healthRes = await fetch(`${API_BASE}/api/health`);
+    if (healthRes.ok) {
+      badge.innerHTML = `
+        <span class="pulse-dot" style="background:#10B981;color:#10B981;width:6px;height:6px;"></span>
+        <span>Qloo Connected</span>
+      `;
+      badge.className = 'hidden xl:inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-[10px] font-mono border border-emerald-500/25 bg-emerald-500/10 text-emerald-300';
+      return;
+    }
+    throw new Error();
+  } catch (e) {
+    if (apiCheckAttempts < 4) {
+      apiCheckAttempts++;
+      badge.innerHTML = `
+        <span class="pulse-dot" style="background:#FFB829;color:#FFB829;width:6px;height:6px;"></span>
+        <span>Connecting Qloo...</span>
+      `;
+      badge.className = 'hidden xl:inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-[10px] font-mono border border-amber-500/25 bg-amber-500/10 text-amber-300';
+      setTimeout(checkApiStatus, 1500);
+      return;
+    }
+
+    badge.innerHTML = '<span class="text-red-400">Qloo Reconnecting</span>';
+    badge.className = 'hidden xl:inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-[10px] font-mono border border-red-500/25 bg-red-500/10 text-red-300';
+  }
+}
+
+// ─── THREE.JS FULL 3D BRAIN VISUALIZATION ─────────────────────────────────────
+function init3DBrain() {
+  const container = document.getElementById('brain-3d-container');
+  if (!container || typeof THREE === 'undefined') return;
+
+  const W = container.clientWidth || 540;
+  const H = container.clientHeight || 460;
+
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(45, W / H, 0.1, 1000);
+  camera.position.set(0, 0, 5.4);
+
+  const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+  renderer.setSize(W, H);
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  container.appendChild(renderer.domElement);
+
+  const brainGroup = new THREE.Group();
+  scene.add(brainGroup);
+
+  const spriteCanvas = document.createElement('canvas');
+  spriteCanvas.width = 64;
+  spriteCanvas.height = 64;
+  const sCtx = spriteCanvas.getContext('2d');
+  const gradient = sCtx.createRadialGradient(32, 32, 0, 32, 32, 32);
+  gradient.addColorStop(0, 'rgba(255, 255, 255, 1)');
+  gradient.addColorStop(0.2, 'rgba(216, 180, 254, 0.9)');
+  gradient.addColorStop(0.5, 'rgba(139, 92, 246, 0.45)');
+  gradient.addColorStop(1, 'rgba(10, 6, 24, 0)');
+  sCtx.fillStyle = gradient;
+  sCtx.fillRect(0, 0, 64, 64);
+  const particleTexture = new THREE.CanvasTexture(spriteCanvas);
+
+  const particleCount = 2600;
+  const positions = new Float32Array(particleCount * 3);
+  const colors = new Float32Array(particleCount * 3);
+  const pointObjects = [];
+
+  const colorViolet = new THREE.Color(0x8B5CF6);
+  const colorCyan = new THREE.Color(0x22D3EE);
+  const colorGold = new THREE.Color(0xFFB829);
+  const colorWhite = new THREE.Color(0xFFFFFF);
+
+  let pIdx = 0;
+  for (let i = 0; i < particleCount; i++) {
+    const hemi = (i % 2 === 0) ? -1 : 1;
+    const u = Math.random();
+    const v = Math.random();
+    const theta = u * Math.PI;
+    const phi = (v * Math.PI) - (Math.PI / 2);
+
+    const baseRx = 1.35;
+    const baseRy = 1.60;
+    const baseRz = 1.95;
+
+    let x = Math.sin(theta) * Math.cos(phi) * baseRx;
+    let y = Math.cos(theta) * baseRy;
+    let z = Math.sin(theta) * Math.sin(phi) * baseRz;
+
+    if (z > 0.3) {
+      x *= (1.0 + 0.15 * Math.sin(z * 1.5));
+      y *= (1.0 - 0.1 * z);
+    }
+    if (z < -0.6) {
+      x *= (1.0 + 0.25 * z);
+      y *= (1.0 + 0.2 * z);
+    }
+    if (y < 0.1 && z > -0.6 && z < 0.6) {
+      x *= 1.15;
+    }
+
+    const gyri = 0.12 * Math.sin(6 * theta) * Math.cos(7 * phi) 
+               + 0.07 * Math.sin(12 * theta + 3 * z) * Math.cos(10 * phi);
+    x *= (1.0 + gyri);
+    y *= (1.0 + gyri);
+    z *= (1.0 + gyri);
+
+    const fissureGap = 0.14;
+    x = (hemi * fissureGap) + (x * 0.92);
+
+    if (Math.random() < 0.22) {
+      const depth = 0.25 + Math.random() * 0.65;
+      x *= depth;
+      y *= depth;
+      z *= depth;
+    }
+
+    positions[pIdx] = x;
+    positions[pIdx + 1] = y;
+    positions[pIdx + 2] = z;
+
+    pointObjects.push(new THREE.Vector3(x, y, z));
+
+    const distFromCenter = Math.sqrt(x*x + y*y + z*z);
+    let chosenColor = colorViolet;
+
+    if (distFromCenter < 0.75 && y < 0.2 && Math.random() < 0.65) {
+      chosenColor = colorGold;
+    } else if (hemi === 1 && Math.sin(z * 4) > 0.2) {
+      chosenColor = colorCyan;
+    } else if (Math.random() < 0.1) {
+      chosenColor = colorWhite;
+    }
+
+    colors[pIdx] = chosenColor.r;
+    colors[pIdx + 1] = chosenColor.g;
+    colors[pIdx + 2] = chosenColor.b;
+
+    pIdx += 3;
+  }
+
+  const geometry = new THREE.BufferGeometry();
+  geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+  geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+
+  const material = new THREE.PointsMaterial({
+    size: 0.13,
+    vertexColors: true,
+    map: particleTexture,
+    transparent: true,
+    opacity: 0.88,
+    blending: THREE.AdditiveBlending,
+    depthWrite: false
+  });
+
+  const particleSystem = new THREE.Points(geometry, material);
+  brainGroup.add(particleSystem);
+
+  // Synaptic Network Lines
+  const linePositions = [];
+  const lineColors = [];
+  const maxLineDist = 0.35;
+  const maxLinesPerNode = 4;
+
+  for (let i = 0; i < pointObjects.length; i += 2) {
+    let connections = 0;
+    const p1 = pointObjects[i];
+    for (let j = i + 1; j < pointObjects.length; j += 3) {
+      const p2 = pointObjects[j];
+      const dist = p1.distanceTo(p2);
+      if (dist < maxLineDist && connections < maxLinesPerNode) {
+        linePositions.push(p1.x, p1.y, p1.z);
+        linePositions.push(p2.x, p2.y, p2.z);
+
+        lineColors.push(0.54, 0.36, 0.96);
+        lineColors.push(0.13, 0.82, 0.93);
+        connections++;
+      }
+    }
+  }
+
+  const lineGeometry = new THREE.BufferGeometry();
+  lineGeometry.setAttribute('position', new THREE.Float32BufferAttribute(linePositions, 3));
+  lineGeometry.setAttribute('color', new THREE.Float32BufferAttribute(lineColors, 3));
+
+  const lineMaterial = new THREE.LineBasicMaterial({
+    vertexColors: true,
+    transparent: true,
+    opacity: 0.28,
+    blending: THREE.AdditiveBlending
+  });
+
+  const linesMesh = new THREE.LineSegments(lineGeometry, lineMaterial);
+  brainGroup.add(linesMesh);
+
+  let targetRotX = 0;
+  let targetRotY = 0;
+  window.addEventListener('mousemove', (e) => {
+    const mouseX = (e.clientX / window.innerWidth) * 2 - 1;
+    const mouseY = (e.clientY / window.innerHeight) * 2 - 1;
+    targetRotY = mouseX * 0.45;
+    targetRotX = mouseY * 0.35;
+  });
+
+  window.addEventListener('resize', () => {
+    if (!container) return;
+    const newW = container.clientWidth;
+    const newH = container.clientHeight;
+    camera.aspect = newW / newH;
+    camera.updateProjectionMatrix();
+    renderer.setSize(newW, newH);
+  });
+
+  function animate() {
+    requestAnimationFrame(animate);
+    brainGroup.rotation.y += 0.0028;
+    brainGroup.rotation.y += (targetRotY - brainGroup.rotation.y * 0.1) * 0.02;
+    brainGroup.rotation.x += (targetRotX - brainGroup.rotation.x) * 0.03;
+
+    const time = Date.now() * 0.0015;
+    const pulseScale = 1.0 + Math.sin(time) * 0.025;
+    brainGroup.scale.set(pulseScale, pulseScale, pulseScale);
+
+    renderer.render(scene, camera);
+  }
+  animate();
+}
+
+// ─── INTERACTIVE LIVE QLOO SEARCH EXPLORER ─────────────────────────────────────
+let searchDebounce = null;
+const searchInput = document.getElementById('landing-search-input');
+const resultsContainer = document.getElementById('landing-search-results');
+const spinner = document.getElementById('search-spinner');
+
+function runLandingSearch(q) {
+  searchInput.value = q;
+  performSearch(q);
+}
+
+searchInput.addEventListener('input', () => {
+  clearTimeout(searchDebounce);
+  const q = searchInput.value.trim();
+  if (q.length < 2) {
+    resultsContainer.innerHTML = '<div class="col-span-full py-8 text-center text-xs text-gray-500 font-mono">Enter an anchor above to query https://hackathon.api.qloo.com</div>';
+    return;
+  }
+  searchDebounce = setTimeout(() => performSearch(q), 300);
+});
+
+async function performSearch(query) {
+  spinner.classList.remove('hidden');
+  try {
+    const res = await fetch(`${API_BASE}/api/qloo/search?query=${encodeURIComponent(query)}`);
+    if (!res.ok) throw new Error();
+    const data = await res.json();
+    const results = data.results || [];
+
+    if (!results.length) {
+      resultsContainer.innerHTML = `<div class="col-span-full py-8 text-center text-xs text-gray-500 font-mono">No matching entities found for "${escapeHtml(query)}"</div>`;
+      return;
+    }
+
+    resultsContainer.innerHTML = results.slice(0, 6).map(r => {
+      const typeStr = (r.types || []).map(t => t.split(':').pop()).join(' · ') || 'Entity';
+      const img = r.image
+        ? `<img src="${escapeHtml(r.image)}" class="w-10 h-10 rounded-lg object-cover flex-shrink-0" onerror="this.style.display='none'" />`
+        : `<div class="w-10 h-10 rounded-lg flex items-center justify-center bg-white/5 text-violet-400 font-bold text-xs"><svg class="w-5 h-5 opacity-70" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 2l8 8-8 8-8-8 8-8z"/></svg></div>`;
+
+      return `
+        <div class="glass p-3 rounded-xl border border-white/5 flex items-start gap-3 hover:border-violet-500/40 transition-colors">
+          ${img}
+          <div class="flex-1 min-w-0">
+            <p class="text-xs font-bold text-white truncate">${escapeHtml(r.name)}</p>
+            <p class="text-[10px] text-gray-400 mt-0.5 truncate">${escapeHtml(typeStr)}</p>
+            <p class="text-[9px] font-mono text-violet-300 mt-1 truncate">${escapeHtml(r.entity_id || '')}</p>
+          </div>
+        </div>
+      `;
+    }).join('');
+
+  } catch (e) {
+    resultsContainer.innerHTML = `<div class="col-span-full py-8 text-center text-xs text-red-400 font-mono">Failed to fetch live results from Qloo Cloud. Verify API key.</div>`;
+  } finally {
+    spinner.classList.add('hidden');
+  }
+}
+
+function escapeHtml(str) {
+  if (str == null) return '';
+  return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  checkApiStatus();
+  init3DBrain();
+  runLandingSearch('Nat King Cole');
+});
+</script>
+
+</body>
+</html>

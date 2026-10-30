@@ -1,0 +1,14 @@
+# Environment variables (Never commit secret API keys!)
+.env
+.env.local
+
+# Python artifacts
+__pycache__/
+*.pyc
+venv/
+.venv/
+*.log
+
+# OS artifacts
+Thumbs.db
+.DS_Store

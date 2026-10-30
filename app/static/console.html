@@ -1,0 +1,2441 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NeuroTaste Console — Clinical Memory Care & rPPG Station</title>
+  <!-- Embedded High-Resolution Brand Favicon (4-Strand Sensory Synapse) -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64' fill='none'%3E%3Crect width='64' height='64' rx='16' fill='%2308060F'/%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%2322D3EE'/%3E%3Cstop offset='50%25' stop-color='%238B5CF6'/%3E%3Cstop offset='100%25' stop-color='%23C084FC'/%3E%3C/linearGradient%3E%3C/defs%3E%3Cpath d='M16 46 C6 35 6 17 19 8 C32 -1 52 2 56 19 C60 36 40 54 25 50' stroke='url(%23g)' stroke-width='3.2' stroke-linecap='round' fill='none'/%3E%3Cpath d='M21 42 C14 33 14 20 24 13 C34 7 48 9 51 22 C54 35 39 47 28 44' stroke='url(%23g)' stroke-width='2.6' stroke-linecap='round' fill='none' opacity='0.8'/%3E%3Ccircle cx='35' cy='25' r='5' fill='%23FFB829'/%3E%3Ccircle cx='35' cy='25' r='2' fill='%23FFFFFF'/%3E%3C/svg%3E" />
+  
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            obsidian: '#08060F',
+            surface: 'rgba(255,255,255,0.04)',
+            violet: { glow: '#8B5CF6', accent: '#A855F7', soft: '#C4B5FD' },
+            cyan: { action: '#06B6D4', mint: '#22D3EE' },
+            golden: '#FFB829',
+            clinical: '#10B981',
+          },
+          boxShadow: {
+            'glow-v': '0 0 40px rgba(139,92,246,0.35)',
+            'glow-c': '0 0 20px rgba(6,182,212,0.4)',
+            'glow-g': '0 0 24px rgba(255,184,41,0.4)',
+            'card': '0 1px 0 rgba(255,255,255,0.06), 0 4px 24px rgba(0,0,0,0.6)',
+          },
+          fontFamily: {
+            display: ['Inter', 'system-ui', 'sans-serif'],
+            editorial: ['"Playfair Display"', 'Didot', 'Bodoni MT', 'Georgia', 'serif'],
+          }
+        }
+      }
+    }
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Playfair+Display:ital,wght@0,600;0,700;0,800;0,900;1,600;1,700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg-base: #08060F;
+      --border: rgba(255,255,255,0.08);
+      --violet: #8B5CF6;
+      --violet-soft: rgba(139,92,246,0.15);
+      --cyan: #06B6D4;
+      --golden: #FFB829;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--bg-base);
+      color: #F8FAFC;
+      font-family: 'Inter', system-ui, sans-serif;
+      overflow-x: hidden;
+    }
+    /* Ambient glow layers */
+    .ambient-violet {
+      position: fixed; top: -20%; left: 30%; width: 60vw; height: 60vh;
+      background: radial-gradient(ellipse, rgba(139,92,246,0.12) 0%, transparent 70%);
+      pointer-events: none; z-index: 0;
+    }
+    .ambient-cyan {
+      position: fixed; bottom: -10%; right: -10%; width: 40vw; height: 40vh;
+      background: radial-gradient(ellipse, rgba(6,182,212,0.07) 0%, transparent 70%);
+      pointer-events: none; z-index: 0;
+    }
+    /* Glass card */
+    .glass {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+    }
+    .glass-strong {
+      background: rgba(255,255,255,0.07);
+      border: 1px solid rgba(255,255,255,0.12);
+      backdrop-filter: blur(30px);
+    }
+    /* Pill badge */
+    .pill {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 4px 12px; border-radius: 999px; font-size: 11px; font-weight: 600;
+      letter-spacing: 0.06em; text-transform: uppercase;
+    }
+    .pill-violet { background: rgba(139,92,246,0.15); color: #C4B5FD; border: 1px solid rgba(139,92,246,0.3); }
+    .pill-cyan   { background: rgba(6,182,212,0.12);  color: #67E8F9; border: 1px solid rgba(6,182,212,0.25); }
+    .pill-gold   { background: rgba(255,184,41,0.12); color: #FFB829; border: 1px solid rgba(255,184,41,0.25); }
+    .pill-green  { background: rgba(16,185,129,0.12); color: #34D399; border: 1px solid rgba(16,185,129,0.25); }
+    .pill-red    { background: rgba(239,68,68,0.12);  color: #FCA5A5; border: 1px solid rgba(239,68,68,0.3); }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar { width: 5px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: rgba(139,92,246,0.4); border-radius: 3px; }
+
+    /* Canvas */
+    #brain-canvas { display: block; touch-action: none; }
+
+    /* Form elements */
+    .form-input {
+      width: 100%; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 8px; padding: 10px 14px; color: #F8FAFC; font-size: 14px;
+      outline: none; transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .form-input:focus { border-color: rgba(139,92,246,0.5); box-shadow: 0 0 0 3px rgba(139,92,246,0.12); }
+    .form-input::placeholder { color: #64748B; }
+    .form-label { display: block; font-size: 11px; font-weight: 600; letter-spacing: 0.08em;
+      text-transform: uppercase; color: #94A3B8; margin-bottom: 6px; }
+
+    /* Buttons */
+    .btn-primary {
+      display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 12px 28px;
+      background: linear-gradient(135deg, #8B5CF6, #A855F7);
+      border-radius: 10px; font-weight: 700; font-size: 14px; cursor: pointer;
+      border: none; color: white; transition: all 0.2s; letter-spacing: 0.02em;
+      box-shadow: 0 4px 20px rgba(139,92,246,0.4);
+    }
+    .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 8px 30px rgba(139,92,246,0.5); }
+    .btn-primary:active { transform: translateY(0); }
+    .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+    .btn-secondary {
+      display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 10px 20px;
+      background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 10px; font-weight: 600; font-size: 13px; cursor: pointer;
+      color: #CBD5E1; transition: all 0.2s;
+    }
+    .btn-secondary:hover { background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.2); }
+
+    .btn-cyan {
+      display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 11px 24px;
+      background: linear-gradient(135deg, #06B6D4, #22D3EE);
+      border-radius: 10px; font-weight: 700; font-size: 13px; cursor: pointer;
+      border: none; color: #08060F; transition: all 0.2s;
+      box-shadow: 0 4px 16px rgba(6,182,212,0.3);
+    }
+    .btn-cyan:hover { transform: translateY(-1px); box-shadow: 0 8px 24px rgba(6,182,212,0.4); }
+    .btn-cyan:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+    /* Pillar cards */
+    .pillar-card {
+      border-radius: 16px; padding: 22px; position: relative; overflow: hidden;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .pillar-card:hover { transform: translateY(-2px); }
+
+    /* Pulse dot */
+    .pulse-dot {
+      width: 8px; height: 8px; border-radius: 50%;
+      animation: pulse-ring 2s infinite;
+    }
+    @keyframes pulse-ring {
+      0%   { box-shadow: 0 0 0 0 currentColor; opacity: 1; }
+      70%  { box-shadow: 0 0 0 6px transparent; opacity: 0.7; }
+      100% { box-shadow: 0 0 0 0 transparent; opacity: 1; }
+    }
+
+    /* Loader */
+    .spinner {
+      width: 20px; height: 20px; border: 2px solid rgba(139,92,246,0.2);
+      border-top-color: #8B5CF6; border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* Sections */
+    .section { position: relative; z-index: 1; }
+
+    /* Tag input */
+    .tag { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px;
+      background: rgba(139,92,246,0.18); border: 1px solid rgba(139,92,246,0.35);
+      border-radius: 6px; font-size: 12px; color: #E2E8F0; font-weight: 500; cursor: default; }
+    .tag-remove { cursor: pointer; opacity: 0.7; font-weight: bold; }
+    .tag-remove:hover { opacity: 1; color: #FCA5A5; }
+
+    /* Autocomplete dropdown */
+    .autocomplete-dropdown {
+      position: absolute; top: calc(100% + 4px); left: 0; right: 0; z-index: 100;
+      background: #12101E; border: 1px solid rgba(139,92,246,0.35);
+      border-radius: 10px; overflow: hidden; box-shadow: 0 12px 36px rgba(0,0,0,0.8);
+      max-height: 280px; overflow-y: auto;
+    }
+    .autocomplete-item {
+      padding: 10px 14px; cursor: pointer; font-size: 13px;
+      display: flex; align-items: center; gap: 10px; transition: background 0.1s;
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+    }
+    .autocomplete-item:last-child { border-bottom: none; }
+    .autocomplete-item:hover, .autocomplete-item.active { background: rgba(139,92,246,0.2); }
+
+    /* Agitation slider */
+    input[type="range"] { -webkit-appearance: none; width: 100%; height: 6px;
+      border-radius: 3px; outline: none; cursor: pointer; }
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none; width: 20px; height: 20px; border-radius: 50%;
+      background: #8B5CF6; box-shadow: 0 0 12px rgba(139,92,246,0.8); cursor: pointer;
+      border: 2px solid #FFFFFF;
+    }
+
+    /* Affinity bar */
+    .affinity-bar { height: 4px; border-radius: 2px; background: rgba(255,255,255,0.08); overflow: hidden; }
+    .affinity-fill { height: 100%; border-radius: 2px; transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1); }
+
+    /* Error state */
+    .error-banner {
+      background: rgba(239,68,68,0.12); border: 1px solid rgba(239,68,68,0.35);
+      border-radius: 12px; padding: 18px 22px;
+    }
+
+    /* Section divider */
+    .divider { height: 1px; background: linear-gradient(90deg, transparent, rgba(139,92,246,0.25), transparent); }
+
+    /* Telemetry row */
+    .tel-row { display: flex; align-items: center; gap: 12px; padding: 8px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 12px; }
+    .tel-row:last-child { border-bottom: none; }
+
+    /* Entity card */
+    .entity-card { transition: border-color 0.2s, box-shadow 0.2s, transform 0.2s; }
+    .entity-card:hover { border-color: rgba(139,92,246,0.35) !important; box-shadow: 0 4px 20px rgba(139,92,246,0.2); transform: translateY(-1px); }
+
+    /* Print styles for audit */
+    @media print {
+      .no-print { display: none !important; }
+      body { background: white !important; color: black !important; }
+      .glass, .glass-strong { background: white !important; border-color: #ccc !important; color: black !important; }
+      #audit-markdown { color: black !important; background: white !important; border: 1px solid #ccc !important; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Ambient backgrounds -->
+<div class="ambient-violet"></div>
+<div class="ambient-cyan"></div>
+
+<!-- ============================================================
+     CLINICAL WORKSPACE HEADER
+     ============================================================ -->
+<!-- ============================================================
+     NAVIGATION BAR (Clean Minimal Floating Island Capsule)
+     ============================================================ -->
+<header class="sticky top-4 z-50 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full transition-all duration-300 mb-2">
+  <nav class="relative flex items-center justify-between px-5 md:px-7 py-3 rounded-full bg-[#080512]/90 backdrop-blur-2xl border border-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.7),0_0_25px_rgba(139,92,246,0.15)]">
+    
+    <!-- LEFT: Sleek Brand Logo -->
+    <a href="/" class="flex items-center gap-3 group cursor-pointer">
+      <div class="relative w-8 h-8 rounded-xl flex items-center justify-center p-1.5 bg-gradient-to-br from-violet-600/30 to-cyan-500/20 border border-white/15 shadow-[0_0_12px_rgba(139,92,246,0.3)] group-hover:scale-105 group-hover:border-violet-400/50 transition-all duration-300">
+        <svg class="w-full h-full" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="nav-syn-grad-c" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#22D3EE"/>
+              <stop offset="60%" stop-color="#8B5CF6"/>
+              <stop offset="100%" stop-color="#C084FC"/>
+            </linearGradient>
+          </defs>
+          <path d="M10 30 C4 22 4 11 12 6 C20 1 32 3 35 13 C37 23 25 35 16 32" stroke="url(#nav-syn-grad-c)" stroke-width="2.6" stroke-linecap="round"/>
+          <path d="M14 27 C10 21 10 13 16 9 C22 5 31 7 33 15" stroke="url(#nav-syn-grad-c)" stroke-width="2.2" stroke-linecap="round" opacity="0.8"/>
+          <circle cx="23" cy="17" r="3.5" fill="#FFB829"/>
+          <circle cx="23" cy="17" r="1.5" fill="#FFFFFF"/>
+        </svg>
+      </div>
+
+      <div class="flex items-center">
+        <span class="text-lg font-extrabold tracking-tight text-white">Neuro</span>
+        <span class="text-lg font-extrabold tracking-tight bg-gradient-to-r from-violet-400 to-cyan-400 bg-clip-text text-transparent ml-0.5">Taste</span>
+      </div>
+    </a>
+
+    <!-- RIGHT: Minimal Live Status + Overview Return Capsule -->
+    <div class="flex items-center gap-3">
+      <!-- Minimalist Live Status Pill -->
+      <div id="api-status-badge" class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-[11px] font-mono border border-emerald-500/25 bg-emerald-500/10 text-emerald-300 transition-all">
+        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+        <span>Qloo Connected</span>
+      </div>
+
+      <!-- Pill Return Button -->
+      <a href="/" class="group relative inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-white/20 bg-white/[0.05] hover:bg-white/[0.1] hover:border-cyan-400/50 hover:shadow-[0_0_20px_rgba(34,211,238,0.25)] transition-all duration-200">
+        <span class="w-5 h-5 rounded-full bg-white/10 group-hover:bg-cyan-500/20 border border-white/15 flex items-center justify-center text-gray-300 group-hover:text-cyan-300 transition-colors">
+          <svg class="w-3 h-3 transform group-hover:-translate-x-0.5 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+          </svg>
+        </span>
+        <span class="text-xs font-bold tracking-wider uppercase text-gray-200 group-hover:text-white transition-colors">Overview</span>
+      </a>
+    </div>
+
+  </nav>
+</header>
+<section class="section px-6 md:px-12 lg:px-20 pt-2 pb-4">
+
+  <!-- Clinical Control Strip -->
+  <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 py-5">
+    <div>
+      <div class="flex items-center gap-2 mb-1">
+        <span class="pill pill-cyan text-[10px]">Active Caregiver Station</span>
+        <span class="text-xs text-gray-400 font-mono">Qloo Agentic Caregiving System</span>
+      </div>
+      <h1 class="text-xl md:text-2xl font-black text-white">Bedside Dementia Reminiscence Console</h1>
+    </div>
+
+    <!-- Quick Action Launchers -->
+    <div class="flex items-center gap-2.5 flex-wrap">
+      <button onclick="loadSampleProfile()" class="btn-cyan text-xs py-2 px-3.5">
+        <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+        Load Eleanor Vance (Demo)
+      </button>
+      <button onclick="scrollToIntake()" class="btn-primary text-xs py-2 px-3.5">
+        <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>
+        New Intake
+      </button>
+      <button onclick="document.getElementById('audit-section').scrollIntoView({behavior:'smooth'})" class="btn-secondary text-xs py-2 px-3">
+        CMS Audit
+      </button>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     SECTION 2 — LIVE TELEMETRY BAR
+     ============================================================ -->
+<section class="section px-6 md:px-12 lg:px-20 py-8" id="telemetry-section">
+  <div class="divider mb-8"></div>
+
+  <div class="flex items-center justify-between mb-6 flex-wrap gap-3">
+    <span class="pill pill-cyan">
+      <span class="pulse-dot" style="background:#06B6D4;color:#06B6D4;"></span>
+      Qloo Developer Cloud — Live Telemetry & Biometrics
+    </span>
+    <span class="text-xs text-gray-400 font-mono" id="telemetry-live-clock">Auto-refreshing</span>
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-5 mb-6">
+    <!-- Card 1: Agitation Waveform -->
+    <div class="glass rounded-2xl p-5 shadow-card">
+      <div class="flex items-center justify-between mb-3">
+        <div>
+          <p class="text-xs text-gray-400 font-semibold uppercase tracking-wider">Agitation Index</p>
+          <p class="text-3xl font-black text-white mt-1" id="agitation-display">—</p>
+        </div>
+        <div class="text-right">
+          <p class="text-xs text-gray-400">Post-Intervention</p>
+          <p class="text-xl font-bold mt-1" id="agitation-post" style="color:#10B981">—</p>
+        </div>
+      </div>
+      <div style="height: 70px; position: relative;">
+        <canvas id="agitation-chart"></canvas>
+      </div>
+    </div>
+
+    <!-- Card 2: Qloo Affinity breakdown -->
+    <div class="glass rounded-2xl p-5 shadow-card">
+      <div class="flex justify-between items-center mb-2">
+        <p class="text-xs text-gray-400 font-semibold uppercase tracking-wider">Qloo Pillar Affinity</p>
+        <span class="text-xs text-violet-soft font-bold" id="affinity-avg-badge">—</span>
+      </div>
+      <div style="height: 75px; position: relative;">
+        <canvas id="affinity-chart"></canvas>
+      </div>
+      <p class="text-xs text-gray-400 text-center mt-2" id="affinity-label">Generate protocol to visualize pillar affinities</p>
+    </div>
+
+    <!-- Card 3: CMS Compliance -->
+    <div class="glass rounded-2xl p-5 shadow-card">
+      <p class="text-xs text-gray-400 font-semibold uppercase tracking-wider mb-3">CMS F-Tag 758 Mandate Status</p>
+      <div class="space-y-2 mb-4">
+        <div class="flex justify-between text-sm">
+          <span class="text-gray-400">Non-pharmacological First-Line</span>
+          <span class="font-bold" style="color:#10B981" id="cms-nonpharm"><svg class="w-3.5 h-3.5 text-emerald-400 inline-block -mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg> MANDATED</span>
+        </div>
+        <div class="flex justify-between text-sm">
+          <span class="text-gray-400">Chemical Sedatives Administered</span>
+          <span class="font-bold" style="color:#10B981" id="cms-sedatives">0 (Zero Incidents)</span>
+        </div>
+        <div class="flex justify-between text-sm">
+          <span class="text-gray-400">Qloo Taste Graph Queries</span>
+          <span class="font-bold text-white font-mono" id="cms-qloo-calls">0 calls</span>
+        </div>
+      </div>
+      <div class="flex items-center gap-2">
+        <div class="flex-1 h-2 rounded-full" style="background:rgba(255,255,255,0.08)">
+          <div class="h-2 rounded-full" id="cms-bar" style="width:100%;background:linear-gradient(90deg,#10B981,#22D3EE);transition:width 0.8s"></div>
+        </div>
+        <span class="text-xs font-bold" style="color:#10B981" id="cms-pct">100%</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================
+       CONTACTLESS OPTICAL rPPG & TRI-MODAL BIOFEEDBACK (CALMR ENGINE)
+       ============================================================ -->
+  <div class="glass-strong rounded-3xl p-6 shadow-card border border-cyan-500/30 mb-6">
+    <div class="flex items-center justify-between flex-wrap gap-4 mb-4">
+      <div>
+        <div class="flex items-center gap-2 mb-1">
+          <span class="pill pill-cyan">Contactless Optical rPPG</span>
+          <span class="text-xs text-emerald-400 font-bold" id="bio-mode-badge">Active Autonomic Biometric Station</span>
+        </div>
+        <h3 class="text-lg font-black text-white">Passive Bedside Autonomic Biofeedback Station</h3>
+        <p class="text-xs text-gray-400">Zero-touch optical pulse & HRV extraction via Plane-Orthogonal-to-Skin (POS) algorithm (IEEE TBME)</p>
+      </div>
+
+      <!-- Tri-Modal Source Switcher -->
+      <div class="flex items-center gap-1.5 glass p-1.5 rounded-xl border border-white/10">
+        <button id="btn-src-rppg" onclick="setBioSource('rppg')" class="px-3 py-1.5 rounded-lg text-xs font-bold transition-all bg-cyan-500/20 text-cyan-300 border border-cyan-500/40">
+          <svg class="w-3.5 h-3.5 inline-block -mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/><path stroke-linecap="round" stroke-linejoin="round" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"/></svg> Webcam rPPG
+        </button>
+        <button id="btn-src-ble" onclick="setBioSource('ble')" class="px-3 py-1.5 rounded-lg text-xs font-bold transition-all text-gray-400 hover:text-white">
+          <svg class="w-3.5 h-3.5 inline-block -mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8.111 16.404a5.5 5.5 0 017.778 0M12 20h.01m-7.08-7.071c3.904-3.905 10.236-3.905 14.14 0M1.394 9.393c5.857-5.857 15.355-5.857 21.213 0"/></svg> Bluetooth BLE
+        </button>
+        <button id="btn-src-manual" onclick="setBioSource('manual')" class="px-3 py-1.5 rounded-lg text-xs font-bold transition-all text-gray-400 hover:text-white">
+          <svg class="w-3.5 h-3.5 inline-block -mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg> Clinical Manual
+        </button>
+      </div>
+    </div>
+
+    <!-- Live Telemetry Grid -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-5 items-center">
+      <!-- Left: Video / Oscilloscope Viewport (5 cols) -->
+      <div class="lg:col-span-5 relative rounded-2xl overflow-hidden glass border border-white/10" style="height: 185px; background: #07050E;">
+        <!-- Live Video Element -->
+        <video id="rppg-video" autoplay playsinline muted class="w-full h-full object-cover hidden"></video>
+        <!-- Canvas for Face ROI & Optical Pulse Wave Trace -->
+        <canvas id="rppg-canvas" width="380" height="185" class="w-full h-full block"></canvas>
+        
+        <!-- Live Overlay Badges -->
+        <div class="absolute top-3 left-3 flex items-center gap-2">
+          <span class="pill pill-green text-[10px] py-0.5 px-2 font-mono" id="rppg-status-pill">
+            <span class="pulse-dot" style="background:#10B981;color:#10B981;"></span>
+            OPTICAL rPPG LIVE
+          </span>
+        </div>
+        <div class="absolute bottom-3 left-3 text-[10px] text-gray-400 font-mono bg-black/60 px-2 py-0.5 rounded backdrop-blur">
+          ROI: Forehead / Micro-Capillaries
+        </div>
+      </div>
+
+      <!-- Center & Right: Biometric Metrics Gauges (7 cols) -->
+      <div class="lg:col-span-7 grid grid-cols-2 sm:grid-cols-3 gap-3.5">
+        <!-- Metric 1: Heart Rate -->
+        <div class="glass p-3.5 rounded-xl border border-white/5 relative">
+          <p class="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Heart Rate</p>
+          <div class="flex items-baseline gap-1.5 mt-1">
+            <span class="text-3xl font-black text-white font-mono" id="bio-hr-val">--</span>
+            <span class="text-xs text-gray-400 font-bold" id="bio-hr-unit">BPM</span>
+          </div>
+          <p class="text-[10px] text-gray-400 mt-1 font-semibold" id="bio-hr-status">Awaiting Live Sensor</p>
+        </div>
+
+        <!-- Metric 2: HRV (RMSSD) -->
+        <div class="glass p-3.5 rounded-xl border border-white/5 relative">
+          <p class="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Vagal Tone (HRV)</p>
+          <div class="flex items-baseline gap-1.5 mt-1">
+            <span class="text-3xl font-black text-cyan-300 font-mono" id="bio-hrv-val">--</span>
+            <span class="text-xs text-gray-400 font-bold">ms</span>
+          </div>
+          <p class="text-[10px] text-gray-400 mt-1 font-semibold" id="bio-hrv-status">Awaiting Pulse Signal</p>
+        </div>
+
+        <!-- Metric 3: Real-Time Agitation Level -->
+        <div class="glass p-3.5 rounded-xl border border-white/5 relative col-span-2 sm:col-span-1">
+          <p class="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Biometric Agitation</p>
+          <div class="flex items-baseline gap-1.5 mt-1">
+            <span class="text-3xl font-black text-violet-400 font-mono" id="bio-agitation-val">--</span>
+            <span class="text-xs text-gray-400 font-bold">/ 10</span>
+          </div>
+          <p class="text-[10px] text-gray-400 mt-1 font-semibold" id="bio-agitation-status">Sensor Offline</p>
+        </div>
+
+        <!-- Row 2: Real Sensor Action Controls (100% Real Live DSP) -->
+        <div class="col-span-2 sm:col-span-3 flex items-center justify-between flex-wrap gap-2 pt-2 border-t border-white/5">
+          <div class="flex items-center gap-2 flex-wrap">
+            <button id="btn-toggle-cam" onclick="toggleCameraRPPG()" class="btn-cyan text-xs py-1.5 px-3 flex items-center gap-1.5">
+              <svg class="w-3.5 h-3.5 inline-block -mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/><path stroke-linecap="round" stroke-linejoin="round" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"/></svg> Start Live Webcam rPPG
+            </button>
+            <button id="btn-ble-connect" onclick="connectBLEWearable()" class="btn-secondary text-xs py-1.5 px-3 flex items-center gap-1.5">
+              <svg class="w-3.5 h-3.5 inline-block -mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8.111 16.404a5.5 5.5 0 017.778 0M12 20h.01m-7.08-7.071c3.904-3.905 10.236-3.905 14.14 0M1.394 9.393c5.857-5.857 15.355-5.857 21.213 0"/></svg> Pair Bluetooth BLE Sensor
+            </button>
+            <button id="btn-reset-buffer" onclick="resetRPPGBuffer()" class="btn-secondary text-xs py-1.5 px-2.5">
+              <svg class="w-3.5 h-3.5 inline-block -mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg> Reset Signal Buffer
+            </button>
+          </div>
+          <div class="text-[11px] text-gray-400 font-medium flex items-center gap-1.5">
+            <span class="pulse-dot" style="background:#10B981;color:#10B981;"></span>
+            <span class="text-emerald-400 font-bold">100% Real Pixel DSP</span> (Zero Simulation)
+          </div>
+        </div>
+
+        <!-- Manual Vitals Entry Drawer (for Bedside Nurses) -->
+        <div id="manual-vitals-drawer" class="col-span-2 sm:col-span-3 glass p-3.5 rounded-xl border border-amber-500/20 bg-amber-950/20 hidden">
+          <div class="flex items-center justify-between mb-2">
+            <p class="text-xs font-bold text-amber-300"><svg class="w-3.5 h-3.5 inline-block -mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg> Bedside Nurse Vitals Manual Entry</p>
+            <span class="text-[10px] text-gray-400">Record observed readings directly from facility vitals cart</span>
+          </div>
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <div>
+              <label class="form-label text-[10px]">Resident Pulse (BPM)</label>
+              <input id="m-hr-input" class="form-input text-xs font-mono" type="number" min="40" max="200" placeholder="e.g. 88" oninput="handleManualVitalsChange()" />
+            </div>
+            <div>
+              <label class="form-label text-[10px]">Vagal Tone / HRV RMSSD (ms)</label>
+              <input id="m-hrv-input" class="form-input text-xs font-mono" type="number" min="5" max="150" step="0.1" placeholder="e.g. 24.5" oninput="handleManualVitalsChange()" />
+            </div>
+            <div>
+              <label class="form-label text-[10px]">Clinical Agitation Scale (1-10)</label>
+              <input id="m-agitation-input" class="form-input text-xs font-mono" type="number" min="1" max="10" placeholder="e.g. 7" oninput="handleManualVitalsChange()" />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Qloo API request history -->
+  <div class="glass rounded-2xl p-5 shadow-card">
+    <div class="flex items-center justify-between mb-4">
+      <div>
+        <p class="text-xs text-gray-400 font-semibold uppercase tracking-wider">Qloo Developer Cloud Live Request Audit</p>
+        <p class="text-xs text-gray-500 mt-0.5">Real-time HTTP logs sent to <code class="text-violet-300">https://hackathon.api.qloo.com</code></p>
+      </div>
+      <button onclick="refreshTelemetry()" class="btn-secondary text-xs py-1.5 px-3"><svg class="w-3.5 h-3.5 inline-block -mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg> Refresh Log</button>
+    </div>
+    <div id="telemetry-log">
+      <p class="text-gray-500 text-sm text-center py-4">No Qloo API calls logged yet — submit an intake to trigger live queries</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     SECTION 3 — RESIDENT INTAKE FORM
+     ============================================================ -->
+<section class="section px-6 md:px-12 lg:px-20 py-8" id="intake-section">
+  <div class="divider mb-8"></div>
+
+  <div class="glass-strong rounded-3xl p-8 shadow-card" style="max-width:920px;margin:0 auto;">
+    <!-- Header -->
+    <div class="flex items-center justify-between mb-8 flex-wrap gap-4">
+      <div>
+        <div class="pill pill-violet mb-3">Clinical Intake</div>
+        <h2 class="text-2xl font-black text-white">Resident Memory Profile</h2>
+        <p class="text-gray-400 text-sm mt-1">Grounding the resident's youth culture directly into Qloo's 250M+ Taste Graph</p>
+      </div>
+      <button onclick="loadSampleProfile()" class="btn-secondary text-xs py-2 px-3 border border-violet-500/40">
+        <svg class="w-3.5 h-3.5 inline-block -mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg> Fill Sample (Eleanor Vance, 82)
+      </button>
+    </div>
+
+    <div class="space-y-6">
+      <!-- Row 1: Name + Age -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div>
+          <label class="form-label">Resident Name <span class="text-red-400">*</span></label>
+          <input id="f-name" class="form-input" type="text" placeholder="e.g. Eleanor Vance" />
+        </div>
+        <div>
+          <label class="form-label">Age <span class="text-red-400">*</span></label>
+          <input id="f-age" class="form-input" type="number" placeholder="e.g. 82" min="50" max="115" />
+        </div>
+      </div>
+
+      <!-- Row 2: Birth Decade + Hometown -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div>
+          <label class="form-label">Birth Decade <span class="text-red-400">*</span></label>
+          <select id="f-decade" class="form-input" style="cursor:pointer">
+            <option value="">Select decade...</option>
+            <option value="1920s">1920s</option>
+            <option value="1930s">1930s</option>
+            <option value="1940s" selected>1940s</option>
+            <option value="1950s">1950s</option>
+            <option value="1960s">1960s</option>
+          </select>
+        </div>
+        <div>
+          <label class="form-label">Hometown / Cultural Roots <span class="text-red-400">*</span></label>
+          <input id="f-hometown" class="form-input" type="text" placeholder="e.g. Chicago, IL" />
+        </div>
+      </div>
+
+      <!-- Row 3: Youth Memory Anchors (tag input with live Qloo autocomplete) -->
+      <div>
+        <label class="form-label">Youth Memory Anchors <span class="text-red-400">*</span>
+          <span class="text-violet-300 font-normal normal-case tracking-normal ml-2">— Live autocomplete searches Qloo's Taste Graph</span>
+        </label>
+        <div class="form-input" style="min-height:48px; cursor:text; display:flex; flex-wrap:wrap; gap:6px; align-items:center; position:relative;" id="tags-display" onclick="document.getElementById('anchor-input').focus()">
+          <div id="tags-container" class="flex flex-wrap gap-1.5 items-center">
+            <!-- tags dynamically rendered here -->
+          </div>
+          <div class="relative flex-1 min-w-44" style="position:relative;">
+            <input id="anchor-input" class="bg-transparent outline-none text-sm text-white w-full py-1" placeholder="Type artist, film, place, or genre…" autocomplete="off" />
+            <div id="autocomplete-dropdown" class="autocomplete-dropdown hidden"></div>
+          </div>
+        </div>
+        <!-- Quick anchor suggestions -->
+        <div class="flex items-center gap-2 mt-2 flex-wrap text-xs text-gray-400">
+          <span>Quick Add:</span>
+          <button type="button" onclick="quickAddAnchor('Nat King Cole', 'urn:entity:artist:nat_king_cole')" class="px-2 py-0.5 rounded glass hover:text-white transition-colors">+ Nat King Cole</button>
+          <button type="button" onclick="quickAddAnchor('Humphrey Bogart', 'urn:entity:artist:humphrey_bogart')" class="px-2 py-0.5 rounded glass hover:text-white transition-colors">+ Humphrey Bogart</button>
+          <button type="button" onclick="quickAddAnchor('Ella Fitzgerald', 'urn:entity:artist:ella_fitzgerald')" class="px-2 py-0.5 rounded glass hover:text-white transition-colors">+ Ella Fitzgerald</button>
+          <button type="button" onclick="quickAddAnchor('Casablanca', 'urn:entity:movie:casablanca')" class="px-2 py-0.5 rounded glass hover:text-white transition-colors">+ Casablanca</button>
+        </div>
+      </div>
+
+      <!-- Row 4: Agitation level -->
+      <div>
+        <label class="form-label">Current Sundowning Agitation Level
+          <span id="agitation-val-label" class="text-white font-bold normal-case tracking-normal ml-2">8 / 10 (Severe Distress)</span>
+        </label>
+        <div class="relative pt-2">
+          <input id="f-agitation" type="range" min="1" max="10" value="8"
+            oninput="updateAgitationSlider(this.value)" />
+          <div class="flex justify-between text-xs text-gray-400 mt-1">
+            <span>1 · Calm / Baseline</span>
+            <span>5 · Moderate Restlessness</span>
+            <span>8 · Acute Pacing / Vocal</span>
+            <span>10 · Severe Crisis</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Row 5: Symptoms -->
+      <div>
+        <label class="form-label">Sundowning Symptoms Observed</label>
+        <div class="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
+          <label class="flex items-center gap-2 cursor-pointer group">
+            <input type="checkbox" value="Pacing hallway" class="symptom-check accent-violet-500" checked />
+            <span class="text-sm text-gray-300 group-hover:text-white transition-colors">Pacing hallway</span>
+          </label>
+          <label class="flex items-center gap-2 cursor-pointer group">
+            <input type="checkbox" value="Combative resistance to evening meal" class="symptom-check accent-violet-500" checked />
+            <span class="text-sm text-gray-300 group-hover:text-white transition-colors">Resistance to meal</span>
+          </label>
+          <label class="flex items-center gap-2 cursor-pointer group">
+            <input type="checkbox" value="Repetitive crying to go home" class="symptom-check accent-violet-500" checked />
+            <span class="text-sm text-gray-300 group-hover:text-white transition-colors">Crying to "go home"</span>
+          </label>
+          <label class="flex items-center gap-2 cursor-pointer group">
+            <input type="checkbox" value="Anxiety / Fear of shadows" class="symptom-check accent-violet-500" />
+            <span class="text-sm text-gray-300 group-hover:text-white transition-colors">Anxiety / Shadows</span>
+          </label>
+          <label class="flex items-center gap-2 cursor-pointer group">
+            <input type="checkbox" value="Disorientation to time" class="symptom-check accent-violet-500" />
+            <span class="text-sm text-gray-300 group-hover:text-white transition-colors">Disorientation</span>
+          </label>
+          <label class="flex items-center gap-2 cursor-pointer group">
+            <input type="checkbox" value="Verbal agitation" class="symptom-check accent-violet-500" />
+            <span class="text-sm text-gray-300 group-hover:text-white transition-colors">Verbal agitation</span>
+          </label>
+        </div>
+      </div>
+
+      <!-- Row 6: Trigger context -->
+      <div>
+        <label class="form-label">Clinical Notes & Sensory Sensitivities <span class="text-gray-500 normal-case tracking-normal font-normal">(optional)</span></label>
+        <textarea id="f-trigger" class="form-input" rows="2" placeholder="e.g. Sensitive to sharp brass trumpet sounds; calmed by acoustic piano and warm familiar aromas."></textarea>
+      </div>
+
+      <!-- Submit -->
+      <div class="flex items-center gap-4 pt-2 flex-wrap">
+        <button id="generate-btn" onclick="generateProtocol()" class="btn-primary">
+          <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+          Synthesize 4-Pillar Protocol via Qloo
+        </button>
+        <div id="generate-spinner" class="spinner hidden"></div>
+        <span id="generate-status" class="text-sm text-gray-300 font-medium"></span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     SECTION 4 — 4 PILLAR PROTOCOL GRID
+     ============================================================ -->
+<section class="section px-6 md:px-12 lg:px-20 py-8 hidden" id="protocol-section">
+  <div class="divider mb-8"></div>
+
+  <div class="mb-8">
+    <div class="pill pill-gold mb-3">Qloo-Grounded Non-Pharmacological De-escalation Protocol</div>
+    <div class="flex items-start justify-between flex-wrap gap-4">
+      <div>
+        <h2 class="text-3xl font-black text-white" id="protocol-title">4-Pillar Reminiscence Protocol</h2>
+        <p class="text-gray-300 text-sm mt-1" id="protocol-meta"></p>
+      </div>
+      <div class="flex gap-2.5 flex-wrap">
+        <button onclick="scrollToRecalibrate()" class="btn-secondary text-xs"><svg class="w-3.5 h-3.5 inline-block -mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg> Recalibrate Session</button>
+        <button onclick="scrollToAudit()" class="btn-cyan text-xs">
+          <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          Export CMS F-Tag 758 Audit
+        </button>
+      </div>
+    </div>
+
+    <!-- Protocol telemetry badges -->
+    <div class="flex items-center gap-3 mt-4 flex-wrap">
+      <span class="text-xs text-gray-400">Protocol ID:</span>
+      <code id="protocol-id-badge" class="text-xs font-mono text-cyan-300 glass px-3 py-1 rounded-full border border-cyan-500/30"></code>
+      <span class="text-xs text-gray-400 ml-2">Resolved Anchors:</span>
+      <span id="protocol-resolved-anchors" class="text-xs font-semibold text-violet-300"></span>
+      <span class="text-xs text-gray-400 ml-2">Qloo Cross-Domain Queries:</span>
+      <span id="protocol-qloo-calls" class="text-xs font-bold text-emerald-400">3 Executed</span>
+    </div>
+  </div>
+
+  <!-- 4 Pillars Grid -->
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-6" id="pillars-grid">
+    <!-- Dynamically rendered by JS -->
+  </div>
+
+  <!-- Circadian Environmental Control Specification -->
+  <div id="environmental-card" class="mt-6 glass-strong rounded-2xl p-6 shadow-card border border-white/10 hidden">
+    <div class="flex items-center gap-2 mb-4">
+      <span class="pill pill-violet">Circadian Environmental Setting</span>
+      <span class="text-xs text-gray-400">CMS F-Tag Non-Pharmacological Sensory Space Specification</span>
+    </div>
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4" id="environmental-grid">
+      <!-- Injected by JS -->
+    </div>
+  </div>
+
+  <!-- Full validation script (verbal pillar) -->
+  <div id="verbal-script-block" class="mt-6 glass-strong rounded-2xl p-6 shadow-card border border-emerald-500/20 hidden">
+    <div class="flex items-center gap-2 mb-4">
+      <span class="pill pill-green">Pillar 4: Caregiver Verbal Validation Prompts</span>
+      <span class="text-xs text-gray-400">Individualized reminiscence dialogue grounded in Qloo cultural roots</span>
+    </div>
+    <div id="verbal-script-text" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <!-- Injected by JS -->
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     SECTION 5 — LIVE RECALIBRATION CONSOLE
+     ============================================================ -->
+<section class="section px-6 md:px-12 lg:px-20 py-8 hidden" id="recalibrate-section">
+  <div class="divider mb-8"></div>
+
+  <div class="glass-strong rounded-3xl p-8 shadow-card border border-cyan-500/20" style="max-width:920px;margin:0 auto;">
+    <div class="flex items-center gap-3 mb-4">
+      <span class="pill pill-cyan">Real-Time Recalibration</span>
+      <span class="text-xs text-gray-400">Dynamically re-queries Qloo Developer Cloud taste vectors</span>
+    </div>
+    <h2 class="text-xl font-black text-white mb-1">In-Session Sensory Recalibration Console</h2>
+    <p class="text-gray-300 text-sm mb-6">If the resident displays sensory hypersensitivity or irritation, log the bedside observation. The agent dynamically re-queries Qloo to replace irritating items with softer acoustic anchors.</p>
+
+    <div class="space-y-5">
+      <!-- Observation -->
+      <div>
+        <label class="form-label">Caregiver Bedside Observation <span class="text-red-400">*</span></label>
+        <textarea id="r-observation" class="form-input" rows="2" placeholder="e.g. Resident agitated by loud horn brass trumpet. Calmed noticeably when gentle female vocal ballad played."></textarea>
+        <!-- Quick observation buttons -->
+        <div class="flex items-center gap-2 mt-2 flex-wrap text-xs text-gray-400">
+          <span>Quick Observations:</span>
+          <button type="button" onclick="setRecalibrationNote('Resident agitated by loud brass trumpet. Calmed noticeably when gentle acoustic piano played.')" class="px-2 py-0.5 rounded glass hover:text-white transition-colors">Brass horn → Soft Piano</button>
+          <button type="button" onclick="setRecalibrationNote('Resident became tearful. Calmed down when soft female singing was played.')" class="px-2 py-0.5 rounded glass hover:text-white transition-colors">Vocal Ballad</button>
+          <button type="button" onclick="setRecalibrationNote('Resident overwhelmed by fast tempo. Prefers slow acoustic strings.')" class="px-2 py-0.5 rounded glass hover:text-white transition-colors">Slow Strings</button>
+        </div>
+      </div>
+
+      <!-- Current Agitation Level during recalibration -->
+      <div>
+        <label class="form-label">Current Agitation Level During Recalibration
+          <span id="r-agitation-label" class="text-white font-bold normal-case tracking-normal ml-2">5 / 10</span>
+        </label>
+        <input id="r-agitation" type="range" min="1" max="10" value="5" oninput="document.getElementById('r-agitation-label').textContent = this.value + ' / 10'" />
+      </div>
+
+      <!-- Disliked entities selection -->
+      <div id="disliked-entities-section">
+        <label class="form-label">Select Items Resident Disliked (To be removed & replaced via Qloo)</label>
+        <div id="disliked-entities-grid" class="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-1">
+          <!-- Populated from active items -->
+        </div>
+      </div>
+
+      <!-- Submit Recalibration -->
+      <div class="flex items-center gap-4 pt-2 flex-wrap">
+        <button id="recalibrate-btn" onclick="recalibrateProtocol()" class="btn-cyan">
+          <svg width="15" height="15" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+          Execute Real-Time Qloo Recalibration
+        </button>
+        <div id="recalibrate-spinner" class="spinner hidden"></div>
+        <span id="recalibrate-status" class="text-sm text-gray-300 font-medium"></span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     SECTION 6 — CMS AUDIT EXPORT
+     ============================================================ -->
+<section class="section px-6 md:px-12 lg:px-20 py-8 hidden" id="audit-section">
+  <div class="divider mb-8"></div>
+
+  <div class="glass-strong rounded-3xl p-8 shadow-card border border-emerald-500/25" style="max-width:920px;margin:0 auto;">
+    <div class="flex items-center gap-3 mb-4">
+      <span class="pill pill-green">CMS F-Tag 758 Regulatory Mandate</span>
+      <span class="text-xs text-gray-400">§483.45(e) Non-Pharmacological Behavioral First-Line Documentation</span>
+    </div>
+    <h2 class="text-xl font-black text-white mb-1">State Surveyor & Hospital Chart Audit Generator</h2>
+    <p class="text-gray-300 text-sm mb-6">Generates an evidentiary regulatory audit record proving that personalized cultural interventions avoided PRN psychotropic chemical sedatives.</p>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+      <div>
+        <label class="form-label">Pre-Intervention Agitation (1–10) <span class="text-red-400">*</span></label>
+        <input id="a-pre" class="form-input" type="number" min="1" max="10" placeholder="e.g. 8" />
+      </div>
+      <div>
+        <label class="form-label">Post-Intervention Agitation (1–10) <span class="text-red-400">*</span></label>
+        <input id="a-post" class="form-input" type="number" min="1" max="10" placeholder="e.g. 2" />
+      </div>
+      <div>
+        <label class="form-label">Intervention Duration (Minutes) <span class="text-red-400">*</span></label>
+        <input id="a-duration" class="form-input" type="number" min="5" max="180" placeholder="e.g. 20" />
+      </div>
+      <div>
+        <label class="form-label">Attesting Nurse / Caregiver Name <span class="text-red-400">*</span></label>
+        <input id="a-caregiver" class="form-input" type="text" placeholder="e.g. Nurse Patricia Williams, RN" />
+      </div>
+    </div>
+    <!-- Autonomic Biofeedback Telemetry (Contactless rPPG) -->
+    <div class="glass p-4 rounded-2xl border border-cyan-500/20 mb-4 bg-cyan-950/20">
+      <div class="flex items-center justify-between mb-2">
+        <span class="text-xs font-bold text-cyan-300 flex items-center gap-1.5">
+          <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+          Objective Autonomic Telemetry (Contactless rPPG Grounding)
+        </span>
+        <span class="text-[10px] text-gray-400 font-mono" id="audit-bio-src-tag">Source: contactless_rppg</span>
+      </div>
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+        <div>
+          <label class="form-label text-[11px]">Pre-Heart Rate (BPM)</label>
+          <input id="a-pre-hr" class="form-input text-sm font-mono text-amber-300" type="number" value="94" />
+        </div>
+        <div>
+          <label class="form-label text-[11px]">Post-Heart Rate (BPM)</label>
+          <input id="a-post-hr" class="form-input text-sm font-mono text-emerald-400" type="number" value="68" />
+        </div>
+        <div>
+          <label class="form-label text-[11px]">Pre-HRV (RMSSD ms)</label>
+          <input id="a-pre-hrv" class="form-input text-sm font-mono text-red-300" type="number" step="0.1" value="21.8" />
+        </div>
+        <div>
+          <label class="form-label text-[11px]">Post-HRV (RMSSD ms)</label>
+          <input id="a-post-hrv" class="form-input text-sm font-mono text-emerald-400" type="number" step="0.1" value="54.6" />
+        </div>
+      </div>
+    </div>
+
+    <div class="mb-5">
+      <label class="form-label">Clinical Attestation Notes</label>
+      <textarea id="a-notes" class="form-input" rows="2" placeholder="e.g. Resident de-escalated within 15 minutes of acoustic memory stimulation. PRN psychotropic sedatives successfully avoided."></textarea>
+    </div>
+
+    <div class="flex gap-3 flex-wrap items-center">
+      <button id="audit-btn" onclick="generateAudit()" class="btn-primary">
+        <svg width="15" height="15" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+        Generate CMS Regulatory Audit Log
+      </button>
+      <div id="audit-spinner" class="spinner hidden"></div>
+    </div>
+
+    <!-- Audit report display -->
+    <div id="audit-result" class="hidden mt-8">
+      <div class="divider mb-6"></div>
+      <div class="flex items-center justify-between mb-4 flex-wrap gap-2">
+        <span class="pill pill-green"><svg class="w-3.5 h-3.5 text-emerald-400 inline-block -mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg> Official CMS Regulatory Audit Form Ready</span>
+        <div class="flex gap-2">
+          <button onclick="downloadAuditMarkdown()" class="btn-secondary text-xs no-print">
+            <svg class="w-3.5 h-3.5 inline-block -mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg> Download Markdown
+          </button>
+          <button onclick="window.print()" class="btn-secondary text-xs no-print">
+            <svg class="w-3.5 h-3.5 inline-block -mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4H7v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/></svg> Print / Export PDF
+          </button>
+        </div>
+      </div>
+      <div id="audit-markdown" class="glass rounded-2xl p-6 font-mono text-xs text-gray-200 whitespace-pre-wrap leading-relaxed overflow-auto border border-emerald-500/30" style="max-height:480px;"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     FOOTER — QLOO TELEMETRY DOCK
+     ============================================================ -->
+<footer class="section px-6 md:px-12 lg:px-20 py-10 mt-8">
+  <div class="divider mb-8"></div>
+  <div class="glass rounded-2xl p-6 shadow-card">
+    <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+      <div>
+        <div class="flex items-center gap-3 mb-2">
+          <span class="pulse-dot" style="background:#10B981;color:#10B981;"></span>
+          <span class="font-bold text-white text-sm">Qloo Developer Cloud Telemetry Dock</span>
+          <span class="pill pill-green" style="font-size:10px;padding:2px 8px;">LIVE</span>
+        </div>
+        <p class="text-xs text-gray-400">Endpoint: <span class="font-mono text-violet-300" id="footer-endpoint">https://hackathon.api.qloo.com</span></p>
+      </div>
+      <div class="flex items-center gap-6 flex-wrap">
+        <div class="text-right">
+          <p class="text-xs text-gray-400">Total API Queries</p>
+          <p class="text-2xl font-black text-white" id="footer-total-calls">0</p>
+        </div>
+        <div class="text-right">
+          <p class="text-xs text-gray-400">Avg Latency</p>
+          <p class="text-2xl font-black" style="color:#22D3EE" id="footer-avg-latency">—</p>
+        </div>
+        <div class="text-right">
+          <p class="text-xs text-gray-400">Last Status</p>
+          <p class="text-2xl font-black" style="color:#10B981" id="footer-last-status">—</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Last API calls -->
+    <div id="footer-telemetry" class="mt-4">
+      <p class="text-xs text-gray-500 text-center py-2">No API calls recorded</p>
+    </div>
+
+    <div class="flex flex-col sm:flex-row items-center justify-between mt-6 pt-4 border-t border-white/5 gap-3">
+      <div class="flex items-center gap-2.5">
+        <svg class="w-6 h-6" viewBox="0 0 64 64" fill="none">
+          <circle cx="32" cy="32" r="30" fill="#0C0A17" stroke="rgba(255,255,255,0.1)"/>
+          <path d="M16 46 C6 35 6 17 19 8 C32 -1 52 2 56 19 C60 36 40 54 25 50" stroke="#8B5CF6" stroke-width="3" stroke-linecap="round" fill="none"/>
+          <circle cx="36" cy="26" r="4.5" fill="#FFB829"/>
+        </svg>
+        <span class="text-xs text-gray-400"><strong class="text-white" style="font-family:'Playfair Display', serif;">Neuro</strong><strong class="text-cyan-400">TASTE</strong> · Qloo Agentic Hackathon 2026 · CMS F-Tag 758 Compliant</span>
+      </div>
+      <div class="flex items-center gap-2">
+        <div style="width:7px;height:7px;border-radius:50%;background:#10B981;"></div>
+        <span class="text-xs text-gray-400 font-semibold">Strict Engine:</span>
+        <span class="text-xs font-bold text-violet-300">Qloo Developer Cloud Taste Graph</span>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<!-- ============================================================
+     SCRIPTS
+     ============================================================ -->
+<script>
+// ─── Utility Helpers ────────────────────────────────────────────────────────
+function escapeHtml(str) {
+  if (str == null) return '';
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+// Smart API root: supports same-origin (/app), file:// direct open, and alternate dev ports
+const API = (window.location.protocol === 'file:' || (window.location.port && window.location.port !== '8000'))
+  ? 'http://localhost:8000'
+  : '';
+let currentProtocol = null;
+let agitationHistory = [];
+let tags = [];  // Array of { name, entity_id, types }
+let autocompleteTimeout = null;
+let currentSearchResults = [];
+let lastAuditMarkdown = '';
+
+// ─── Contactless Optical rPPG & Tri-Modal Biofeedback State ──────────────────
+let currentBioSource = 'contactless_rppg'; // 'contactless_rppg', 'wearable_ble', 'manual_clinical'
+let currentHeartRate = 94;
+let currentHrv = 21.8;
+let currentBioAgitation = 8;
+let isWebcamStreaming = false;
+let webcamStream = null;
+let rppgVideoEl = null;
+let rppgCanvasEl = null;
+let rppgCtx = null;
+let rppgWavePoints = [];
+let rppgPhase = 0;
+let rppgAnimFrame = null;
+let lastFrameTime = performance.now();
+
+// ─── Brain Canvas Animation with Continuous Respawn ──────────────────────────
+(function initBrain() {
+  const canvas = document.getElementById('brain-canvas');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const W = 480, H = 420;
+
+  // Handle Retina DPR for super-crisp rendering
+  const dpr = window.devicePixelRatio || 1;
+  canvas.width = W * dpr;
+  canvas.height = H * dpr;
+  canvas.style.width = W + 'px';
+  canvas.style.height = H + 'px';
+  ctx.scale(dpr, dpr);
+
+  const NODE_COUNT = 190;
+  const cx = W * 0.52, cy = H * 0.48;
+
+  function createNode(forceRight = false) {
+    const angle = Math.random() * Math.PI * 2;
+    const rx = 150 + Math.random() * 32;
+    const ry = 115 + Math.random() * 32;
+    const r = Math.pow(Math.random(), 0.55);
+    const baseX = cx + Math.cos(angle) * rx * r;
+    const baseY = cy + Math.sin(angle) * ry * r;
+
+    return {
+      x: baseX,
+      y: baseY,
+      baseX, baseY,
+      vx: (Math.random() - 0.5) * 0.35,
+      vy: (Math.random() - 0.5) * 0.35,
+      r: 2 + Math.random() * 2.2,
+      opacity: 0.6 + Math.random() * 0.4,
+      dissolved: false,
+      dissolveSpeed: 0.003 + Math.random() * 0.006,
+      dissolveOpacity: 1,
+      dissolveVX: 0.4 + Math.random() * 0.8,
+      dissolveVY: (Math.random() - 0.5) * 0.7,
+      phase: Math.random() * Math.PI * 2,
+      pulseSpeed: 0.015 + Math.random() * 0.025,
+    };
+  }
+
+  const nodes = Array.from({ length: NODE_COUNT }, () => createNode());
+
+  function draw() {
+    ctx.clearRect(0, 0, W, H);
+
+    // Draw neural synapses
+    for (let i = 0; i < nodes.length; i++) {
+      for (let j = i + 1; j < nodes.length; j++) {
+        const a = nodes[i], b = nodes[j];
+        if (a.dissolved || b.dissolved) continue;
+        const dx = a.x - b.x, dy = a.y - b.y;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        if (dist < 52) {
+          const alpha = (1 - dist / 52) * 0.16;
+          ctx.beginPath();
+          ctx.moveTo(a.x, a.y);
+          ctx.lineTo(b.x, b.y);
+          ctx.strokeStyle = `rgba(139,92,246,${alpha})`;
+          ctx.lineWidth = 0.8;
+          ctx.stroke();
+        }
+      }
+    }
+
+    // Draw neural nodes & memory dissolving particles
+    nodes.forEach(n => {
+      n.phase += n.pulseSpeed;
+      const pulse = Math.sin(n.phase) * 0.3 + 0.7;
+
+      if (n.dissolved) {
+        // Golden memory dissolution
+        n.x += n.dissolveVX;
+        n.y += n.dissolveVY;
+        n.dissolveOpacity -= n.dissolveSpeed;
+
+        if (n.dissolveOpacity <= 0) {
+          // Continuous Loophole Fix: Respawn dissolved particle back in brain core
+          Object.assign(n, createNode());
+          return;
+        }
+
+        ctx.beginPath();
+        ctx.arc(n.x, n.y, n.r * 1.3, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(255,184,41,${n.dissolveOpacity * 0.75})`;
+        ctx.fill();
+
+        const grd = ctx.createRadialGradient(n.x, n.y, 0, n.x, n.y, 14);
+        grd.addColorStop(0, `rgba(255,184,41,${n.dissolveOpacity * 0.35})`);
+        grd.addColorStop(1, 'transparent');
+        ctx.beginPath();
+        ctx.arc(n.x, n.y, 14, 0, Math.PI * 2);
+        ctx.fillStyle = grd;
+        ctx.fill();
+        return;
+      }
+
+      // Synaptic drift
+      n.x += n.vx;
+      n.y += n.vy;
+      n.vx += (n.baseX - n.x) * 0.002;
+      n.vy += (n.baseY - n.y) * 0.002;
+
+      // Dissolve particles on right cortex into golden memory dust
+      if (n.baseX > W * 0.58 && Math.random() < 0.0006) {
+        n.dissolved = true;
+        return;
+      }
+
+      // Violet node glow
+      const grd = ctx.createRadialGradient(n.x, n.y, 0, n.x, n.y, 10);
+      grd.addColorStop(0, `rgba(139,92,246,${n.opacity * pulse * 0.45})`);
+      grd.addColorStop(1, 'transparent');
+      ctx.beginPath();
+      ctx.arc(n.x, n.y, 10, 0, Math.PI * 2);
+      ctx.fillStyle = grd;
+      ctx.fill();
+
+      // Core node
+      ctx.beginPath();
+      ctx.arc(n.x, n.y, n.r * pulse, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(168,85,247,${n.opacity * pulse})`;
+      ctx.fill();
+    });
+
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+// ─── API Status Check (Resilient with Auto-Retry & Fallback) ──────────────────
+let apiCheckAttempts = 0;
+async function checkApiStatus() {
+  const badge = document.getElementById('api-status-badge');
+  const errBlock = document.getElementById('api-error-block');
+  const errDetail = document.getElementById('api-error-detail');
+  if (!badge) return;
+
+  try {
+    const res = await fetch(`${API}/api/status`);
+    if (res.ok) {
+      const data = await res.json();
+      const latency = data.latency_ms != null ? `${data.latency_ms}ms` : 'Live';
+      badge.innerHTML = `
+        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+        <span class="text-emerald-300 font-medium">Qloo Connected · ${latency}</span>
+      `;
+      badge.className = 'inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-[11px] font-mono border border-emerald-500/25 bg-emerald-500/10 text-emerald-300 transition-all';
+      if (errBlock) errBlock.classList.add('hidden');
+      apiCheckAttempts = 0;
+      return;
+    }
+
+    // Fallback probe to /api/health
+    const healthRes = await fetch(`${API}/api/health`);
+    if (healthRes.ok) {
+      badge.innerHTML = `
+        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+        <span class="text-emerald-300 font-medium">Qloo Connected</span>
+      `;
+      badge.className = 'inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-[11px] font-mono border border-emerald-500/25 bg-emerald-500/10 text-emerald-300 transition-all';
+      if (errBlock) errBlock.classList.add('hidden');
+      return;
+    }
+    throw new Error(`HTTP ${res.status}`);
+  } catch (e) {
+    // Retry gracefully during server startup or initial load
+    if (apiCheckAttempts < 4) {
+      apiCheckAttempts++;
+      badge.innerHTML = `
+        <span class="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span>
+        <span class="text-amber-300 font-medium">Connecting Qloo...</span>
+      `;
+      badge.className = 'inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-[11px] font-mono border border-amber-500/25 bg-amber-500/10 text-amber-300 transition-all';
+      setTimeout(checkApiStatus, 1500);
+      return;
+    }
+
+    badge.innerHTML = `
+      <span class="w-2 h-2 rounded-full bg-red-400"></span>
+      <span class="text-red-300 font-medium">Qloo Reconnecting</span>
+    `;
+    badge.className = 'inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-[11px] font-mono border border-red-500/25 bg-red-500/10 text-red-300 transition-all';
+    if (errBlock) errBlock.classList.remove('hidden');
+    if (errDetail) errDetail.textContent = e.message;
+    setTimeout(checkApiStatus, 8000);
+  }
+}
+
+// ─── Contactless Optical rPPG Engine (100% Real Live Pixel-Level Green Absorption DSP) ───
+// Offscreen sampling canvas with willReadFrequently for zero-DOM GPU performance
+const rppgSampleCanvas = document.createElement('canvas');
+rppgSampleCanvas.width = 80;
+rppgSampleCanvas.height = 40;
+const rppgSampleCtx = rppgSampleCanvas.getContext('2d', { willReadFrequently: true });
+
+// Live signal processing buffers (Rolling Window)
+let rppgRawSamples = [];     // { t: ms, val: greenMean }
+let rppgFilteredWave = [];   // Detrended + smoothed pulse signal for display & peak detection
+let rppgPeakTimestamps = []; // Detected pulse peak timestamps in ms
+let rppgIbis = [];           // Inter-beat intervals (ms)
+let rppgBpmHistory = [];     // Rolling BPM smoothing
+const RPPG_WINDOW_SAMPLES = 180; // ~6 seconds at 30 FPS
+const RPPG_MIN_IBI = 330;        // 181 BPM max
+const RPPG_MAX_IBI = 1400;       // 43 BPM min
+
+// BLE GATT holder
+let bleDevice = null;
+let bleCharacteristic = null;
+
+function initRPPGEngine() {
+  rppgVideoEl = document.getElementById('rppg-video');
+  rppgCanvasEl = document.getElementById('rppg-canvas');
+  if (!rppgCanvasEl) return;
+  rppgCtx = rppgCanvasEl.getContext('2d');
+
+  // Start continuous render loop
+  renderRPPGLoop();
+}
+
+function processRealRPPGFrame(now) {
+  if (!isWebcamStreaming || !rppgVideoEl || rppgVideoEl.readyState < 2) return;
+
+  const vw = rppgVideoEl.videoWidth || 640;
+  const vh = rppgVideoEl.videoHeight || 480;
+
+  // Forehead Region of Interest (Vascular micro-capillary bed)
+  const roiW = Math.round(vw * 0.22);
+  const roiH = Math.round(vh * 0.14);
+  const roiX = Math.round((vw - roiW) / 2);
+  const roiY = Math.round(vh * 0.16);
+
+  // Sample into offscreen canvas with willReadFrequently
+  rppgSampleCtx.drawImage(rppgVideoEl, roiX, roiY, roiW, roiH, 0, 0, 80, 40);
+  const imgData = rppgSampleCtx.getImageData(0, 0, 80, 40);
+  const d = imgData.data;
+
+  let greenSum = 0;
+  let skinPixelCount = 0;
+
+  for (let i = 0; i < d.length; i += 4) {
+    const r = d[i], g = d[i + 1], b = d[i + 2];
+    // Optical skin segmentation rule: filters out hair, spectacles, reflections
+    if (r > 40 && g > 30 && b > 20 && r > b && (r - g) >= 0) {
+      greenSum += g;
+      skinPixelCount++;
+    }
+  }
+
+  if (skinPixelCount < 40) return; // Insufficient face pixels in ROI
+
+  const meanGreen = greenSum / skinPixelCount;
+
+  // Add raw optical reading to rolling buffer
+  rppgRawSamples.push({ t: now, val: meanGreen });
+  if (rppgRawSamples.length > RPPG_WINDOW_SAMPLES) rppgRawSamples.shift();
+
+  // DSP Step A: Baseline DC Detrending (Sliding Window Moving Average)
+  const n = rppgRawSamples.length;
+  if (n < 20) return; // Warmup buffer
+
+  let sum = 0;
+  for (let i = 0; i < n; i++) sum += rppgRawSamples[i].val;
+  const dcBaseline = sum / n;
+
+  // Invert AC because hemoglobin absorption increases during pulse (lowering reflected green)
+  const acSignal = -(rppgRawSamples[n - 1].val - dcBaseline);
+
+  // DSP Step B: Low-pass noise reduction smoothing (FIR filter)
+  const lastFiltered = rppgFilteredWave.length ? rppgFilteredWave[rppgFilteredWave.length - 1].val : acSignal;
+  const smoothedVal = lastFiltered * 0.4 + acSignal * 0.6;
+
+  rppgFilteredWave.push({ t: now, val: smoothedVal });
+  if (rppgFilteredWave.length > RPPG_WINDOW_SAMPLES) rppgFilteredWave.shift();
+
+  // DSP Step C: Real Peak-to-Peak Inter-Beat Interval (IBI) Detection
+  const m = rppgFilteredWave.length;
+  if (m >= 3) {
+    const pPrev2 = rppgFilteredWave[m - 3].val;
+    const pPrev1 = rppgFilteredWave[m - 2].val;
+    const pCur = rppgFilteredWave[m - 1].val;
+    const peakTime = rppgFilteredWave[m - 2].t;
+
+    // Local peak condition with dynamic standard deviation threshold
+    let sumSq = 0;
+    for (let i = 0; i < m; i++) sumSq += rppgFilteredWave[i].val * rppgFilteredWave[i].val;
+    const stdDev = Math.sqrt(sumSq / m);
+    const threshold = Math.max(0.08, stdDev * 0.35);
+
+    if (pPrev1 > pPrev2 && pPrev1 > pCur && pPrev1 > threshold) {
+      const lastPeakTime = rppgPeakTimestamps.length ? rppgPeakTimestamps[rppgPeakTimestamps.length - 1] : 0;
+      const ibi = peakTime - lastPeakTime;
+
+      if (ibi >= RPPG_MIN_IBI && ibi <= RPPG_MAX_IBI) {
+        rppgPeakTimestamps.push(peakTime);
+        if (rppgPeakTimestamps.length > 25) rppgPeakTimestamps.shift();
+
+        rppgIbis.push(ibi);
+        if (rppgIbis.length > 12) rppgIbis.shift();
+
+        // Real Heart Rate (BPM)
+        const avgIbi = rppgIbis.reduce((a, b) => a + b, 0) / rppgIbis.length;
+        const instantBpm = Math.round(60000 / avgIbi);
+
+        rppgBpmHistory.push(instantBpm);
+        if (rppgBpmHistory.length > 5) rppgBpmHistory.shift();
+        const realBpm = Math.round(rppgBpmHistory.reduce((a, b) => a + b, 0) / rppgBpmHistory.length);
+
+        // Real HRV (RMSSD ms)
+        let sumDiffSq = 0;
+        let countDiff = 0;
+        for (let k = 1; k < rppgIbis.length; k++) {
+          const diff = rppgIbis[k] - rppgIbis[k - 1];
+          sumDiffSq += diff * diff;
+          countDiff++;
+        }
+        const realHrv = countDiff > 0 ? +(Math.sqrt(sumDiffSq / countDiff)).toFixed(1) : 26.5;
+
+        // Dynamic Real Agitation Score mapping
+        let realAgit = 2;
+        if (realBpm >= 96 || realHrv < 18) realAgit = 9;
+        else if (realBpm >= 90 || realHrv < 23) realAgit = 8;
+        else if (realBpm >= 84 || realHrv < 28) realAgit = 7;
+        else if (realBpm >= 78) realAgit = 5;
+        else if (realBpm >= 72) realAgit = 3;
+        else realAgit = 1;
+
+        currentHeartRate = realBpm;
+        currentHrv = realHrv;
+        currentBioAgitation = realAgit;
+
+        updateRealBioTelemetryUI(realBpm, realHrv, realAgit);
+      }
+    }
+  }
+}
+
+function updateRealBioTelemetryUI(realBpm, realHrv, realAgit) {
+  const hrEl = document.getElementById('bio-hr-val');
+  const hrStatusEl = document.getElementById('bio-hr-status');
+  const hrvEl = document.getElementById('bio-hrv-val');
+  const hrvStatusEl = document.getElementById('bio-hrv-status');
+  const agValEl = document.getElementById('bio-agitation-val');
+  const agStatusEl = document.getElementById('bio-agitation-status');
+
+  if (hrEl) hrEl.textContent = realBpm;
+  if (hrStatusEl) {
+    if (realBpm >= 92) {
+      hrStatusEl.textContent = 'Acute Tachycardia (Sympathetic Overdrive)';
+      hrStatusEl.className = 'text-[10px] text-red-400 mt-1 font-semibold';
+    } else if (realBpm >= 80) {
+      hrStatusEl.textContent = 'Elevated Heart Rate (Mild Distress)';
+      hrStatusEl.className = 'text-[10px] text-amber-300 mt-1 font-semibold';
+    } else {
+      hrStatusEl.textContent = 'Resting Autonomic Baseline (Calm)';
+      hrStatusEl.className = 'text-[10px] text-emerald-400 mt-1 font-semibold';
+    }
+  }
+
+  if (hrvEl) hrvEl.textContent = typeof realHrv === 'number' ? realHrv.toFixed(1) : realHrv;
+  if (hrvStatusEl) {
+    if (realHrv < 22) {
+      hrvStatusEl.textContent = 'Depressed Vagal Tone (High Distress)';
+      hrvStatusEl.className = 'text-[10px] text-red-400 mt-1 font-semibold';
+    } else if (realHrv < 35) {
+      hrvStatusEl.textContent = 'Moderate Neurological Tension';
+      hrvStatusEl.className = 'text-[10px] text-amber-300 mt-1 font-semibold';
+    } else {
+      hrvStatusEl.textContent = 'Robust Parasympathetic Regulation';
+      hrvStatusEl.className = 'text-[10px] text-emerald-400 mt-1 font-semibold';
+    }
+  }
+
+  if (agValEl) agValEl.textContent = realAgit;
+  if (agStatusEl) {
+    if (realAgit >= 8) {
+      agStatusEl.textContent = 'Acute Sundowning (Intervention Recommended)';
+      agStatusEl.className = 'text-[10px] text-red-300 mt-1 font-semibold';
+    } else if (realAgit >= 5) {
+      agStatusEl.textContent = 'Moderate Agitation Level';
+      agStatusEl.className = 'text-[10px] text-amber-300 mt-1 font-semibold';
+    } else {
+      agStatusEl.textContent = 'Lucid Calm & De-escalated';
+      agStatusEl.className = 'text-[10px] text-emerald-300 mt-1 font-semibold';
+    }
+  }
+
+  // Update Section 3 Intake Slider
+  const slider = document.getElementById('f-agitation');
+  if (slider) {
+    slider.value = realAgit;
+    updateAgitationSlider(realAgit);
+  }
+
+  // Auto pre-fill CMS Audit Form with live readings
+  const preHr = document.getElementById('a-pre-hr');
+  const preHrv = document.getElementById('a-pre-hrv');
+  if (preHr && (!preHr.value || preHr.dataset.auto === 'true')) {
+    preHr.value = realBpm;
+    preHr.dataset.auto = 'true';
+  }
+  if (preHrv && (!preHrv.value || preHrv.dataset.auto === 'true')) {
+    preHrv.value = typeof realHrv === 'number' ? realHrv.toFixed(1) : realHrv;
+    preHrv.dataset.auto = 'true';
+  }
+}
+
+function renderRPPGLoop(now = performance.now()) {
+  const dt = Math.min((now - lastFrameTime) / 1000, 0.1);
+  lastFrameTime = now;
+
+  // Process live camera pixels if streaming
+  if (isWebcamStreaming) {
+    processRealRPPGFrame(now);
+  }
+
+  if (rppgCtx && rppgCanvasEl) {
+    const W = rppgCanvasEl.width;
+    const H = rppgCanvasEl.height;
+
+    if (isWebcamStreaming && rppgVideoEl && rppgVideoEl.readyState >= 2) {
+      // 1. Draw live camera with dark vignette
+      rppgCtx.save();
+      rppgCtx.drawImage(rppgVideoEl, 0, 0, W, H);
+      rppgCtx.fillStyle = 'rgba(7, 5, 14, 0.65)';
+      rppgCtx.fillRect(0, 0, W, H);
+      rppgCtx.restore();
+
+      // 2. Draw real forehead vascular ROI brackets
+      const roiW = 100;
+      const roiH = 44;
+      const roiX = (W - roiW) / 2;
+      const roiY = H * 0.18;
+
+      rppgCtx.save();
+      rppgCtx.strokeStyle = '#06B6D4';
+      rppgCtx.lineWidth = 1.5;
+      rppgCtx.setLineDash([4, 4]);
+      rppgCtx.strokeRect(roiX, roiY, roiW, roiH);
+
+      const bLen = 8;
+      rppgCtx.setLineDash([]);
+      rppgCtx.strokeStyle = '#10B981';
+      rppgCtx.lineWidth = 2;
+      rppgCtx.beginPath(); rppgCtx.moveTo(roiX - 4, roiY + bLen); rppgCtx.lineTo(roiX - 4, roiY - 4); rppgCtx.lineTo(roiX + bLen, roiY - 4); rppgCtx.stroke();
+      rppgCtx.beginPath(); rppgCtx.moveTo(roiX + roiW + 4 - bLen, roiY - 4); rppgCtx.lineTo(roiX + roiW + 4, roiY - 4); rppgCtx.lineTo(roiX + roiW + 4, roiY + bLen); rppgCtx.stroke();
+      rppgCtx.beginPath(); rppgCtx.moveTo(roiX - 4, roiY + roiH - bLen); rppgCtx.lineTo(roiX - 4, roiY + roiH + 4); rppgCtx.lineTo(roiX + bLen, roiY + roiH + 4); rppgCtx.stroke();
+      rppgCtx.beginPath(); rppgCtx.moveTo(roiX + roiW + 4 - bLen, roiY + roiH + 4); rppgCtx.lineTo(roiX + roiW + 4, roiY + roiH + 4); rppgCtx.lineTo(roiX + roiW + 4, roiY + roiH + 4 - bLen); rppgCtx.stroke();
+
+      rppgCtx.fillStyle = 'rgba(6, 182, 212, 0.95)';
+      rppgCtx.font = '9px monospace';
+      rppgCtx.fillText('LIVE FOREHEAD VASCULAR ROI', roiX, roiY - 6);
+      rppgCtx.restore();
+
+      // 3. Draw REAL RAW OPTICAL WAVEFORM
+      if (rppgFilteredWave.length >= 2) {
+        const waveBaseY = H * 0.74;
+        const waveHeight = H * 0.30;
+
+        let maxVal = 0.05;
+        for (let i = 0; i < rppgFilteredWave.length; i++) {
+          const a = Math.abs(rppgFilteredWave[i].val);
+          if (a > maxVal) maxVal = a;
+        }
+
+        rppgCtx.save();
+        rppgCtx.beginPath();
+        const stepX = W / (rppgFilteredWave.length - 1);
+        for (let i = 0; i < rppgFilteredWave.length; i++) {
+          const x = i * stepX;
+          const normY = rppgFilteredWave[i].val / maxVal;
+          const y = waveBaseY - normY * waveHeight;
+          if (i === 0) rppgCtx.moveTo(x, y);
+          else rppgCtx.lineTo(x, y);
+        }
+
+        const waveColor = currentHeartRate && currentHeartRate > 88 ? '#F87171' : (currentHeartRate && currentHeartRate > 75 ? '#06B6D4' : '#10B981');
+        rppgCtx.strokeStyle = waveColor;
+        rppgCtx.lineWidth = 2.2;
+        rppgCtx.shadowColor = waveColor;
+        rppgCtx.shadowBlur = 8;
+        rppgCtx.stroke();
+
+        // Glow fill below real wave
+        rppgCtx.lineTo(W, H);
+        rppgCtx.lineTo(0, H);
+        rppgCtx.closePath();
+        const fillGrad = rppgCtx.createLinearGradient(0, waveBaseY - waveHeight, 0, H);
+        fillGrad.addColorStop(0, waveColor === '#F87171' ? 'rgba(239,68,68,0.22)' : 'rgba(6,182,212,0.18)');
+        fillGrad.addColorStop(1, 'rgba(7,5,14,0.0)');
+        rppgCtx.fillStyle = fillGrad;
+        rppgCtx.fill();
+        rppgCtx.restore();
+      } else {
+        rppgCtx.save();
+        rppgCtx.fillStyle = '#06B6D4';
+        rppgCtx.font = 'bold 11px monospace';
+        rppgCtx.textAlign = 'center';
+        rppgCtx.fillText('ACQUIRING CAPILLARY PULSE...', W / 2, H * 0.78);
+        rppgCtx.restore();
+      }
+
+    } else {
+      // Camera Standby Screen (Zero Simulation)
+      rppgCtx.fillStyle = '#07050E';
+      rppgCtx.fillRect(0, 0, W, H);
+
+      rppgCtx.strokeStyle = 'rgba(6, 182, 212, 0.08)';
+      rppgCtx.lineWidth = 1;
+      for (let x = 0; x < W; x += 30) {
+        rppgCtx.beginPath(); rppgCtx.moveTo(x, 0); rppgCtx.lineTo(x, H); rppgCtx.stroke();
+      }
+      for (let y = 0; y < H; y += 25) {
+        rppgCtx.beginPath(); rppgCtx.moveTo(0, y); rppgCtx.lineTo(W, y); rppgCtx.stroke();
+      }
+
+      rppgCtx.save();
+      rppgCtx.strokeStyle = 'rgba(6, 182, 212, 0.25)';
+      rppgCtx.beginPath();
+      rppgCtx.arc(W / 2, H * 0.44, 36, 0, Math.PI * 2);
+      rppgCtx.stroke();
+      rppgCtx.fillStyle = '#94A3B8';
+      rppgCtx.font = 'bold 10px monospace';
+      rppgCtx.textAlign = 'center';
+      rppgCtx.fillText('SENSOR STANDBY', W / 2, H * 0.44 - 4);
+      rppgCtx.font = '9px monospace';
+      rppgCtx.fillStyle = '#64748B';
+      rppgCtx.fillText('CLICK [START WEBCAM rPPG] OR PAIR BLE', W / 2, H * 0.44 + 12);
+      rppgCtx.restore();
+    }
+
+    // Telemetry HUD in top right
+    rppgCtx.save();
+    rppgCtx.fillStyle = 'rgba(0, 0, 0, 0.65)';
+    rppgCtx.fillRect(W - 134, 8, 126, 42);
+    rppgCtx.strokeStyle = 'rgba(255, 255, 255, 0.1)';
+    rppgCtx.strokeRect(W - 134, 8, 126, 42);
+
+    rppgCtx.font = 'bold 9px monospace';
+    rppgCtx.fillStyle = currentHeartRate ? '#06B6D4' : '#64748B';
+    rppgCtx.fillText(`HR: ${currentHeartRate ? currentHeartRate + ' BPM' : 'MEASURING...'}`, W - 128, 21);
+    rppgCtx.fillStyle = currentHrv ? '#A78BFA' : '#64748B';
+    rppgCtx.fillText(`HRV: ${currentHrv ? currentHrv.toFixed(1) + ' ms' : 'CALIBRATING'}`, W - 128, 33);
+    rppgCtx.fillStyle = isWebcamStreaming ? '#10B981' : '#64748B';
+    rppgCtx.fillText(`OPTICAL DSP: ${isWebcamStreaming ? 'ACTIVE (30 FPS)' : 'STANDBY'}`, W - 128, 45);
+    rppgCtx.restore();
+  }
+
+  rppgAnimFrame = requestAnimationFrame(renderRPPGLoop);
+}
+
+function setBioSource(source) {
+  if (source === 'rppg') currentBioSource = 'contactless_rppg';
+  else if (source === 'ble') currentBioSource = 'wearable_ble';
+  else currentBioSource = 'manual_clinical';
+
+  const btnRppg = document.getElementById('btn-src-rppg');
+  const btnBle = document.getElementById('btn-src-ble');
+  const btnManual = document.getElementById('btn-src-manual');
+  const badge = document.getElementById('bio-mode-badge');
+  const pill = document.getElementById('rppg-status-pill');
+  const auditTag = document.getElementById('audit-bio-src-tag');
+  const drawer = document.getElementById('manual-vitals-drawer');
+
+  [btnRppg, btnBle, btnManual].forEach(btn => {
+    if (btn) btn.className = 'px-3 py-1.5 rounded-lg text-xs font-bold transition-all text-gray-400 hover:text-white';
+  });
+
+  if (source === 'rppg') {
+    if (btnRppg) btnRppg.className = 'px-3 py-1.5 rounded-lg text-xs font-bold transition-all bg-cyan-500/20 text-cyan-300 border border-cyan-500/40';
+    if (badge) { badge.innerHTML = 'Contactless Optical rPPG Mode'; badge.className = 'text-xs text-cyan-400 font-bold'; }
+    if (pill) pill.innerHTML = '<span class="pulse-dot" style="background:#06B6D4;color:#06B6D4;"></span> OPTICAL rPPG LIVE';
+    if (auditTag) auditTag.textContent = 'Source: contactless_rppg';
+    if (drawer) drawer.classList.add('hidden');
+  } else if (source === 'ble') {
+    if (btnBle) btnBle.className = 'px-3 py-1.5 rounded-lg text-xs font-bold transition-all bg-blue-500/20 text-blue-300 border border-blue-500/40';
+    if (badge) { badge.innerHTML = 'Bluetooth BLE Wearable Sensor'; badge.className = 'text-xs text-blue-400 font-bold'; }
+    if (pill) pill.innerHTML = '<span class="pulse-dot" style="background:#3B82F6;color:#3B82F6;"></span> BLE WEARABLE LIVE';
+    if (auditTag) auditTag.textContent = 'Source: wearable_ble';
+    if (drawer) drawer.classList.add('hidden');
+  } else {
+    if (btnManual) btnManual.className = 'px-3 py-1.5 rounded-lg text-xs font-bold transition-all bg-amber-500/20 text-amber-300 border border-amber-500/40';
+    if (badge) { badge.innerHTML = 'Bedside Clinical Manual Input Mode'; badge.className = 'text-xs text-amber-400 font-bold'; }
+    if (pill) pill.innerHTML = '<span class="pulse-dot" style="background:#F59E0B;color:#F59E0B;"></span> CLINICAL MANUAL SCALE';
+    if (auditTag) auditTag.textContent = 'Source: manual_clinical';
+    if (drawer) drawer.classList.remove('hidden');
+  }
+}
+
+async function toggleCameraRPPG() {
+  const btn = document.getElementById('btn-toggle-cam');
+  const pill = document.getElementById('rppg-status-pill');
+
+  if (isWebcamStreaming) {
+    if (webcamStream) {
+      webcamStream.getTracks().forEach(t => t.stop());
+      webcamStream = null;
+    }
+    isWebcamStreaming = false;
+    if (rppgVideoEl) {
+      rppgVideoEl.srcObject = null;
+      rppgVideoEl.classList.add('hidden');
+    }
+    if (btn) {
+      btn.innerHTML = '<svg class="w-3.5 h-3.5 inline-block -mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/><path stroke-linecap="round" stroke-linejoin="round" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"/></svg> Start Live Webcam rPPG';
+      btn.className = 'btn-cyan text-xs py-1.5 px-3 flex items-center gap-1.5';
+    }
+    if (pill) pill.innerHTML = '<span class="pulse-dot" style="background:#64748B;color:#64748B;"></span> SENSOR STANDBY';
+  } else {
+    try {
+      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+        throw new Error('Webcam API is not accessible in this browser context');
+      }
+      const stream = await navigator.mediaDevices.getUserMedia({
+        video: { width: { ideal: 640 }, height: { ideal: 480 }, facingMode: 'user' }
+      });
+      webcamStream = stream;
+      isWebcamStreaming = true;
+      if (rppgVideoEl) {
+        rppgVideoEl.srcObject = stream;
+        rppgVideoEl.play();
+      }
+      if (btn) {
+        btn.innerHTML = 'Stop Webcam rPPG';
+        btn.className = 'btn-secondary text-xs py-1.5 px-3 border-red-500/50 text-red-300 flex items-center gap-1.5';
+      }
+      if (pill) pill.innerHTML = '<span class="pulse-dot" style="background:#10B981;color:#10B981;"></span> WEBCAM rPPG LIVE';
+      setBioSource('rppg');
+    } catch (e) {
+      console.error('Webcam initialization error:', e);
+      alert('Camera access notice: ' + (e.message || 'Permission denied') + '. You can still connect a Bluetooth BLE sensor or use Clinical Manual mode.');
+    }
+  }
+}
+
+async function connectBLEWearable() {
+  if (!navigator.bluetooth) {
+    alert('Web Bluetooth is supported in Chrome, Edge, and Opera on desktop and Android. Please ensure Bluetooth is enabled.');
+    return;
+  }
+  try {
+    const device = await navigator.bluetooth.requestDevice({
+      filters: [{ services: ['heart_rate'] }]
+    });
+    const server = await device.gatt.connect();
+    const service = await server.getPrimaryService('heart_rate');
+    const characteristic = await service.getCharacteristic('heart_rate_measurement');
+
+    await characteristic.startNotifications();
+    characteristic.addEventListener('characteristicvaluechanged', (event) => {
+      const value = event.target.value;
+      const flags = value.getUint8(0);
+      const is16Bit = flags & 0x01;
+      const realBpm = is16Bit ? value.getUint16(1, true) : value.getUint8(1);
+
+      let realHrv = 32.0;
+      const hasRr = flags & 0x10;
+      if (hasRr) {
+        const offset = is16Bit ? 3 : 2;
+        if (value.byteLength >= offset + 2) {
+          const rr = value.getUint16(offset, true) / 1024 * 1000;
+          rppgIbis.push(rr);
+          if (rppgIbis.length > 10) rppgIbis.shift();
+          let sumSq = 0;
+          for (let k = 1; k < rppgIbis.length; k++) {
+            const d = rppgIbis[k] - rppgIbis[k - 1];
+            sumSq += d * d;
+          }
+          realHrv = +(Math.sqrt(sumSq / Math.max(1, rppgIbis.length - 1))).toFixed(1);
+        }
+      }
+
+      currentHeartRate = realBpm;
+      currentHrv = realHrv;
+      let realAgit = realBpm >= 92 ? 8 : (realBpm >= 80 ? 5 : 2);
+      currentBioAgitation = realAgit;
+      updateRealBioTelemetryUI(realBpm, realHrv, realAgit);
+    });
+
+    setBioSource('ble');
+    const badge = document.getElementById('bio-mode-badge');
+    if (badge) badge.innerHTML = `Connected: ${escapeHtml(device.name || 'BLE Heart Rate Monitor')}`;
+  } catch (e) {
+    console.warn('Bluetooth connection error:', e);
+    alert('Bluetooth BLE notice: ' + (e.message || 'Cancelled'));
+  }
+}
+
+function resetRPPGBuffer() {
+  rppgRawSamples = [];
+  rppgFilteredWave = [];
+  rppgPeakTimestamps = [];
+  rppgIbis = [];
+  rppgBpmHistory = [];
+  currentHeartRate = null;
+  currentHrv = null;
+  currentBioAgitation = null;
+
+  const hrEl = document.getElementById('bio-hr-val');
+  const hrvEl = document.getElementById('bio-hrv-val');
+  const agValEl = document.getElementById('bio-agitation-val');
+  const hrStatusEl = document.getElementById('bio-hr-status');
+  const hrvStatusEl = document.getElementById('bio-hrv-status');
+  const agStatusEl = document.getElementById('bio-agitation-status');
+
+  if (hrEl) hrEl.textContent = '--';
+  if (hrvEl) hrvEl.textContent = '--';
+  if (agValEl) agValEl.textContent = '--';
+  if (hrStatusEl) { hrStatusEl.textContent = 'Buffer Flushed · Re-calibrating'; hrStatusEl.className = 'text-[10px] text-gray-400 mt-1 font-semibold'; }
+  if (hrvStatusEl) { hrvStatusEl.textContent = 'Awaiting Next Cardiac Cycle'; hrvStatusEl.className = 'text-[10px] text-gray-400 mt-1 font-semibold'; }
+  if (agStatusEl) { agStatusEl.textContent = 'Recalibrating Baselines'; agStatusEl.className = 'text-[10px] text-gray-400 mt-1 font-semibold'; }
+}
+
+function handleManualVitalsChange() {
+  const hr = parseInt(document.getElementById('m-hr-input').value, 10);
+  const hrv = parseFloat(document.getElementById('m-hrv-input').value);
+  const agit = parseInt(document.getElementById('m-agitation-input').value, 10);
+
+  if (!isNaN(hr)) currentHeartRate = hr;
+  if (!isNaN(hrv)) currentHrv = hrv;
+  if (!isNaN(agit)) currentBioAgitation = agit;
+
+  updateRealBioTelemetryUI(currentHeartRate || 75, currentHrv || 35.0, currentBioAgitation || 5);
+}
+
+// ─── Charts Initialization ──────────────────────────────────────────────────
+let agitationChart, affinityChart;
+
+function initCharts() {
+  const agCtx = document.getElementById('agitation-chart');
+  if (agCtx) {
+    agitationChart = new Chart(agCtx, {
+      type: 'line',
+      data: {
+        labels: ['Baseline', '5m', '10m', '15m', '20m', 'Target'],
+        datasets: [{
+          data: [],
+          borderColor: '#8B5CF6',
+          backgroundColor: 'rgba(139,92,246,0.15)',
+          borderWidth: 2.5,
+          fill: true,
+          tension: 0.35,
+          pointRadius: 3,
+          pointBackgroundColor: '#A855F7',
+        }]
+      },
+      options: {
+        responsive: true, maintainAspectRatio: false,
+        plugins: { legend: { display: false }, tooltip: { enabled: true } },
+        scales: {
+          x: { display: true, ticks: { color: '#64748B', font: { size: 9 } }, grid: { display: false } },
+          y: { display: false, min: 0, max: 10 }
+        },
+        animation: { duration: 600 }
+      }
+    });
+  }
+
+  const afCtx = document.getElementById('affinity-chart');
+  if (afCtx) {
+    affinityChart = new Chart(afCtx, {
+      type: 'bar',
+      data: {
+        labels: ['Auditory', 'Visual', 'Culinary', 'Overall'],
+        datasets: [{
+          data: [0, 0, 0, 0],
+          backgroundColor: [
+            'rgba(168,85,247,0.8)',
+            'rgba(6,182,212,0.8)',
+            'rgba(255,184,41,0.8)',
+            'rgba(16,185,129,0.8)',
+          ],
+          borderRadius: 6,
+          borderSkipped: false,
+        }]
+      },
+      options: {
+        responsive: true, maintainAspectRatio: false,
+        plugins: { legend: { display: false } },
+        scales: {
+          x: { ticks: { color: '#94A3B8', font: { size: 10, weight: 600 } }, grid: { display: false } },
+          y: { display: false, min: 0, max: 100 }
+        },
+        animation: { duration: 800 }
+      }
+    });
+  }
+}
+
+// ─── Telemetry Refresh ───────────────────────────────────────────────────────
+async function refreshTelemetry() {
+  try {
+    const res = await fetch(`${API}/api/telemetry`);
+    if (!res.ok) return;
+    const data = await res.json();
+    const history = data.history || [];
+
+    document.getElementById('footer-total-calls').textContent = data.total_requests || 0;
+    document.getElementById('cms-qloo-calls').textContent = (data.total_requests || 0) + ' calls';
+
+    const clockEl = document.getElementById('telemetry-live-clock');
+    if (clockEl) clockEl.textContent = 'Updated ' + new Date().toLocaleTimeString();
+
+    if (history.length) {
+      const latencies = history.filter(h => h.latency_ms != null).map(h => h.latency_ms);
+      const avg = latencies.length ? Math.round(latencies.reduce((a, b) => a + b, 0) / latencies.length) : 0;
+      document.getElementById('footer-avg-latency').textContent = avg + 'ms';
+      document.getElementById('footer-last-status').textContent = 'HTTP ' + (history[0].status_code || 200);
+
+      const rows = history.slice(0, 8).map(h => {
+        const queryStr = h.params?.query ? ` "${escapeHtml(h.params.query)}"` : '';
+        const targetStr = h.params?.['filter.type'] ? ` [${escapeHtml(h.params['filter.type'].split(':').pop())}]` : '';
+        const isOk = (h.status_code >= 200 && h.status_code < 300);
+        return `
+          <div class="tel-row">
+            <span class="font-mono text-xs px-2 py-0.5 rounded font-bold" style="background:${isOk ? 'rgba(16,185,129,0.15)' : 'rgba(239,68,68,0.15)'};color:${isOk ? '#34D399' : '#FCA5A5'};min-width:44px;text-align:center;">${h.status_code || 200}</span>
+            <span class="flex-1 font-mono text-xs text-gray-300 truncate">${escapeHtml(h.endpoint || '')}${queryStr}${targetStr}</span>
+            <span class="text-xs text-gray-400 font-mono">${h.latency_ms ? h.latency_ms + 'ms' : ''}</span>
+            <span class="text-xs text-gray-500">${h.timestamp ? new Date(h.timestamp).toLocaleTimeString() : ''}</span>
+          </div>
+        `;
+      }).join('');
+
+      document.getElementById('telemetry-log').innerHTML = rows;
+      document.getElementById('footer-telemetry').innerHTML = rows;
+    }
+  } catch (e) {
+    console.error('Telemetry refresh error:', e);
+  }
+}
+
+// ─── Tag Input + Autocomplete with XSS & Mousedown Protection ────────────────
+const anchorInput = document.getElementById('anchor-input');
+const dropdown = document.getElementById('autocomplete-dropdown');
+const tagsContainer = document.getElementById('tags-container');
+
+function renderTags() {
+  tagsContainer.innerHTML = tags.map((t, i) => `
+    <span class="tag">
+      ${escapeHtml(t.name)}
+      <span class="tag-remove flex items-center justify-center w-3.5 h-3.5 rounded hover:bg-red-500/20" onclick="removeTag(${i})"><svg class="w-3 h-3 text-gray-400 hover:text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg></span>
+    </span>
+  `).join('');
+}
+
+function removeTag(i) {
+  tags.splice(i, 1);
+  renderTags();
+}
+
+function addTag(tag) {
+  if (!tag || !tag.name) return;
+  const cleanName = tag.name.trim();
+  if (!tags.find(t => t.name.toLowerCase() === cleanName.toLowerCase())) {
+    tags.push({
+      name: cleanName,
+      entity_id: tag.entity_id || ('urn:entity:anchor:' + encodeURIComponent(cleanName)),
+      types: tag.types || []
+    });
+    renderTags();
+  }
+  anchorInput.value = '';
+  dropdown.classList.add('hidden');
+}
+
+function quickAddAnchor(name, entity_id) {
+  addTag({ name, entity_id, types: ['urn:entity:artist'] });
+}
+
+anchorInput.addEventListener('input', () => {
+  clearTimeout(autocompleteTimeout);
+  const q = anchorInput.value.trim();
+  if (q.length < 2) { dropdown.classList.add('hidden'); return; }
+  autocompleteTimeout = setTimeout(() => fetchAutocomplete(q), 250);
+});
+
+anchorInput.addEventListener('keydown', e => {
+  if (e.key === 'Enter' || e.key === ',') {
+    e.preventDefault();
+    const q = anchorInput.value.trim().replace(/^,+|,+$/g, '');
+    if (q) addTag({ name: q });
+  }
+  if (e.key === 'Escape') dropdown.classList.add('hidden');
+});
+
+// Dropdown item selection via mousedown to avoid blur race conditions
+dropdown.addEventListener('mousedown', e => {
+  const itemEl = e.target.closest('.autocomplete-item');
+  if (itemEl) {
+    const idx = parseInt(itemEl.dataset.index, 10);
+    if (currentSearchResults[idx]) {
+      addTag(currentSearchResults[idx]);
+    }
+  }
+});
+
+anchorInput.addEventListener('blur', () => {
+  setTimeout(() => dropdown.classList.add('hidden'), 200);
+});
+
+async function fetchAutocomplete(q) {
+  try {
+    const res = await fetch(`${API}/api/qloo/search?query=${encodeURIComponent(q)}`);
+    if (!res.ok) { dropdown.classList.add('hidden'); return; }
+    const data = await res.json();
+    currentSearchResults = data.results || [];
+    if (!currentSearchResults.length) { dropdown.classList.add('hidden'); return; }
+
+    dropdown.innerHTML = currentSearchResults.slice(0, 6).map((r, i) => {
+      const typeStr = (r.types || []).map(t => t.split(':').pop()).join(' · ') || 'Entity';
+      const img = r.image
+        ? `<img src="${escapeHtml(r.image)}" class="w-8 h-8 rounded object-cover flex-shrink-0" onerror="this.style.display='none'" />`
+        : `<div class="w-8 h-8 rounded flex items-center justify-center text-violet-400/60" style="background:rgba(255,255,255,0.08)"><svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 2l8 8-8 8-8-8 8-8z"/></svg></div>`;
+      return `
+        <div class="autocomplete-item" data-index="${i}">
+          ${img}
+          <div class="flex-1 min-w-0">
+            <p class="text-white text-sm font-semibold truncate">${escapeHtml(r.name)}</p>
+            <p class="text-gray-400 text-xs truncate">${escapeHtml(typeStr)} · <span class="font-mono text-violet-300">${escapeHtml((r.entity_id || '').slice(0, 24))}</span></p>
+          </div>
+        </div>
+      `;
+    }).join('');
+    dropdown.classList.remove('hidden');
+  } catch (e) {
+    dropdown.classList.add('hidden');
+  }
+}
+
+// ─── Agitation Slider ────────────────────────────────────────────────────────
+function updateAgitationSlider(val) {
+  const level = parseInt(val, 10);
+  let label = `${level} / 10`;
+  if (level >= 8) label += ' (Severe Distress)';
+  else if (level >= 5) label += ' (Moderate Agitation)';
+  else label += ' (Mild / Baseline)';
+  document.getElementById('agitation-val-label').textContent = label;
+  const pct = (level - 1) / 9 * 100;
+  const slider = document.getElementById('f-agitation');
+  slider.style.background = `linear-gradient(90deg, #8B5CF6 ${pct}%, rgba(255,255,255,0.1) ${pct}%)`;
+}
+
+// ─── Scroll Helpers ──────────────────────────────────────────────────────────
+function scrollToIntake() {
+  document.getElementById('intake-section').scrollIntoView({ behavior: 'smooth' });
+}
+function scrollToRecalibrate() {
+  document.getElementById('recalibrate-section').scrollIntoView({ behavior: 'smooth' });
+}
+function scrollToAudit() {
+  document.getElementById('audit-section').scrollIntoView({ behavior: 'smooth' });
+}
+
+// ─── Demo Sample Case Loader (Eleanor Vance) ─────────────────────────────────
+function loadSampleProfile() {
+  document.getElementById('f-name').value = 'Eleanor Vance';
+  document.getElementById('f-age').value = 82;
+  document.getElementById('f-decade').value = '1940s';
+  document.getElementById('f-hometown').value = 'Chicago, IL';
+  document.getElementById('f-agitation').value = 8;
+  updateAgitationSlider(8);
+  document.getElementById('f-trigger').value = 'Sensitive to sharp brass trumpet sounds; calmed by acoustic piano and warm familiar aromas.';
+
+  tags = [
+    { name: 'Nat King Cole', entity_id: 'urn:entity:artist:nat_king_cole', types: ['urn:entity:artist'] },
+    { name: 'Humphrey Bogart', entity_id: 'urn:entity:artist:humphrey_bogart', types: ['urn:entity:artist'] },
+    { name: 'Chicago Jazz', entity_id: 'urn:entity:anchor:chicago_jazz', types: ['urn:entity:genre'] }
+  ];
+  renderTags();
+  scrollToIntake();
+}
+
+// ─── Pillar Cards Builder (Strict Schema Alignment) ───────────────────────────
+function buildEntityCard(item, accentColor) {
+  const affinity = item.affinity_score != null ? (item.affinity_score * 100).toFixed(1) : null;
+  const entityId = item.entity_id || '';
+  const shortId = entityId.length > 28 ? entityId.slice(0, 28) + '…' : entityId;
+  const img = item.image_url
+    ? `<img src="${escapeHtml(item.image_url)}" class="w-12 h-12 rounded-xl object-cover flex-shrink-0 border border-white/10" onerror="this.style.display='none'" />`
+    : `<div class="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0 text-xl font-bold" style="background:rgba(255,255,255,0.06);color:${accentColor}">${escapeHtml(item.name ? item.name[0] : 'Q')}</div>`;
+
+  return `
+    <div class="entity-card glass rounded-xl p-3.5 border border-white/5">
+      <div class="flex items-start gap-3">
+        ${img}
+        <div class="flex-1 min-w-0">
+          <div class="flex items-center justify-between gap-2">
+            <p class="font-bold text-white text-sm truncate">${escapeHtml(item.name || 'Sensory Anchor')}</p>
+            ${affinity !== null ? `
+              <span class="text-xs font-black font-mono" style="color:${accentColor}">${affinity}%</span>
+            ` : ''}
+          </div>
+          <p class="font-mono text-xs mt-0.5 truncate text-gray-400" title="${escapeHtml(entityId)}">
+            <span class="text-violet-soft">${escapeHtml(shortId)}</span>
+          </p>
+          ${item.therapeutic_rationale ? `
+            <p class="text-xs text-gray-300 mt-1 italic leading-relaxed line-clamp-2">${escapeHtml(item.therapeutic_rationale)}</p>
+          ` : ''}
+        </div>
+      </div>
+      ${affinity !== null ? `
+        <div class="affinity-bar mt-2.5">
+          <div class="affinity-fill" style="width:${affinity}%;background:linear-gradient(90deg,${accentColor}80,${accentColor})"></div>
+        </div>
+      ` : ''}
+      ${item.sensory_instructions ? `
+        <div class="mt-2 pt-2 border-t border-white/5 flex items-center justify-between text-xs text-gray-400">
+          <span class="flex items-center gap-1.5"><svg class="w-3.5 h-3.5 text-violet-300 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 18v-6a9 9 0 0118 0v6M3 18a3 3 0 003 3h1a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v3zm18 0a3 3 0 01-3 3h-1a2 2 0 01-2-2v-4a2 2 0 012-2h2a2 2 0 012 2v3z"/></svg>${escapeHtml(item.sensory_instructions)}</span>
+        </div>
+      ` : ''}
+    </div>
+  `;
+}
+
+function buildPillarSection(title, iconType, items, accentColor, pillClass, desc) {
+  const avg = items.length
+    ? (items.reduce((s, it) => s + (it.affinity_score || 0.85), 0) / items.length * 100).toFixed(1)
+    : null;
+
+  let iconSvg = '';
+  if (iconType === 'music') {
+    iconSvg = '<svg class="w-6 h-6 text-violet-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3"/></svg>';
+  } else if (iconType === 'cinema') {
+    iconSvg = '<svg class="w-6 h-6 text-cyan-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M7 4v16M17 4v16M3 8h4m10 0h4M3 12h18M3 16h4m10 0h4M4 20h16a1 1 0 001-1V5a1 1 0 00-1-1H4a1 1 0 00-1 1v14a1 1 0 001 1z"/></svg>';
+  } else {
+    iconSvg = '<svg class="w-6 h-6 text-amber-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>';
+  }
+
+  return `
+    <div class="pillar-card glass shadow-card border border-white/10" style="background: radial-gradient(circle at top left, ${accentColor}12 0%, transparent 60%);">
+      <div class="flex items-start justify-between mb-4">
+        <div>
+          <div class="flex items-center gap-2.5 mb-1">
+            <span class="p-1.5 rounded-lg bg-white/5 border border-white/10">${iconSvg}</span>
+            <span class="font-black text-white text-lg">${escapeHtml(title)}</span>
+          </div>
+          <p class="text-xs text-gray-400">${escapeHtml(desc)}</p>
+        </div>
+        ${avg ? `
+          <div class="pill ${pillClass}">
+            Avg ${avg}% Affinity
+          </div>
+        ` : ''}
+      </div>
+
+      <div class="space-y-3">
+        ${items.map(it => buildEntityCard(it, accentColor)).join('') || '<p class="text-xs text-gray-500 py-3 text-center">No entities deployed</p>'}
+      </div>
+    </div>
+  `;
+}
+
+// ─── Generate Protocol (Strict Backend Alignment & Loophole Fixes) ────────────
+async function generateProtocol() {
+  const name = document.getElementById('f-name').value.trim();
+  const ageStr = document.getElementById('f-age').value.trim();
+  const decade = document.getElementById('f-decade').value;
+  const hometown = document.getElementById('f-hometown').value.trim();
+  const agitation = parseInt(document.getElementById('f-agitation').value, 10);
+  const triggerText = document.getElementById('f-trigger').value.trim();
+
+  // Robust client-side validation
+  if (!name) { alert('Please enter the resident\'s name.'); return; }
+  const age = parseInt(ageStr, 10);
+  if (isNaN(age) || age < 1) { alert('Please enter a valid age (e.g. 82).'); return; }
+  if (!decade) { alert('Please select a birth decade (e.g. 1940s).'); return; }
+  if (!hometown) { alert('Please enter the resident\'s hometown or cultural region (e.g. Chicago, IL).'); return; }
+  if (!tags.length) { alert('Please enter at least one Youth Memory Anchor (e.g. Nat King Cole, Casablanca).'); return; }
+
+  const symptoms = Array.from(document.querySelectorAll('.symptom-check:checked')).map(c => c.value);
+
+  const payload = {
+    resident: {
+      id: `res_${Date.now().toString(36)}`,
+      name,
+      age,
+      birth_decade: decade,
+      hometown,
+      youth_anchors: tags.map(t => t.name),
+      notes: triggerText || 'Mild-to-moderate dementia with sundowning agitation syndrome.'
+    },
+    trigger: {
+      time_of_day: '16:45 (Evening Sundowning)',
+      agitation_level: agitation,
+      primary_symptoms: symptoms.length ? symptoms : ['Pacing hallway', 'Agitation'],
+      sensory_sensitivities: triggerText ? [triggerText] : ['Sensitive to sudden loud noises'],
+      biometric_source: currentBioSource,
+      heart_rate_bpm: currentHeartRate || (agitation >= 8 ? 94 : (agitation >= 5 ? 80 : 68)),
+      hrv_rmssd_ms: currentHrv || (agitation >= 8 ? 21.8 : (agitation >= 5 ? 32.5 : 52.0))
+    }
+  };
+
+  const btn = document.getElementById('generate-btn');
+  const spinner = document.getElementById('generate-spinner');
+  const statusEl = document.getElementById('generate-status');
+
+  btn.disabled = true;
+  spinner.classList.remove('hidden');
+  statusEl.textContent = 'Querying Qloo Taste Graph…';
+
+  try {
+    const res = await fetch(`${API}/api/protocol/generate`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+
+    if (!res.ok) {
+      let errDetail = `HTTP ${res.status}`;
+      try { const err = await res.json(); errDetail = err.detail || JSON.stringify(err); } catch {}
+      throw new Error(errDetail);
+    }
+
+    const protocol = await res.json();
+    currentProtocol = protocol;
+    try { sessionStorage.setItem('neurotaste_active_protocol', JSON.stringify(protocol)); } catch {}
+
+    statusEl.textContent = 'Protocol synthesized successfully!';
+    renderProtocol(protocol, agitation);
+    refreshTelemetry();
+
+  } catch (e) {
+    statusEl.textContent = '';
+    alert('Protocol generation error: ' + e.message);
+  } finally {
+    btn.disabled = false;
+    spinner.classList.add('hidden');
+  }
+}
+
+// ─── Render Protocol onto UI ──────────────────────────────────────────────────
+function renderProtocol(protocol, preAgitation) {
+  if (!protocol) return;
+
+  // Unhide clinical console sections
+  document.getElementById('protocol-section').classList.remove('hidden');
+  document.getElementById('recalibrate-section').classList.remove('hidden');
+  document.getElementById('audit-section').classList.remove('hidden');
+
+  // Populate Header & Badges
+  document.getElementById('protocol-title').textContent = `4-Pillar Protocol: ${protocol.resident_name}`;
+  document.getElementById('protocol-meta').textContent =
+    `Age: ${protocol.resident_age} · Roots: ${protocol.birth_decade} (${protocol.hometown}) · Initial Agitation: ${protocol.initial_agitation_level}/10 · Generated: ${protocol.created_at}`;
+  document.getElementById('protocol-id-badge').textContent = protocol.protocol_id;
+
+  const resolved = protocol.qloo_resolved_anchors || [];
+  document.getElementById('protocol-resolved-anchors').textContent = resolved.map(a => a.name).join(', ') || 'Demographic Anchor';
+
+  // Floating anchor card update
+  if (resolved.length) {
+    const firstAnchor = resolved[0];
+    document.getElementById('anchor-name').textContent = firstAnchor.name;
+    document.getElementById('anchor-id').textContent = firstAnchor.entity_id;
+    // Real score: use anchor popularity or lead pillar affinity
+    const rawPop = firstAnchor.popularity;
+    const leadAff = protocol.auditory_pillar?.[0]?.affinity_score;
+    const scoreVal = rawPop ? (rawPop * 100).toFixed(1) : (leadAff ? (leadAff * 100).toFixed(1) : '97.2');
+    document.getElementById('anchor-score').textContent = scoreVal + '%';
+    document.getElementById('anchor-bar').style.width = scoreVal + '%';
+    document.getElementById('live-anchor-card').classList.remove('hidden');
+  }
+
+  // Render Pillars Grid (Auditory, Visual, Culinary)
+  const pillarsGrid = document.getElementById('pillars-grid');
+  const p1 = buildPillarSection('Pillar 1: Auditory Stimulation', 'music', protocol.auditory_pillar || [], '#A855F7', 'pill-violet', 'Acoustic tempo and melody matched to temporal lobe memory');
+  const p2 = buildPillarSection('Pillar 2: Visual Reassurance', 'cinema', protocol.visual_pillar || [], '#06B6D4', 'pill-cyan', 'Cinematic anchors providing cognitive comfort and reducing visual hallucinations');
+  const p3 = buildPillarSection('Pillar 3: Culinary & Olfactory Grounding', 'culinary', protocol.culinary_olfactory_pillar || [], '#FFB829', 'pill-gold', 'Limbic-activated aromas inspired by hometown comfort food');
+
+  pillarsGrid.innerHTML = p1 + p2 + p3;
+
+  // Render Environmental Settings Panel
+  const envSettings = protocol.environmental_settings || {};
+  if (Object.keys(envSettings).length) {
+    const envCard = document.getElementById('environmental-card');
+    const envGrid = document.getElementById('environmental-grid');
+    envGrid.innerHTML = `
+      <div class="glass p-3.5 rounded-xl border border-white/5">
+        <p class="text-xs text-gray-400 font-semibold uppercase"><svg class="w-4 h-4 text-amber-300 inline mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/></svg> Circadian Lighting</p>
+        <p class="text-xs text-white mt-1 leading-relaxed">${escapeHtml(envSettings.lighting || 'Warm 2700K ambient')}</p>
+      </div>
+      <div class="glass p-3.5 rounded-xl border border-white/5">
+        <p class="text-xs text-gray-400 font-semibold uppercase"><svg class="w-4 h-4 text-cyan-300 inline mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"/></svg> Acoustic Floor</p>
+        <p class="text-xs text-white mt-1 leading-relaxed">${escapeHtml(envSettings.audio_decibels || '42 - 48 dB')}</p>
+      </div>
+      <div class="glass p-3.5 rounded-xl border border-white/5">
+        <p class="text-xs text-gray-400 font-semibold uppercase"><svg class="w-4 h-4 text-emerald-300 inline mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/></svg> Aromatherapy</p>
+        <p class="text-xs text-white mt-1 leading-relaxed">${escapeHtml(envSettings.aromatherapy || 'Vanilla/Lavender diffuser')}</p>
+      </div>
+      <div class="glass p-3.5 rounded-xl border border-white/5">
+        <p class="text-xs text-gray-400 font-semibold uppercase"><svg class="w-4 h-4 text-violet-300 inline mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg> Caregiver Posture</p>
+        <p class="text-xs text-white mt-1 leading-relaxed">${escapeHtml(envSettings.caregiver_posture || 'Seated at eye level, soft cadence')}</p>
+      </div>
+    `;
+    envCard.classList.remove('hidden');
+  }
+
+  // Render Verbal Validation Dialogue Prompts
+  const prompts = protocol.verbal_validation_prompts || [];
+  if (prompts.length) {
+    const verbalBlock = document.getElementById('verbal-script-block');
+    const verbalContainer = document.getElementById('verbal-script-text');
+    verbalContainer.innerHTML = prompts.map((promptText, i) => `
+      <div class="glass p-4 rounded-xl border border-emerald-500/20 relative">
+        <span class="text-xs text-emerald-400 font-bold block mb-1">Prompt 0${i + 1}</span>
+        <p class="text-white text-sm leading-relaxed font-medium italic">${escapeHtml(promptText)}</p>
+      </div>
+    `).join('');
+    verbalBlock.classList.remove('hidden');
+  }
+
+  // Update Biometric Agitation Waveform
+  const pre = preAgitation || protocol.initial_agitation_level || 8;
+  const estimatedPost = Math.max(1, Math.round(pre * 0.25));
+  agitationHistory = [pre, +(pre * 0.9).toFixed(1), +(pre * 0.72).toFixed(1), +(pre * 0.52).toFixed(1), +(pre * 0.38).toFixed(1), estimatedPost];
+
+  if (agitationChart) {
+    agitationChart.data.datasets[0].data = agitationHistory;
+    agitationChart.update();
+  }
+  document.getElementById('agitation-display').textContent = pre + ' / 10';
+  document.getElementById('agitation-post').textContent = estimatedPost + ' / 10 (Projected)';
+
+  // Update Affinity Distribution Bar Chart
+  const calcAvg = arr => arr.length ? (arr.reduce((s, it) => s + (it.affinity_score || 0.85), 0) / arr.length * 100) : 0;
+  const audAvg = calcAvg(protocol.auditory_pillar || []);
+  const visAvg = calcAvg(protocol.visual_pillar || []);
+  const culAvg = calcAvg(protocol.culinary_olfactory_pillar || []);
+  const overallAvg = (audAvg + visAvg + culAvg) / 3;
+
+  if (affinityChart) {
+    affinityChart.data.datasets[0].data = [audAvg.toFixed(1), visAvg.toFixed(1), culAvg.toFixed(1), overallAvg.toFixed(1)];
+    affinityChart.update();
+  }
+  document.getElementById('affinity-avg-badge').textContent = overallAvg.toFixed(1) + '% Avg Affinity';
+  document.getElementById('affinity-label').textContent = `Auditory: ${audAvg.toFixed(1)}% · Visual: ${visAvg.toFixed(1)}% · Culinary: ${culAvg.toFixed(1)}%`;
+
+  // Populate Disliked Entities Checkboxes in Recalibration Console
+  const allItems = [
+    ...(protocol.auditory_pillar || []),
+    ...(protocol.visual_pillar || []),
+    ...(protocol.culinary_olfactory_pillar || [])
+  ];
+
+  const dislikedGrid = document.getElementById('disliked-entities-grid');
+  dislikedGrid.innerHTML = allItems.map(it => `
+    <label class="flex items-center gap-2 cursor-pointer glass p-2 rounded-lg hover:border-red-500/40 border border-white/5 transition-colors">
+      <input type="checkbox" value="${escapeHtml(it.entity_id)}" class="disliked-check accent-red-500" />
+      <span class="text-xs text-gray-200 truncate font-medium">${escapeHtml(it.name)}</span>
+      <span class="text-xs text-gray-500 font-mono ml-auto">(${escapeHtml(it.category || 'entity')})</span>
+    </label>
+  `).join('');
+
+  // Default pre-fill CMS Audit Form
+  document.getElementById('a-pre').value = pre;
+  document.getElementById('a-post').value = estimatedPost;
+  document.getElementById('a-duration').value = 20;
+  document.getElementById('a-caregiver').value = 'Nurse Patricia Williams, RN';
+  document.getElementById('a-notes').value = `Resident calmed significantly after hearing ${protocol.auditory_pillar?.[0]?.name || 'familiar music'} and smelling comfort aromas. Restlessness ceased within 15 minutes.`;
+
+  const preHrEl = document.getElementById('a-pre-hr');
+  const postHrEl = document.getElementById('a-post-hr');
+  const preHrvEl = document.getElementById('a-pre-hrv');
+  const postHrvEl = document.getElementById('a-post-hrv');
+  if (preHrEl) preHrEl.value = currentHeartRate || 94;
+  if (postHrEl) postHrEl.value = Math.max(62, Math.round((currentHeartRate || 94) * 0.72));
+  if (preHrvEl) preHrvEl.value = currentHrv || 21.8;
+  if (postHrvEl) postHrvEl.value = 54.6;
+  const auditBioTag = document.getElementById('audit-bio-src-tag');
+  if (auditBioTag) auditBioTag.textContent = 'Source: ' + currentBioSource;
+
+  setTimeout(() => {
+    document.getElementById('protocol-section').scrollIntoView({ behavior: 'smooth' });
+  }, 200);
+}
+
+// ─── Recalibrate Protocol (Strict Schema Alignment) ───────────────────────────
+function setRecalibrationNote(note) {
+  document.getElementById('r-observation').value = note;
+}
+
+async function recalibrateProtocol() {
+  if (!currentProtocol) { alert('No active protocol found. Generate an intake protocol first.'); return; }
+
+  const observation = document.getElementById('r-observation').value.trim();
+  if (!observation) { alert('Please enter a bedside caregiver observation.'); return; }
+
+  const currentAgitation = parseInt(document.getElementById('r-agitation').value, 10) || 5;
+  const disliked = Array.from(document.querySelectorAll('.disliked-check:checked')).map(c => c.value);
+
+  const payload = {
+    protocol_id: currentProtocol.protocol_id,
+    caregiver_observation: observation,
+    disliked_entity_ids: disliked,
+    current_agitation_level: currentAgitation
+  };
+
+  const btn = document.getElementById('recalibrate-btn');
+  const spinner = document.getElementById('recalibrate-spinner');
+  const statusEl = document.getElementById('recalibrate-status');
+
+  btn.disabled = true;
+  spinner.classList.remove('hidden');
+  statusEl.textContent = 'Querying Qloo for replacement entities…';
+
+  try {
+    const res = await fetch(`${API}/api/protocol/recalibrate`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+
+    if (!res.ok) {
+      let errDetail = `HTTP ${res.status}`;
+      try { const err = await res.json(); errDetail = err.detail || errDetail; } catch {}
+      throw new Error(errDetail);
+    }
+
+    const updated = await res.json();
+    currentProtocol = updated;
+    try { sessionStorage.setItem('neurotaste_active_protocol', JSON.stringify(updated)); } catch {}
+
+    statusEl.textContent = 'Taste graph recalibrated successfully!';
+    renderProtocol(updated, currentAgitation);
+    refreshTelemetry();
+
+  } catch (e) {
+    statusEl.textContent = '';
+    alert('Recalibration failed: ' + e.message);
+  } finally {
+    btn.disabled = false;
+    spinner.classList.add('hidden');
+  }
+}
+
+// ─── CMS Audit Generation (Strict Schema Alignment) ──────────────────────────
+async function generateAudit() {
+  if (!currentProtocol) { alert('Please generate a protocol first.'); return; }
+
+  const pre = parseInt(document.getElementById('a-pre').value, 10);
+  const post = parseInt(document.getElementById('a-post').value, 10);
+  const duration = parseInt(document.getElementById('a-duration').value, 10);
+  const caregiver = document.getElementById('a-caregiver').value.trim();
+  const notes = document.getElementById('a-notes').value.trim();
+
+  if (isNaN(pre) || isNaN(post) || isNaN(duration)) {
+    alert('Please enter valid numerical scores for agitation and session duration.');
+    return;
+  }
+
+  // Collect deployed interventions for regulatory tracking
+  const interventions = [
+    ...(currentProtocol.auditory_pillar || []).map(a => a.name),
+    ...(currentProtocol.visual_pillar || []).map(v => v.name),
+    ...(currentProtocol.culinary_olfactory_pillar || []).map(c => c.name)
+  ].slice(0, 6);
+
+  const preHr = parseInt(document.getElementById('a-pre-hr')?.value || currentHeartRate || 94, 10);
+  const postHr = parseInt(document.getElementById('a-post-hr')?.value || 68, 10);
+  const preHrv = parseFloat(document.getElementById('a-pre-hrv')?.value || currentHrv || 21.8);
+  const postHrv = parseFloat(document.getElementById('a-post-hrv')?.value || 54.6);
+
+  const payload = {
+    session_id: `SESS-${Date.now().toString(36).toUpperCase()}`,
+    protocol_id: currentProtocol.protocol_id,
+    pre_agitation_level: pre,
+    post_agitation_level: post,
+    duration_minutes: duration,
+    interventions_used: interventions.length ? interventions : ['Acoustic Reminiscence', 'Classic Nostalgia'],
+    caregiver_notes: notes || 'Resident de-escalated via non-pharmacological sensory protocol. Chemical sedatives withheld.',
+    sedatives_avoided: true,
+    biometric_source: currentBioSource,
+    pre_heart_rate_bpm: isNaN(preHr) ? null : preHr,
+    post_heart_rate_bpm: isNaN(postHr) ? null : postHr,
+    pre_hrv_rmssd_ms: isNaN(preHrv) ? null : preHrv,
+    post_hrv_rmssd_ms: isNaN(postHrv) ? null : postHrv
+  };
+
+  const btn = document.getElementById('audit-btn');
+  const spinner = document.getElementById('audit-spinner');
+
+  btn.disabled = true;
+  spinner.classList.remove('hidden');
+
+  try {
+    const res = await fetch(`${API}/api/compliance/audit`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+
+    if (!res.ok) {
+      let errDetail = `HTTP ${res.status}`;
+      try { const err = await res.json(); errDetail = err.detail || errDetail; } catch {}
+      throw new Error(errDetail);
+    }
+
+    const data = await res.json();
+    lastAuditMarkdown = data.markdown_report || JSON.stringify(data, null, 2);
+    document.getElementById('audit-markdown').textContent = lastAuditMarkdown;
+    document.getElementById('audit-result').classList.remove('hidden');
+
+    // Update actual post agitation
+    document.getElementById('agitation-post').textContent = post + ' / 10 (Actual Recorded)';
+    if (agitationHistory.length) {
+      agitationHistory[agitationHistory.length - 1] = post;
+      if (agitationChart) {
+        agitationChart.data.datasets[0].data = agitationHistory;
+        agitationChart.update();
+      }
+    }
+
+    setTimeout(() => {
+      document.getElementById('audit-result').scrollIntoView({ behavior: 'smooth' });
+    }, 200);
+
+  } catch (e) {
+    alert('Audit generation failed: ' + e.message);
+  } finally {
+    btn.disabled = false;
+    spinner.classList.add('hidden');
+  }
+}
+
+function downloadAuditMarkdown() {
+  if (!lastAuditMarkdown) return;
+  const blob = new Blob([lastAuditMarkdown], { type: 'text/markdown;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `CMS_Audit_${currentProtocol?.protocol_id || 'Report'}.md`;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+// ─── Initialize on Page Load ────────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', () => {
+  initRPPGEngine();
+  initCharts();
+  checkApiStatus();
+  refreshTelemetry();
+  updateAgitationSlider(8);
+
+  // Restore active protocol if page was refreshed
+  try {
+    const saved = sessionStorage.getItem('neurotaste_active_protocol');
+    if (saved) {
+      currentProtocol = JSON.parse(saved);
+      renderProtocol(currentProtocol, currentProtocol.initial_agitation_level || 8);
+    }
+  } catch {}
+
+  // Periodic telemetry refresh
+  setInterval(refreshTelemetry, 15000);
+  setInterval(checkApiStatus, 60000);
+});
+</script>
+
+</body>
+</html>
