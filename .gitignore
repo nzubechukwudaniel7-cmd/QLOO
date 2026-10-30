@@ -12,3 +12,5 @@ venv/
 # OS artifacts
 Thumbs.db
 .DS_Store
+gh.exe
+
