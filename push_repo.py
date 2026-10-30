@@ -43,6 +43,15 @@ def main():
         "app/services/agent_service.py",
         "app/static/console.html",
         "app/static/index.html",
+        "app/static/demo.html",
+        "generate_voiceovers.py",
+        "app/static/audio/scene_1.mp3",
+        "app/static/audio/scene_2.mp3",
+        "app/static/audio/scene_3.mp3",
+        "app/static/audio/scene_4.mp3",
+        "app/static/audio/scene_5.mp3",
+        "app/static/audio/scene_6.mp3",
+        "app/static/audio/neurotaste_full_voiceover.mp3",
         "app/static/js/cortex.js",
         "app/static/js/rppg.js"
     ]
@@ -54,7 +63,7 @@ def main():
             print(f"[-] Could not add {f}: {e}")
 
     try:
-        commit_id = p.commit(".", message="feat: add Prompt-Motion design system and cinematic demo video script for judges", author=b"nzubechukwudaniel7-cmd <nzube@example.com>")
+        commit_id = p.commit(".", message="feat: add Prompt-Motion 3D cinematic demo experience and ElevenLabs voiceovers", author=b"nzubechukwudaniel7-cmd <nzube@example.com>")
         print(f"[+] Committed: {commit_id}")
     except Exception as e:
         print(f"[*] Commit note: {e}")

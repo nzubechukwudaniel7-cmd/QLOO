@@ -48,6 +48,11 @@ async def serve_console():
     """Alias for clinical console."""
     return FileResponse(str(_static_dir / "console.html"))
 
+@app.get("/demo", response_class=FileResponse, include_in_schema=False)
+async def serve_demo():
+    """Serve the Prompt-Motion Powered 3D Cinematic Demo Experience with ElevenLabs Voiceover."""
+    return FileResponse(str(_static_dir / "demo.html"))
+
 # In-memory store for active session protocols and audits
 protocols_db: Dict[str, ReminiscenceProtocol] = {}
 audits_db: Dict[str, Dict[str, Any]] = {}
