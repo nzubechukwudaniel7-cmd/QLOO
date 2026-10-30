@@ -106,6 +106,27 @@
     }
     .form-input:focus { border-color: rgba(139,92,246,0.5); box-shadow: 0 0 0 3px rgba(139,92,246,0.12); }
     .form-input::placeholder { color: #64748B; }
+
+    /* High-Contrast Dropdown Menu (Fixes washed out options on Windows/Chrome) */
+    select.form-input {
+      color-scheme: dark !important;
+      background-color: #0E091E !important;
+      color: #F8FAFC !important;
+    }
+    select.form-input option {
+      background-color: #0E091E !important;
+      color: #F8FAFC !important;
+      font-size: 14px;
+      padding: 10px 14px;
+    }
+    select.form-input option:checked {
+      background-color: #8B5CF6 !important;
+      color: #FFFFFF !important;
+    }
+    select.form-input option:hover {
+      background-color: #2D1B69 !important;
+      color: #FFFFFF !important;
+    }
     .form-label { display: block; font-size: 11px; font-weight: 600; letter-spacing: 0.08em;
       text-transform: uppercase; color: #94A3B8; margin-bottom: 6px; }
 
@@ -565,13 +586,13 @@
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div>
           <label class="form-label">Birth Decade <span class="text-red-400">*</span></label>
-          <select id="f-decade" class="form-input" style="cursor:pointer">
-            <option value="">Select decade...</option>
-            <option value="1920s">1920s</option>
-            <option value="1930s">1930s</option>
-            <option value="1940s" selected>1940s</option>
-            <option value="1950s">1950s</option>
-            <option value="1960s">1960s</option>
+          <select id="f-decade" class="form-input" style="cursor:pointer; color-scheme:dark; background-color:#0E091E; color:#F8FAFC;">
+            <option value="" style="background-color:#0E091E; color:#94A3B8;">Select decade...</option>
+            <option value="1920s" style="background-color:#0E091E; color:#F8FAFC;">1920s</option>
+            <option value="1930s" style="background-color:#0E091E; color:#F8FAFC;">1930s</option>
+            <option value="1940s" style="background-color:#0E091E; color:#F8FAFC;" selected>1940s</option>
+            <option value="1950s" style="background-color:#0E091E; color:#F8FAFC;">1950s</option>
+            <option value="1960s" style="background-color:#0E091E; color:#F8FAFC;">1960s</option>
           </select>
         </div>
         <div>
