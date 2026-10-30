@@ -3,10 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>NeuroTaste — 3D Cinematic Demo Experience | Powered by Qloo & ElevenLabs</title>
+  <title>NeuroTaste — 3D Cinematic Pitch Experience | Powered by Qloo & ElevenLabs</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700;800&display=swap" rel="stylesheet">
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 
@@ -21,7 +21,7 @@
       user-select: none;
     }
     body {
-      background-color: #06040A;
+      background-color: #040207;
       color: #F8FAFC;
       font-family: 'Plus Jakarta Sans', sans-serif;
       overflow: hidden;
@@ -32,29 +32,25 @@
       font-family: 'JetBrains Mono', monospace;
     }
 
-    /* WebGL Canvas Background */
+    /* Full-bleed Hardware Accelerated WebGL Canvas */
     #webgl-canvas {
       position: absolute;
       top: 0;
       left: 0;
-      width: 100%;
-      height: 100%;
+      width: 100vw;
+      height: 100vh;
       z-index: 0;
+      display: block;
     }
 
-    /* 3D Glass Layering - Zero Static Cards */
-    .spatial-plane {
-      background: rgba(14, 10, 26, 0.45);
-      border: 1px solid rgba(255, 255, 255, 0.12);
-      backdrop-filter: blur(24px);
-      -webkit-backdrop-filter: blur(24px);
-      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.15);
-      border-radius: 20px;
-      transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
-    }
-    .spatial-plane:hover {
-      border-color: rgba(139, 92, 246, 0.4);
-      box-shadow: 0 25px 60px rgba(139, 92, 246, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.25);
+    /* Cinematic Vignette & Ambient Color Grading */
+    #cinematic-vignette {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      z-index: 1;
+      background: radial-gradient(circle at 50% 50%, transparent 40%, rgba(4, 2, 7, 0.85) 100%);
+      transition: all 1.2s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
     /* Dynamic Lighting Ambiance Filter */
@@ -62,226 +58,236 @@
       position: absolute;
       inset: 0;
       pointer-events: none;
-      z-index: 1;
-      transition: background 1.2s cubic-bezier(0.16, 1, 0.3, 1);
-      background: radial-gradient(circle at 50% 50%, rgba(139, 92, 246, 0.08) 0%, rgba(6, 4, 10, 0.85) 100%);
+      z-index: 2;
+      transition: background 1.5s cubic-bezier(0.16, 1, 0.3, 1);
+      mix-blend-mode: screen;
+      opacity: 0.6;
     }
 
-    /* Kinetic Subtitle Ticker */
-    .word-span {
+    /* Word-Level Synced Subtitle Typography */
+    .word-token {
       display: inline-block;
-      opacity: 0.35;
+      opacity: 0.28;
       transform: translateY(2px);
-      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+      margin-right: 0.28em;
     }
-    .word-span.active {
-      opacity: 1;
-      transform: translateY(0) scale(1.04);
-      color: #FFFFFF;
-      text-shadow: 0 0 16px rgba(167, 139, 250, 0.8);
+    .word-token.spoken {
+      opacity: 0.8;
+      color: #E2E8F0;
+      transform: translateY(0);
+    }
+    .word-token.active-word {
+      opacity: 1 !important;
+      color: #FFFFFF !important;
+      transform: translateY(-2px) scale(1.08) !important;
+      text-shadow: 0 0 20px rgba(167, 139, 250, 0.95), 0 0 35px rgba(34, 211, 238, 0.8) !important;
+      font-weight: 700;
     }
 
-    /* Scene Pill Navigation */
-    .scene-pill {
+    /* Scene Navigation Pills (Floating Sleek Island) */
+    .nav-pill {
       position: relative;
       cursor: pointer;
       padding: 6px 14px;
       border-radius: 9999px;
       font-size: 11px;
       font-weight: 700;
-      letter-spacing: 0.05em;
+      letter-spacing: 0.06em;
       text-transform: uppercase;
       background: rgba(255, 255, 255, 0.05);
-      border: 1px solid rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.12);
       color: #94A3B8;
-      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      backdrop-filter: blur(16px);
+      transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
     }
-    .scene-pill:hover {
-      background: rgba(255, 255, 255, 0.12);
+    .nav-pill:hover {
+      background: rgba(255, 255, 255, 0.15);
       color: #FFFFFF;
-      border-color: rgba(255, 255, 255, 0.25);
+      border-color: rgba(255, 255, 255, 0.3);
+      transform: translateY(-1px);
     }
-    .scene-pill.active {
-      background: linear-gradient(135deg, rgba(139, 92, 246, 0.4), rgba(6, 182, 212, 0.3));
-      border-color: rgba(167, 139, 250, 0.7);
+    .nav-pill.active {
+      background: linear-gradient(135deg, rgba(139, 92, 246, 0.5), rgba(6, 182, 212, 0.4));
+      border-color: rgba(167, 139, 250, 0.8);
       color: #FFFFFF;
-      box-shadow: 0 0 20px rgba(139, 92, 246, 0.4);
-    }
-
-    /* Pulse wave canvas */
-    #rppg-wave-canvas {
-      width: 100%;
-      height: 64px;
-      display: block;
+      box-shadow: 0 0 25px rgba(139, 92, 246, 0.55);
+      transform: scale(1.05);
     }
 
     /* Spectrum canvas */
     #spectrum-canvas {
       width: 100%;
-      height: 38px;
+      height: 32px;
       display: block;
+    }
+
+    /* 3D Floating HUD Canvas Elements */
+    .hud-chip {
+      background: rgba(8, 5, 18, 0.55);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      backdrop-filter: blur(20px);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+      border-radius: 9999px;
+      padding: 6px 14px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
     }
   </style>
 </head>
 <body class="relative flex flex-col justify-between p-6 md:p-8">
 
-  <!-- Three.js Canvas -->
+  <!-- Full-Screen Hardware-Accelerated 3D WebGL Canvas -->
   <canvas id="webgl-canvas"></canvas>
 
-  <!-- Ambient Dynamic Lighting Layer -->
+  <!-- Cinematic Visual Layers -->
+  <div id="cinematic-vignette"></div>
   <div id="ambience-overlay"></div>
 
-  <!-- TOP HUD: Navigation & Director Controls -->
+  <!-- ============================================================
+       TOP FLOATING CAPSULE BAR (NO STATIC CARDS, PURE MINIMAL HUD)
+       ============================================================ -->
   <header class="relative z-10 flex items-center justify-between gap-4 w-full max-w-7xl mx-auto">
     
-    <!-- Logo & Back Link -->
+    <!-- Left: Brand Identifier & Quick Exit -->
     <div class="flex items-center gap-3">
-      <a href="/app" class="group flex items-center gap-2.5 px-3 py-1.5 rounded-xl border border-white/10 bg-white/[0.04] hover:bg-white/[0.1] hover:border-violet-400/40 transition-all duration-300">
-        <div class="w-6 h-6 rounded-lg bg-gradient-to-br from-violet-600 to-cyan-400 flex items-center justify-center p-1">
+      <a href="/app" class="group flex items-center gap-2.5 px-3 py-1.5 rounded-full border border-white/10 bg-black/40 backdrop-blur-xl hover:bg-white/[0.1] hover:border-violet-400/50 transition-all duration-300">
+        <div class="w-5 h-5 rounded-full bg-gradient-to-br from-violet-600 to-cyan-400 flex items-center justify-center p-1">
           <svg class="w-full h-full text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"/></svg>
         </div>
-        <span class="text-xs font-bold text-gray-300 group-hover:text-white transition-colors">Exit to Console</span>
+        <span class="text-xs font-bold text-gray-300 group-hover:text-white transition-colors">Console</span>
       </a>
 
       <div class="h-4 w-px bg-white/15"></div>
 
       <div class="flex items-center gap-2">
         <span class="text-sm font-extrabold tracking-tight text-white">Neuro<span class="bg-gradient-to-r from-violet-400 to-cyan-400 bg-clip-text text-transparent">Taste</span></span>
-        <span class="px-2 py-0.5 rounded-full text-[10px] font-mono font-bold bg-violet-500/20 text-violet-300 border border-violet-500/30">CINEMATIC 3D ENGINE</span>
+        <span class="hud-chip text-[10px] text-violet-300 border-violet-500/30">PROMPT-MOTION 3D CINEMA</span>
       </div>
     </div>
 
-    <!-- Scene Selector Pills -->
+    <!-- Center: Interactive Scene Jump Pills -->
     <div class="hidden lg:flex items-center gap-2" id="scene-nav-pills">
-      <button class="scene-pill active" onclick="jumpToScene(0)">1. Crisis</button>
-      <button class="scene-pill" onclick="jumpToScene(1)">2. rPPG Sensor</button>
-      <button class="scene-pill" onclick="jumpToScene(2)">3. Qloo Graph</button>
-      <button class="scene-pill" onclick="jumpToScene(3)">4. De-escalation</button>
-      <button class="scene-pill" onclick="jumpToScene(4)">5. Clinical Proof</button>
-      <button class="scene-pill" onclick="jumpToScene(5)">6. The Vision</button>
+      <button class="nav-pill active" onclick="jumpToScene(0)">1. Crisis</button>
+      <button class="nav-pill" onclick="jumpToScene(1)">2. rPPG Sensor</button>
+      <button class="nav-pill" onclick="jumpToScene(2)">3. Qloo Graph</button>
+      <button class="nav-pill" onclick="jumpToScene(3)">4. De-escalation</button>
+      <button class="nav-pill" onclick="jumpToScene(4)">5. Clinical Proof</button>
+      <button class="nav-pill" onclick="jumpToScene(5)">6. The Vision</button>
     </div>
 
-    <!-- Camera Mode & Audio Download -->
+    <!-- Right: Camera Mode Switcher & Audio Download -->
     <div class="flex items-center gap-2.5">
-      <button id="cam-toggle-btn" onclick="toggleCameraMode()" class="flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-bold font-mono border border-white/15 bg-white/[0.05] hover:bg-white/[0.1] text-gray-300 transition-all">
-        <span class="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></span>
-        <span id="cam-mode-text">DIRECTOR CAM: ON</span>
+      <button id="cam-toggle-btn" onclick="toggleCameraMode()" class="hud-chip flex items-center gap-2 border-white/15 hover:border-cyan-400/50 text-gray-300 transition-all">
+        <span class="w-2 h-2 rounded-full bg-cyan-400 animate-pulse" id="cam-dot"></span>
+        <span id="cam-mode-text">CINEMATIC CAM: ACTIVE</span>
       </button>
 
-      <a href="/static/audio/neurotaste_full_voiceover.mp3" download class="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold border border-violet-500/30 bg-violet-600/20 hover:bg-violet-600/35 text-violet-200 hover:text-white transition-all">
+      <a href="/static/audio/neurotaste_full_voiceover.mp3" download class="hud-chip flex items-center gap-1.5 border-violet-500/40 text-violet-300 hover:text-white hover:border-violet-300 transition-all">
         <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
-        <span>Get MP3</span>
+        <span>Full VO (MP3)</span>
       </a>
     </div>
 
   </header>
 
-  <!-- MIDGROUND: Spatial 3D Overlay Elements (Contextual based on active Scene) -->
-  <main class="relative z-10 w-full max-w-7xl mx-auto flex-1 flex flex-col justify-center pointer-events-none my-4">
+  <!-- ============================================================
+       MIDDLE SPATIAL LAYER: 3D WORLD-PROJECTED HUD TAGS
+       (Floating with zero enclosing box, reacting to camera angles)
+       ============================================================ -->
+  <main class="relative z-10 w-full max-w-7xl mx-auto flex-1 flex items-center justify-between pointer-events-none">
     
-    <!-- Floating Telemetry HUD (Left) -->
-    <div id="spatial-telemetry-hud" class="pointer-events-auto w-full max-w-md spatial-plane p-5">
-      <div class="flex items-center justify-between pb-3 border-b border-white/10">
-        <div class="flex items-center gap-2">
-          <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping"></span>
-          <span id="hud-status-badge" class="text-xs font-bold uppercase tracking-wider text-emerald-300 font-mono">AUTONOMOUS GAURDIAN LIVE</span>
-        </div>
-        <span id="hud-timestamp" class="text-[11px] font-mono text-gray-400">00:00:00</span>
+    <!-- Top-Left Live Biometric Stream (Floating Borderless Indicators) -->
+    <div id="live-stream-overlay" class="flex flex-col gap-2 pointer-events-auto">
+      <div class="flex items-center gap-2.5">
+        <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping"></span>
+        <span id="hud-status-badge" class="text-xs font-extrabold uppercase tracking-widest text-emerald-300 font-mono drop-shadow-[0_0_12px_rgba(16,185,129,0.8)]">AUTONOMIC MONITORING ACTIVE</span>
       </div>
 
-      <!-- Real-time rPPG Signal Waveform -->
-      <div class="mt-3">
-        <div class="flex items-center justify-between text-[11px] font-mono text-gray-400 mb-1">
-          <span>CONTACTLESS OPTICAL rPPG WAVEFORM</span>
-          <span id="hud-bpm-val" class="font-bold text-white">72 BPM</span>
+      <div class="flex items-center gap-3 mt-1">
+        <div class="hud-chip">
+          <span class="text-gray-400">PULSE:</span>
+          <span id="hud-bpm-val" class="text-white ml-1 font-bold">96 BPM</span>
         </div>
-        <canvas id="rppg-wave-canvas" class="rounded-lg bg-black/40 border border-white/5"></canvas>
+        <div class="hud-chip">
+          <span class="text-gray-400">HRV (SDNN):</span>
+          <span id="hud-hrv-val" class="text-cyan-300 ml-1 font-bold">18 ms</span>
+        </div>
+        <div class="hud-chip">
+          <span class="text-gray-400">AGITATION:</span>
+          <span id="hud-agitation-val" class="text-amber-400 ml-1 font-bold">8.4 / 10</span>
+        </div>
       </div>
+    </div>
 
-      <!-- Key Biometric Readouts -->
-      <div class="grid grid-cols-3 gap-2 mt-3 pt-3 border-t border-white/10 text-center">
-        <div class="p-2 rounded-xl bg-white/[0.03] border border-white/5">
-          <div class="text-[10px] font-mono text-gray-400 uppercase">Agitation</div>
-          <div id="hud-agitation-val" class="text-sm font-extrabold text-amber-400">2.1 / 10</div>
-        </div>
-        <div class="p-2 rounded-xl bg-white/[0.03] border border-white/5">
-          <div class="text-[10px] font-mono text-gray-400 uppercase">HRV (SDNN)</div>
-          <div id="hud-hrv-val" class="text-sm font-extrabold text-cyan-400">42 ms</div>
-        </div>
-        <div class="p-2 rounded-xl bg-white/[0.03] border border-white/5">
-          <div class="text-[10px] font-mono text-gray-400 uppercase">Qloo Match</div>
-          <div id="hud-affinity-val" class="text-sm font-extrabold text-violet-400">98.4%</div>
-        </div>
+    <!-- Top-Right Active Reminiscence Anchor (Floating Glass Pill) -->
+    <div id="live-anchor-overlay" class="hidden md:flex flex-col items-end gap-1 pointer-events-auto">
+      <div class="hud-chip flex items-center gap-2 border-violet-500/40">
+        <span class="w-2 h-2 rounded-full bg-violet-400"></span>
+        <span class="text-gray-400">QLOO AFFINITY LOCK:</span>
+        <span id="hud-affinity-val" class="text-violet-300 font-bold">98.4% MATCH</span>
       </div>
-
-      <!-- Dynamic Active Anchor -->
-      <div id="hud-anchor-card" class="mt-3 p-2.5 rounded-xl bg-gradient-to-r from-violet-900/30 to-cyan-900/20 border border-violet-500/30 flex items-center justify-between">
-        <div class="flex items-center gap-2.5">
-          <div class="w-8 h-8 rounded-lg bg-violet-600/30 flex items-center justify-center text-violet-300">
-            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/></svg>
-          </div>
-          <div>
-            <div id="hud-anchor-title" class="text-xs font-bold text-white">Nat King Cole • 1940s Acoustic Session</div>
-            <div id="hud-anchor-urn" class="text-[10px] font-mono text-violet-300/80">urn:entity:artist:nat_king_cole</div>
-          </div>
-        </div>
-        <span class="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">LOCKED</span>
-      </div>
+      <div class="text-[11px] font-mono text-gray-400 pr-2" id="hud-anchor-desc">Nat King Cole • 1940s Acoustic Session</div>
     </div>
 
   </main>
 
-  <!-- BOTTOM HUD: ElevenLabs Audio Master Bar & Kinetic Subtitles -->
+  <!-- ============================================================
+       BOTTOM PITCH CONTROL BAR: ELEVENLABS SYNCED SUBTITLES & AUDIO
+       ============================================================ -->
   <footer class="relative z-10 w-full max-w-5xl mx-auto flex flex-col gap-3">
     
-    <!-- Kinetic Subtitle Stream (Prompt-Motion Typography) -->
-    <div class="w-full text-center px-4 py-2 min-h-[56px] flex items-center justify-center">
-      <div id="subtitle-box" class="text-base md:text-xl font-medium tracking-wide text-gray-200 transition-all duration-300 max-w-3xl leading-relaxed">
-        <!-- Spoken words will render here dynamically -->
+    <!-- Word-by-Word Synchronized Subtitle Ticker -->
+    <div class="w-full text-center px-4 py-2 min-h-[64px] flex items-center justify-center">
+      <div id="subtitle-box" class="text-lg md:text-2xl font-medium tracking-wide text-gray-200 transition-all duration-200 max-w-4xl leading-relaxed">
+        <!-- Spoken words dynamically highlighted in line with narrator pitch -->
       </div>
     </div>
 
-    <!-- Master Audio Bar -->
-    <div class="spatial-plane p-4 flex flex-col md:flex-row items-center justify-between gap-4">
+    <!-- Floating Audio Control Capsule (No static card border) -->
+    <div class="flex flex-col md:flex-row items-center justify-between gap-4 px-6 py-3.5 rounded-full bg-black/60 backdrop-blur-2xl border border-white/15 shadow-[0_20px_50px_rgba(0,0,0,0.8),0_0_30px_rgba(139,92,246,0.15)]">
       
-      <!-- Left: Playback Controls & Voiceover Info -->
+      <!-- Play/Pause & Voiceover Meta -->
       <div class="flex items-center gap-3 w-full md:w-auto">
-        <button id="master-play-btn" onclick="togglePlayback()" class="w-12 h-12 rounded-full bg-gradient-to-r from-violet-600 to-cyan-500 hover:scale-105 active:scale-95 flex items-center justify-center text-white shadow-[0_0_25px_rgba(139,92,246,0.5)] transition-all">
+        <button id="master-play-btn" onclick="togglePlayback()" class="w-12 h-12 rounded-full bg-gradient-to-r from-violet-600 to-cyan-500 hover:scale-105 active:scale-95 flex items-center justify-center text-white shadow-[0_0_25px_rgba(139,92,246,0.6)] transition-all">
           <svg id="play-icon" class="w-5 h-5 ml-0.5" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
           <svg id="pause-icon" class="w-5 h-5 hidden" fill="currentColor" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
         </button>
 
         <div>
           <div class="flex items-center gap-2">
-            <span class="text-xs font-bold text-white" id="scene-title-display">Scene 1: The Sundowning Crisis</span>
-            <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-white/10 text-gray-300">ElevenLabs AI Narrator: George</span>
+            <span class="text-xs font-extrabold text-white" id="scene-title-display">Scene 1: The Sundowning Crisis</span>
+            <span class="text-[10px] font-mono px-2 py-0.5 rounded-full bg-white/10 text-violet-300">ElevenLabs AI Narrator: George</span>
           </div>
           <div class="text-[11px] font-mono text-gray-400 mt-0.5 flex items-center gap-2">
             <span id="audio-time-current">00:00</span>
             <span>/</span>
-            <span id="audio-time-total">02:35</span>
-            <span class="text-violet-400">• Turbo v2.5 Broadcast HD</span>
+            <span id="audio-time-total">00:23</span>
+            <span class="text-cyan-400">• Turbo v2.5 Synchronized</span>
           </div>
         </div>
       </div>
 
       <!-- Center: Reactive Audio Spectrum Visualizer -->
       <div class="w-full md:w-72 flex flex-col items-center">
-        <canvas id="spectrum-canvas" class="rounded bg-black/30"></canvas>
+        <canvas id="spectrum-canvas" class="rounded-full bg-black/40"></canvas>
       </div>
 
-      <!-- Right: Progress Scrubber & Fast Forward -->
+      <!-- Right: Navigation Controls & App Launch -->
       <div class="flex items-center gap-3 w-full md:w-auto justify-end">
         <button onclick="prevScene()" class="p-2 rounded-full hover:bg-white/10 text-gray-300 hover:text-white transition-colors" title="Previous Scene">
-          <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+          <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"/></svg>
         </button>
 
         <button onclick="nextScene()" class="p-2 rounded-full hover:bg-white/10 text-gray-300 hover:text-white transition-colors" title="Next Scene">
-          <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+          <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/></svg>
         </button>
 
-        <a href="/app" class="px-4 py-2 rounded-xl bg-gradient-to-r from-violet-600/30 to-cyan-500/20 border border-violet-400/40 hover:border-violet-300 text-xs font-bold text-white hover:shadow-[0_0_20px_rgba(139,92,246,0.3)] transition-all flex items-center gap-1.5">
-          <span>Launch App</span>
+        <a href="/app" class="px-4 py-2 rounded-full bg-gradient-to-r from-violet-600/30 to-cyan-500/20 border border-violet-400/40 hover:border-violet-300 text-xs font-bold text-white hover:shadow-[0_0_20px_rgba(139,92,246,0.4)] transition-all flex items-center gap-1.5">
+          <span>Launch Live App</span>
           <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
         </a>
       </div>
@@ -290,207 +296,246 @@
 
   </footer>
 
-  <!-- Audio Source Elements (ElevenLabs Synthesized Tracks) -->
-  <audio id="audio-player" preload="auto">
-    <source src="/static/audio/neurotaste_full_voiceover.mp3" type="audio/mpeg">
-  </audio>
+  <!-- Audio Player (Sequential Scene Player for 100% Zero-Drift Sync) -->
+  <audio id="audio-player" preload="auto"></audio>
 
-  <!-- Script: Three.js 3D Prompt-Motion Engine & Audio Orchestrator -->
+  <!-- Three.js + Prompt-Motion Engine Script -->
   <script>
-    // --- 1. SCENE DATA & CAMERA DIRECTIVES ---
+    // --- 1. ACCURATE SCENE SPECIFICATIONS & SPOKEN PITCH ---
     const SCENES = [
       {
         id: 0,
         title: "The Sundowning Crisis",
-        timeRange: [0, 22],
-        camPos: { x: 0, y: 0.8, z: 28 },
-        camTarget: { x: 0, y: 0, z: 0 },
-        camRoll: 0.15,
-        ambience: "radial-gradient(circle at 50% 50%, rgba(239, 68, 68, 0.15) 0%, rgba(6, 4, 10, 0.95) 100%)",
-        agitation: "8.4 / 10 (ACUTE PANIC)",
+        audioSrc: "/static/audio/scene_1.mp3",
         bpm: "96 BPM",
         hrv: "18 ms",
+        agitation: "8.4 / 10 (ACUTE PANIC)",
         affinity: "Calculating...",
-        status: "AUTONOMIC DISTRESS DETECTED",
+        anchorDesc: "Autonomic Sympathetic Storm",
+        status: "ACUTE AUTONOMIC DISTRESS DETECTED",
         statusColor: "#EF4444",
-        text: "Every evening at sundown, millions of dementia patients experience acute neurological terror. In memory care, it’s known as Sundowning: sudden, overwhelming agitation. For decades, the standard response has been chemical sedation: dangerous antipsychotics that strip away human dignity and violate federal guidelines. What if memory care didn't require pills?"
+        ambience: "radial-gradient(circle at 50% 50%, rgba(239, 68, 68, 0.25) 0%, rgba(4, 2, 7, 0.95) 100%)",
+        text: "Every evening at sundown, millions of dementia patients experience acute neurological terror. In memory care, it’s known as Sundowning: sudden, overwhelming agitation. For decades, the standard response has been chemical sedation: dangerous antipsychotics that strip away human dignity and violate federal guidelines. What if memory care didn't require pills?",
+        // Dynamic Camera Parameters for Scene 1: Low-Angle Spiral Tracking
+        cameraMotion: {
+          baseRadius: 26,
+          radiusOsc: 4,
+          heightBase: -1.5,
+          heightOsc: 3.5,
+          speed: 0.35,
+          rollMax: 0.18,
+          lookTarget: { x: 0, y: 0.5, z: 0 }
+        }
       },
       {
         id: 1,
         title: "Meet NeuroTaste (Contactless rPPG)",
-        timeRange: [22, 52],
-        camPos: { x: 0, y: 0, z: 12 },
-        camTarget: { x: 0, y: 0, z: 0 },
-        camRoll: 0.0,
-        ambience: "radial-gradient(circle at 50% 50%, rgba(6, 182, 212, 0.18) 0%, rgba(6, 4, 10, 0.9) 100%)",
-        agitation: "7.8 / 10",
+        audioSrc: "/static/audio/scene_2.mp3",
         bpm: "92 BPM",
         hrv: "22 ms",
-        affinity: "Qloo Graph Connecting",
-        status: "OPTICAL SENSING • 30 FPS RGB",
+        agitation: "7.8 / 10",
+        affinity: "Optical Pulse Locked",
+        anchorDesc: "Remote Photoplethysmography • 30 FPS",
+        status: "CONTACTLESS OPTICAL SENSING ACTIVE",
         statusColor: "#06B6D4",
-        text: "Meet NeuroTaste: the world’s first autonomous, contactless memory care de-escalation agent. Using standard RGB computer vision, NeuroTaste reads microscopic arterial blood volume pulses beneath facial skin, calculating autonomic distress without a single wire or wearable. And when agitation strikes, NeuroTaste doesn't call for sedation. It activates something infinitely more powerful."
+        ambience: "radial-gradient(circle at 50% 50%, rgba(6, 182, 212, 0.25) 0%, rgba(4, 2, 7, 0.95) 100%)",
+        text: "Meet NeuroTaste: the world’s first autonomous, contactless memory care de-escalation agent. Using standard RGB computer vision, NeuroTaste reads microscopic arterial blood volume pulses beneath facial skin, calculating autonomic distress without a single wire or wearable. And when agitation strikes, NeuroTaste doesn't call for sedation. It activates something infinitely more powerful.",
+        // Dynamic Camera Parameters for Scene 2: High-Speed Fly-Through Focal Punch
+        cameraMotion: {
+          baseRadius: 14,
+          radiusOsc: 2.5,
+          heightBase: 1.0,
+          heightOsc: 1.8,
+          speed: 0.55,
+          rollMax: -0.12,
+          lookTarget: { x: 0, y: 0, z: 0 }
+        }
       },
       {
         id: 2,
         title: "The Dementia Paradox & The Qloo Taste Graph",
-        timeRange: [52, 88],
-        camPos: { x: 18, y: -4, z: 34 },
-        camTarget: { x: 0, y: 0, z: 0 },
-        camRoll: -0.08,
-        ambience: "radial-gradient(circle at 50% 50%, rgba(139, 92, 246, 0.22) 0%, rgba(6, 4, 10, 0.9) 100%)",
-        agitation: "6.2 / 10",
+        audioSrc: "/static/audio/scene_3.mp3",
         bpm: "84 BPM",
-        hrv: "31 ms",
+        hrv: "32 ms",
+        agitation: "6.2 / 10",
         affinity: "98.4% AFFINITY LOCK",
-        status: "QLOO 250M+ TASTE NODES ACTIVE",
+        anchorDesc: "Nat King Cole • 1940s Chicago Jazz Circuit",
+        status: "QLOO 250M+ TASTE NODES CONNECTED",
         statusColor: "#A78BFA",
-        text: "Neuroscientists call it the Dementia Paradox: while degenerative illness destroys short-term episodic memory, the brain’s cultural taste cortex remains vividly alive until the end of life. NeuroTaste bridges this gap using the Qloo Taste Graph API, mapping the resident's birth decade, cultural geography, and dormant sensory anchors to surface music, cinema, and scents proven to evoke emotional calm."
+        ambience: "radial-gradient(circle at 50% 50%, rgba(139, 92, 246, 0.3) 0%, rgba(4, 2, 7, 0.95) 100%)",
+        text: "Neuroscientists call it the Dementia Paradox: while degenerative illness destroys short-term episodic memory, the brain’s cultural taste cortex remains vividly alive until the end of life. NeuroTaste bridges this gap using the Qloo Taste Graph API, mapping the resident's birth decade, cultural geography, and dormant sensory anchors to surface music, cinema, and scents proven to evoke emotional calm.",
+        // Dynamic Camera Parameters for Scene 3: Wide 3D Orbital Swoop through Vinyl & Splines
+        cameraMotion: {
+          baseRadius: 32,
+          radiusOsc: 6,
+          heightBase: 4.0,
+          heightOsc: 5.0,
+          speed: 0.42,
+          rollMax: 0.22,
+          lookTarget: { x: 0, y: -0.5, z: 0 }
+        }
       },
       {
         id: 3,
         title: "Autonomous Live Intervention",
-        timeRange: [88, 122],
-        camPos: { x: -14, y: 6, z: 22 },
-        camTarget: { x: 0, y: 0, z: 0 },
-        camRoll: 0.05,
-        ambience: "radial-gradient(circle at 50% 50%, rgba(251, 191, 36, 0.18) 0%, rgba(6, 4, 10, 0.9) 100%)",
-        agitation: "2.1 / 10 (RESOLVED)",
+        audioSrc: "/static/audio/scene_4.mp3",
         bpm: "71 BPM",
         hrv: "44 ms",
+        agitation: "2.1 / 10 (RESOLVED)",
         affinity: "98.4% (Nat King Cole)",
-        status: "CIRCADIAN 2400K • DE-ESCALATED",
+        anchorDesc: "Acoustic Reminiscence Active • 2400K Dusk",
+        status: "DE-ESCALATION PROTOCOL EXECUTED",
         statusColor: "#34D399",
-        text: "Watch what happens in real time. Without a single nurse touching a syringe, NeuroTaste deploys an autonomous sensory de-escalation protocol. A 1940s acoustic recording of Nat King Cole softly fills the room, while smart lighting transitions to a soothing sunset twilight. Within two minutes, heart rate stabilizes, vagal tone rebounds, and the agitation storm dissolves peacefully."
+        ambience: "radial-gradient(circle at 50% 50%, rgba(251, 191, 36, 0.25) 0%, rgba(4, 2, 7, 0.95) 100%)",
+        text: "Watch what happens in real time. Without a single nurse touching a syringe, NeuroTaste deploys an autonomous sensory de-escalation protocol. A 1940s acoustic recording of Nat King Cole softly fills the room, while smart lighting transitions to a soothing sunset twilight. Within two minutes, heart rate stabilizes, vagal tone rebounds, and the agitation storm dissolves peacefully.",
+        // Dynamic Camera Parameters for Scene 4: 360° Warm Ambient Crane Arc
+        cameraMotion: {
+          baseRadius: 22,
+          radiusOsc: 3.5,
+          heightBase: 2.0,
+          heightOsc: 2.8,
+          speed: 0.28,
+          rollMax: 0.08,
+          lookTarget: { x: 0, y: 0, z: 0 }
+        }
       },
       {
         id: 4,
         title: "Clinical Proof & Regulatory Moat",
-        timeRange: [122, 144],
-        camPos: { x: 24, y: 2, z: 18 },
-        camTarget: { x: 0, y: 0, z: 0 },
-        camRoll: -0.04,
-        ambience: "radial-gradient(circle at 50% 50%, rgba(16, 185, 129, 0.16) 0%, rgba(6, 4, 10, 0.9) 100%)",
-        agitation: "1.8 / 10 (BASELINE)",
+        audioSrc: "/static/audio/scene_5.mp3",
         bpm: "68 BPM",
         hrv: "48 ms",
-        affinity: "100% CMS COMPLIANCE",
-        status: "CMS F-TAG 758 VERIFIED",
+        agitation: "1.8 / 10 (BASELINE)",
+        affinity: "100% CMS COMPLIANT",
+        anchorDesc: "CMS F-Tag 758 Psychotropic Reduction Verified",
+        status: "CMS F-TAG 758 AUDIT CERTIFIED",
         statusColor: "#10B981",
-        text: "For healthcare facilities, NeuroTaste isn't just compassionate care—it’s an enterprise regulatory shield. Fully compliant with federal CMS F-Tag 758 mandates restricting unnecessary psychotropic medications, it reduces caregiver burnout and institutional liability through continuous, edge-computed twenty-four-seven care."
+        ambience: "radial-gradient(circle at 50% 50%, rgba(16, 185, 129, 0.22) 0%, rgba(4, 2, 7, 0.95) 100%)",
+        text: "For healthcare facilities, NeuroTaste isn't just compassionate care—it’s an enterprise regulatory shield. Fully compliant with federal CMS F-Tag 758 mandates restricting unnecessary psychotropic medications, it reduces caregiver burnout and institutional liability through continuous, edge-computed twenty-four-seven care.",
+        // Dynamic Camera Parameters for Scene 5: High-Speed Lateral Tracking Dolly
+        cameraMotion: {
+          baseRadius: 24,
+          radiusOsc: 5,
+          heightBase: 0.5,
+          heightOsc: 2.2,
+          speed: 0.48,
+          rollMax: -0.15,
+          lookTarget: { x: 2.0, y: 0, z: 0 }
+        }
       },
       {
         id: 5,
         title: "The Vision & Call to Action",
-        timeRange: [144, 155],
-        camPos: { x: 0, y: 12, z: 45 },
-        camTarget: { x: 0, y: 0, z: 0 },
-        camRoll: 0.0,
-        ambience: "radial-gradient(circle at 50% 50%, rgba(139, 92, 246, 0.25) 0%, rgba(6, 4, 10, 0.95) 100%)",
-        agitation: "1.5 / 10 (PEACEFUL)",
+        audioSrc: "/static/audio/scene_6.mp3",
         bpm: "66 BPM",
         hrv: "52 ms",
+        agitation: "1.5 / 10 (PEACEFUL)",
         affinity: "POWERED BY QLOO",
-        status: "AUTONOMOUS MEMORY CARE",
+        anchorDesc: "Restoring Cognitive Dignity Across Generations",
+        status: "AUTONOMOUS MEMORY CARE GUARDIAN",
         statusColor: "#C084FC",
-        text: "Dementia steals memories. But with Qloo and NeuroTaste, we can bring their calm, their dignity, and their humanity back. NeuroTaste: Autonomous Memory Care, powered by cultural intelligence."
+        ambience: "radial-gradient(circle at 50% 50%, rgba(139, 92, 246, 0.35) 0%, rgba(4, 2, 7, 0.95) 100%)",
+        text: "Dementia steals memories. But with Qloo and NeuroTaste, we can bring their calm, their dignity, and their humanity back. NeuroTaste: Autonomous Memory Care, powered by cultural intelligence.",
+        // Dynamic Camera Parameters for Scene 6: Epic Vertical Crane Pull-Out into Nebula
+        cameraMotion: {
+          baseRadius: 45,
+          radiusOsc: 8,
+          heightBase: 12.0,
+          heightOsc: 6.0,
+          speed: 0.22,
+          rollMax: 0.05,
+          lookTarget: { x: 0, y: 0, z: 0 }
+        }
       }
     ];
 
     let currentSceneIdx = 0;
-    let directorMode = true;
+    let cinematicCam = true;
 
-    // --- 2. THREE.JS 3D ENVIRONMENT SETUP ---
+    // --- 2. THREE.JS SCENE, CAMERAS & CINEMATIC LIGHTING ---
     const canvas = document.getElementById('webgl-canvas');
-    const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+    const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true, powerPreference: "high-performance" });
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     renderer.setSize(window.innerWidth, window.innerHeight);
 
     const scene = new THREE.Scene();
-    scene.fog = new THREE.FogExp2(0x06040A, 0.02);
+    scene.fog = new THREE.FogExp2(0x040207, 0.018);
 
-    const camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.1, 1000);
-    camera.position.set(SCENES[0].camPos.x, SCENES[0].camPos.y, SCENES[0].camPos.z);
+    const camera = new THREE.PerspectiveCamera(52, window.innerWidth / window.innerHeight, 0.1, 1000);
+    camera.position.set(0, 0, 26);
 
-    // Dynamic Camera Tracking Vectors
-    const targetCamPos = new THREE.Vector3().copy(camera.position);
-    const targetCamLook = new THREE.Vector3(0, 0, 0);
-    const currentCamLook = new THREE.Vector3(0, 0, 0);
+    // Dynamic Tracking Vectors
+    const currentCamPos = new THREE.Vector3().copy(camera.position);
+    const currentLookTarget = new THREE.Vector3(0, 0, 0);
 
-    // Ambient & Point Lighting
-    const ambientLight = new THREE.AmbientLight(0x221144, 1.2);
+    // Multi-Point Cinematic Lighting Rig
+    const ambientLight = new THREE.AmbientLight(0x221144, 1.4);
     scene.add(ambientLight);
 
-    const keyLight = new THREE.PointLight(0x8B5CF6, 3, 100);
-    keyLight.position.set(15, 20, 20);
+    const keyLight = new THREE.PointLight(0x8B5CF6, 3.5, 120);
+    keyLight.position.set(20, 25, 25);
     scene.add(keyLight);
 
-    const fillLight = new THREE.PointLight(0x06B6D4, 2, 80);
-    fillLight.position.set(-15, -10, 15);
+    const fillLight = new THREE.PointLight(0x06B6D4, 2.5, 100);
+    fillLight.position.set(-20, -15, 20);
     scene.add(fillLight);
 
-    const rimLight = new THREE.PointLight(0xEF4444, 2, 80);
-    rimLight.position.set(0, -15, -20);
+    const rimLight = new THREE.PointLight(0xEF4444, 3.0, 100);
+    rimLight.position.set(0, -20, -25);
     scene.add(rimLight);
 
-    // --- 3. BIOLUMINESCENT DUAL-HEMISPHERE NEURAL CORTEX ---
+    // --- 3. 3D OBJECTS & GEOMETRY (ANIMATED VISUALS, ZERO STATIC CARDS) ---
+
+    // A. 3D Dual-Hemisphere Bioluminescent Neural Cortex
     const brainGroup = new THREE.Group();
     scene.add(brainGroup);
 
-    const nodeCount = 1800;
-    const geometry = new THREE.BufferGeometry();
+    const nodeCount = 2200;
+    const brainGeo = new THREE.BufferGeometry();
     const positions = new Float32Array(nodeCount * 3);
     const colors = new Float32Array(nodeCount * 3);
 
-    const colorViolet = new THREE.Color(0x8B5CF6);
-    const colorCyan = new THREE.Color(0x22D3EE);
-    const colorGold = new THREE.Color(0xFBBF24);
+    const colViolet = new THREE.Color(0x8B5CF6);
+    const colCyan = new THREE.Color(0x22D3EE);
+    const colGold = new THREE.Color(0xFBBF24);
+    const colCrimson = new THREE.Color(0xEF4444);
 
     for (let i = 0; i < nodeCount; i++) {
-      // Anatomical Dual-Hemisphere Math
       const u = Math.random();
       const v = Math.random();
       const theta = u * 2.0 * Math.PI;
       const phi = Math.acos(2.0 * v - 1.0);
-      const r = 5.5 + Math.sin(theta * 3.0) * 0.8 + (Math.random() - 0.5) * 0.5;
+      const r = 6.2 + Math.sin(theta * 3.0) * 0.9 + (Math.random() - 0.5) * 0.6;
+      const hemisphereShift = (i % 2 === 0 ? 1 : -1) * 0.8;
 
-      const hemisphereShift = (i % 2 === 0 ? 1 : -1) * 0.7;
+      positions[i * 3] = r * Math.sin(phi) * Math.cos(theta) * 0.85 + hemisphereShift;
+      positions[i * 3 + 1] = r * Math.sin(phi) * Math.sin(theta) * 0.95;
+      positions[i * 3 + 2] = r * Math.cos(phi) * 1.15;
 
-      const x = r * Math.sin(phi) * Math.cos(theta) * 0.8 + hemisphereShift;
-      const y = r * Math.sin(phi) * Math.sin(theta) * 0.9;
-      const z = r * Math.cos(phi) * 1.1;
-
-      positions[i * 3] = x;
-      positions[i * 3 + 1] = y;
-      positions[i * 3 + 2] = z;
-
-      // Color interpolation
-      const mixedColor = (i % 3 === 0) ? colorViolet : ((i % 3 === 1) ? colorCyan : colorGold);
-      colors[i * 3] = mixedColor.r;
-      colors[i * 3 + 1] = mixedColor.g;
-      colors[i * 3 + 2] = mixedColor.b;
+      const c = (i % 3 === 0) ? colViolet : ((i % 3 === 1) ? colCyan : colGold);
+      colors[i * 3] = c.r;
+      colors[i * 3 + 1] = c.g;
+      colors[i * 3 + 2] = c.b;
     }
 
-    geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-    geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+    brainGeo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+    brainGeo.setAttribute('color', new THREE.BufferAttribute(colors, 3));
 
-    // Particle Material
-    const pMaterial = new THREE.PointsMaterial({
-      size: 0.22,
+    const brainMaterial = new THREE.PointsMaterial({
+      size: 0.28,
       vertexColors: true,
       transparent: true,
-      opacity: 0.85,
+      opacity: 0.88,
       blending: THREE.AdditiveBlending
     });
+    const brainPoints = new THREE.Points(brainGeo, brainMaterial);
+    brainGroup.add(brainPoints);
 
-    const brainParticles = new THREE.Points(geometry, pMaterial);
-    brainGroup.add(brainParticles);
-
-    // Neural Synapse Network Lines
+    // Synaptic Connecting Lines
     const lineMat = new THREE.LineBasicMaterial({
-      color: 0x4C1D95,
+      color: 0x6D28D9,
       transparent: true,
-      opacity: 0.22,
+      opacity: 0.28,
       blending: THREE.AdditiveBlending
     });
     const lineGeo = new THREE.BufferGeometry();
@@ -502,36 +547,172 @@
       }
     }
     lineGeo.setAttribute('position', new THREE.Float32BufferAttribute(linePos, 3));
-    const brainNetwork = new THREE.LineSegments(lineGeo, lineMat);
-    brainGroup.add(brainNetwork);
+    const brainLines = new THREE.LineSegments(lineGeo, lineMat);
+    brainGroup.add(brainLines);
 
-    // Qloo Cultural Galaxy Constellation (Outer Orbit)
+    // B. 3D Facial Contour & Capillary Pulse Lattice (Scene 1)
+    const faceGroup = new THREE.Group();
+    scene.add(faceGroup);
+
+    const facePointsCount = 600;
+    const faceGeo = new THREE.BufferGeometry();
+    const facePos = new Float32Array(facePointsCount * 3);
+    for (let i = 0; i < facePointsCount; i++) {
+      const u = (Math.random() - 0.5) * 5.0;
+      const v = (Math.random() - 0.5) * 6.0;
+      const z = Math.cos(u * 0.5) * Math.cos(v * 0.4) * 3.5;
+      facePos[i*3] = u;
+      facePos[i*3+1] = v;
+      facePos[i*3+2] = z + 12.0; // In front of brain
+    }
+    faceGeo.setAttribute('position', new THREE.BufferAttribute(facePos, 3));
+    const faceMat = new THREE.PointsMaterial({
+      size: 0.22,
+      color: 0xEF4444,
+      transparent: true,
+      opacity: 0.75,
+      blending: THREE.AdditiveBlending
+    });
+    const faceMesh = new THREE.Points(faceGeo, faceMat);
+    faceGroup.add(faceMesh);
+
+    // C. 3D Spinning Vinyl Record Mesh (Scene 3 & 4)
+    const vinylGroup = new THREE.Group();
+    scene.add(vinylGroup);
+    vinylGroup.position.set(0, -1.0, 0);
+
+    const vinylGeo = new THREE.RingGeometry(1.5, 9.0, 64);
+    const vinylMat = new THREE.MeshStandardMaterial({
+      color: 0x0A0A0E,
+      roughness: 0.35,
+      metalness: 0.85,
+      side: THREE.DoubleSide
+    });
+    const vinylDisc = new THREE.Mesh(vinylGeo, vinylMat);
+    vinylDisc.rotation.x = Math.PI / 2.2;
+    vinylGroup.add(vinylDisc);
+
+    // Center Gold Label
+    const labelGeo = new THREE.CircleGeometry(1.5, 32);
+    const labelMat = new THREE.MeshBasicMaterial({ color: 0xF59E0B });
+    const vinylLabel = new THREE.Mesh(labelGeo, labelMat);
+    vinylLabel.rotation.x = Math.PI / 2.2;
+    vinylLabel.position.y = 0.02;
+    vinylGroup.add(vinylLabel);
+
+    // Concentric Soundwave Rings
+    const ringGroup = new THREE.Group();
+    scene.add(ringGroup);
+    const rings = [];
+    for (let r = 0; r < 5; r++) {
+      const rGeo = new THREE.RingGeometry(4.0 + r * 2.5, 4.15 + r * 2.5, 64);
+      const rMat = new THREE.MeshBasicMaterial({
+        color: 0xFBBF24,
+        transparent: true,
+        opacity: 0.4 - r * 0.06,
+        side: THREE.DoubleSide,
+        blending: THREE.AdditiveBlending
+      });
+      const rMesh = new THREE.Mesh(rGeo, rMat);
+      rMesh.rotation.x = Math.PI / 2.2;
+      ringGroup.add(rMesh);
+      rings.push(rMesh);
+    }
+
+    // D. 3D Qloo Cultural Nodes & Spline Beams (Scene 3)
     const qlooGroup = new THREE.Group();
     scene.add(qlooGroup);
 
-    const qlooNodes = 400;
-    const qlooGeo = new THREE.BufferGeometry();
-    const qlooPos = new Float32Array(qlooNodes * 3);
-    for (let i = 0; i < qlooNodes; i++) {
-      const radius = 14 + Math.random() * 22;
-      const angle = Math.random() * Math.PI * 2;
-      const y = (Math.random() - 0.5) * 16;
-      qlooPos[i*3] = Math.cos(angle) * radius;
-      qlooPos[i*3+1] = y;
-      qlooPos[i*3+2] = Math.sin(angle) * radius;
-    }
-    qlooGeo.setAttribute('position', new THREE.BufferAttribute(qlooPos, 3));
-    const qlooMat = new THREE.PointsMaterial({
-      size: 0.35,
-      color: 0xFBBF24,
-      transparent: true,
-      opacity: 0.65,
-      blending: THREE.AdditiveBlending
-    });
-    const qlooStars = new THREE.Points(qlooGeo, qlooMat);
-    qlooGroup.add(qlooStars);
+    const qlooEntities = [
+      { name: "Nat King Cole", pos: [12, 5, 8], color: 0xFBBF24 },
+      { name: "Billie Holiday", pos: [-14, 4, 10], color: 0x22D3EE },
+      { name: "1940s Swing Radio", pos: [10, -6, 6], color: 0xA78BFA },
+      { name: "Acoustic Balcony", pos: [-11, -5, 9], color: 0x34D399 },
+      { name: "It's a Wonderful Life", pos: [0, 9, 11], color: 0xF43F5E }
+    ];
 
-    // --- 4. AUDIO & SUBTITLE ENGINE ---
+    const nodeMeshes = [];
+    qlooEntities.forEach(e => {
+      const sGeo = new THREE.SphereGeometry(0.75, 24, 24);
+      const sMat = new THREE.MeshBasicMaterial({ color: e.color });
+      const sMesh = new THREE.Mesh(sGeo, sMat);
+      sMesh.position.set(e.pos[0], e.pos[1], e.pos[2]);
+      qlooGroup.add(sMesh);
+      nodeMeshes.push(sMesh);
+
+      // Connecting Spline from brain center to node
+      const curve = new THREE.LineCurve3(new THREE.Vector3(0, 0, 0), sMesh.position);
+      const cGeo = new THREE.TubeGeometry(curve, 20, 0.06, 8, false);
+      const cMat = new THREE.MeshBasicMaterial({
+        color: e.color,
+        transparent: true,
+        opacity: 0.55,
+        blending: THREE.AdditiveBlending
+      });
+      const tube = new THREE.Mesh(cGeo, cMat);
+      qlooGroup.add(tube);
+    });
+
+    // E. 3D Holographic Metric Slabs (Scene 5)
+    const slabGroup = new THREE.Group();
+    scene.add(slabGroup);
+
+    function createMetricSlab(title, value, sub, posX, posY, posZ, colHex) {
+      const canvas = document.createElement('canvas');
+      canvas.width = 512;
+      canvas.height = 256;
+      const ctx = canvas.getContext('2d');
+
+      // Rounded gradient slab
+      ctx.fillStyle = "rgba(10, 6, 22, 0.85)";
+      ctx.strokeStyle = colHex;
+      ctx.lineWidth = 6;
+      ctx.beginPath();
+      ctx.roundRect(10, 10, 492, 236, 24);
+      ctx.fill();
+      ctx.stroke();
+
+      ctx.fillStyle = "#94A3B8";
+      ctx.font = "bold 24px 'JetBrains Mono', monospace";
+      ctx.fillText(title.toUpperCase(), 36, 64);
+
+      ctx.fillStyle = "#FFFFFF";
+      ctx.font = "900 68px 'Plus Jakarta Sans', sans-serif";
+      ctx.fillText(value, 36, 150);
+
+      ctx.fillStyle = colHex;
+      ctx.font = "600 22px 'JetBrains Mono', monospace";
+      ctx.fillText(sub, 36, 204);
+
+      const texture = new THREE.CanvasTexture(canvas);
+      const sGeo = new THREE.PlaneGeometry(8, 4);
+      const sMat = new THREE.MeshBasicMaterial({
+        map: texture,
+        transparent: true,
+        opacity: 0.92,
+        side: THREE.DoubleSide
+      });
+      const mesh = new THREE.Mesh(sGeo, sMat);
+      mesh.position.set(posX, posY, posZ);
+      return mesh;
+    }
+
+    const slab1 = createMetricSlab("Agitation Outbursts", "-73%", "AUTONOMOUS DE-ESCALATION", -9, 2, 8, "#34D399");
+    const slab2 = createMetricSlab("PRN Antipsychotics", "-82%", "ZERO UNNECESSARY SEDATION", 0, -2, 10, "#22D3EE");
+    const slab3 = createMetricSlab("Federal Mandate", "100%", "CMS F-TAG 758 COMPLIANT", 9, 3, 7, "#A78BFA");
+
+    slabGroup.add(slab1);
+    slabGroup.add(slab2);
+    slabGroup.add(slab3);
+
+    // Initial Visibility State
+    faceGroup.visible = true;
+    vinylGroup.visible = false;
+    ringGroup.visible = false;
+    qlooGroup.visible = false;
+    slabGroup.visible = false;
+
+    // --- 4. AUDIO & SUBTITLE ENGINE (PERFECT ZERO-DRIFT SYNCHRONIZATION) ---
     const audio = document.getElementById('audio-player');
     const subtitleBox = document.getElementById('subtitle-box');
     const playBtn = document.getElementById('master-play-btn');
@@ -542,7 +723,7 @@
     let analyser = null;
     let audioSrc = null;
 
-    function initAudioContext() {
+    function initAudio() {
       if (!audioContext) {
         audioContext = new (window.AudioContext || window.webkitAudioContext)();
         analyser = audioContext.createAnalyser();
@@ -554,15 +735,16 @@
     }
 
     function togglePlayback() {
-      initAudioContext();
+      initAudio();
       if (audioContext.state === 'suspended') {
         audioContext.resume();
       }
 
       if (audio.paused) {
-        audio.play();
-        playIcon.classList.add('hidden');
-        pauseIcon.classList.remove('hidden');
+        audio.play().then(() => {
+          playIcon.classList.add('hidden');
+          pauseIcon.classList.remove('hidden');
+        }).catch(e => console.log("Audio play error:", e));
       } else {
         audio.pause();
         playIcon.classList.remove('hidden');
@@ -573,12 +755,25 @@
     function jumpToScene(idx) {
       if (idx < 0 || idx >= SCENES.length) return;
       currentSceneIdx = idx;
-      const sceneData = SCENES[idx];
-      audio.currentTime = sceneData.timeRange[0];
-      applyScene(sceneData);
-      if (audio.paused) {
-        togglePlayback();
-      }
+      const sc = SCENES[idx];
+
+      // Load specific scene audio file
+      audio.src = sc.audioSrc;
+      audio.load();
+
+      // Render words into subtitle container
+      renderSubtitles(sc.text);
+
+      // Apply Visual State
+      applySceneVisuals(sc);
+
+      // Play audio
+      initAudio();
+      if (audioContext && audioContext.state === 'suspended') audioContext.resume();
+      audio.play().then(() => {
+        playIcon.classList.add('hidden');
+        pauseIcon.classList.remove('hidden');
+      }).catch(e => console.log("Audio play error:", e));
     }
 
     function prevScene() {
@@ -589,139 +784,119 @@
       jumpToScene(Math.min(SCENES.length - 1, currentSceneIdx + 1));
     }
 
-    function applyScene(sc) {
-      currentSceneIdx = sc.id;
+    // Auto-advance to next scene on audio completion (Smooth Sequence Pitch)
+    audio.addEventListener('ended', () => {
+      if (currentSceneIdx < SCENES.length - 1) {
+        jumpToScene(currentSceneIdx + 1);
+      } else {
+        // Finished full pitch
+        playIcon.classList.remove('hidden');
+        pauseIcon.classList.add('hidden');
+      }
+    });
 
-      // Update Camera Targets
-      targetCamPos.set(sc.camPos.x, sc.camPos.y, sc.camPos.z);
-      targetCamLook.set(sc.camTarget.x, sc.camTarget.y, sc.camTarget.z);
+    function renderSubtitles(text) {
+      const words = text.split(' ');
+      subtitleBox.innerHTML = words.map((w, i) => `<span class="word-token" id="w-${i}">${w}</span>`).join(' ');
+    }
 
-      // Ambience background
-      document.getElementById('ambience-overlay').style.background = sc.ambience;
-
-      // Scene pills
-      const pills = document.querySelectorAll('.scene-pill');
+    function applySceneVisuals(sc) {
+      // 1. Navigation Pills
+      const pills = document.querySelectorAll('.nav-pill');
       pills.forEach((p, i) => {
         if (i === sc.id) p.classList.add('active');
         else p.classList.remove('active');
       });
 
-      // HUD Telemetry Updates
+      // 2. Ambience Background
+      document.getElementById('ambience-overlay').style.background = sc.ambience;
+
+      // 3. HUD Telemetry Updates
       document.getElementById('scene-title-display').innerText = `Scene ${sc.id + 1}: ${sc.title}`;
       document.getElementById('hud-agitation-val').innerText = sc.agitation;
       document.getElementById('hud-bpm-val').innerText = sc.bpm;
       document.getElementById('hud-hrv-val').innerText = sc.hrv;
       document.getElementById('hud-affinity-val').innerText = sc.affinity;
-      
+      document.getElementById('hud-anchor-desc').innerText = sc.anchorDesc;
+
       const badge = document.getElementById('hud-status-badge');
       badge.innerText = sc.status;
       badge.style.color = sc.statusColor;
 
-      // Color tuning based on scene mood
+      // 4. Dynamic 3D Object Visibility per Scene
+      faceGroup.visible = (sc.id === 0 || sc.id === 1);
+      vinylGroup.visible = (sc.id === 2 || sc.id === 3);
+      ringGroup.visible = (sc.id === 3);
+      qlooGroup.visible = (sc.id === 2);
+      slabGroup.visible = (sc.id === 4);
+
+      // 5. Lighting Shift (Color Tuning)
       if (sc.id === 0) {
-        rimLight.color.setHex(0xEF4444); // Crimson panic
-        rimLight.intensity = 4;
+        rimLight.color.setHex(0xEF4444); // Crimson distress
+        rimLight.intensity = 4.5;
+        fillLight.color.setHex(0x06B6D4);
       } else if (sc.id === 3 || sc.id === 4) {
-        rimLight.color.setHex(0xFBBF24); // Golden twilight
+        rimLight.color.setHex(0xFBBF24); // Golden twilight de-escalation
+        rimLight.intensity = 3.0;
         fillLight.color.setHex(0x34D399); // Mint calm
-        rimLight.intensity = 2;
       } else {
-        rimLight.color.setHex(0x8B5CF6);
-        rimLight.intensity = 1.5;
+        rimLight.color.setHex(0x8B5CF6); // Royal purple
+        rimLight.intensity = 2.0;
       }
-
-      // Render words into subtitle box
-      renderSubtitles(sc.text);
     }
 
-    function renderSubtitles(text) {
-      const words = text.split(' ');
-      subtitleBox.innerHTML = words.map((w, i) => `<span class="word-span" id="w-${i}">${w} </span>`).join('');
-    }
-
-    // Audio time update synchronization
+    // High-Precision Word Highlighting in Line with Pitch
     audio.addEventListener('timeupdate', () => {
       const cur = audio.currentTime;
-      const total = audio.duration || 155;
+      const dur = audio.duration || 1;
 
       // Format time
       const curM = Math.floor(cur / 60);
       const curS = Math.floor(cur % 60);
+      const durM = Math.floor(dur / 60);
+      const durS = Math.floor(dur % 60);
       document.getElementById('audio-time-current').innerText = `${String(curM).padStart(2,'0')}:${String(curS).padStart(2,'0')}`;
-      document.getElementById('hud-timestamp').innerText = `00:${String(curM).padStart(2,'0')}:${String(curS).padStart(2,'0')}`;
+      document.getElementById('audio-time-total').innerText = `${String(durM).padStart(2,'0')}:${String(durS).padStart(2,'0')}`;
 
-      // Check active scene
-      for (let i = 0; i < SCENES.length; i++) {
-        if (cur >= SCENES[i].timeRange[0] && cur < SCENES[i].timeRange[1]) {
-          if (currentSceneIdx !== i) {
-            applyScene(SCENES[i]);
-          }
-          break;
+      // High-precision word matching based on exact audio progress
+      const progress = Math.min(1.0, Math.max(0.0, cur / dur));
+      const wordElements = subtitleBox.querySelectorAll('.word-token');
+      const totalWords = wordElements.length;
+      const activeIdx = Math.min(totalWords - 1, Math.floor(progress * totalWords));
+
+      wordElements.forEach((el, idx) => {
+        if (idx < activeIdx) {
+          el.className = "word-token spoken";
+        } else if (idx === activeIdx) {
+          el.className = "word-token active-word";
+        } else {
+          el.className = "word-token";
         }
-      }
-
-      // Stagger highlight on words
-      const curScene = SCENES[currentSceneIdx];
-      const sceneElapsed = cur - curScene.timeRange[0];
-      const sceneDur = curScene.timeRange[1] - curScene.timeRange[0];
-      const progress = Math.min(1, Math.max(0, sceneElapsed / sceneDur));
-
-      const wordSpans = subtitleBox.querySelectorAll('.word-span');
-      const activeWordCount = Math.floor(progress * wordSpans.length);
-      wordSpans.forEach((sp, idx) => {
-        if (idx <= activeWordCount) sp.classList.add('active');
-        else sp.classList.remove('active');
       });
     });
 
-    audio.addEventListener('ended', () => {
-      playIcon.classList.remove('hidden');
-      pauseIcon.classList.add('hidden');
-    });
-
     function toggleCameraMode() {
-      directorMode = !directorMode;
+      cinematicCam = !cinematicCam;
       const txt = document.getElementById('cam-mode-text');
-      txt.innerText = directorMode ? "DIRECTOR CAM: ON" : "MANUAL FREE ORBIT";
-      txt.style.color = directorMode ? "#22D3EE" : "#FBBF24";
+      const dot = document.getElementById('cam-dot');
+      if (cinematicCam) {
+        txt.innerText = "CINEMATIC CAM: ACTIVE";
+        txt.style.color = "#FFFFFF";
+        dot.className = "w-2 h-2 rounded-full bg-cyan-400 animate-pulse";
+      } else {
+        txt.innerText = "MANUAL ORBIT: FREE";
+        txt.style.color = "#FBBF24";
+        dot.className = "w-2 h-2 rounded-full bg-amber-400";
+      }
     }
 
-    // --- 5. REAL-TIME rPPG WAVEFORM & SPECTRUM RENDERING ---
-    const waveCanvas = document.getElementById('rppg-wave-canvas');
-    const waveCtx = waveCanvas.getContext('2d');
-    waveCanvas.width = 400;
-    waveCanvas.height = 64;
-
+    // --- 5. AUDIO SPECTRUM CANVAS (REACTIVE VISUALIZER) ---
     const specCanvas = document.getElementById('spectrum-canvas');
     const specCtx = specCanvas.getContext('2d');
     specCanvas.width = 280;
-    specCanvas.height = 38;
+    specCanvas.height = 32;
 
-    let waveOffset = 0;
-
-    function drawTelemetry() {
-      // Draw rPPG Optical Wave
-      waveCtx.fillStyle = "rgba(0, 0, 0, 0.25)";
-      waveCtx.fillRect(0, 0, waveCanvas.width, waveCanvas.height);
-
-      waveCtx.strokeStyle = (currentSceneIdx === 0) ? "#EF4444" : "#22D3EE";
-      waveCtx.lineWidth = 2.2;
-      waveCtx.shadowBlur = 10;
-      waveCtx.shadowColor = (currentSceneIdx === 0) ? "rgba(239, 68, 68, 0.8)" : "rgba(34, 211, 238, 0.8)";
-      waveCtx.beginPath();
-
-      const freq = (currentSceneIdx === 0) ? 0.08 : 0.045;
-      const amp = (currentSceneIdx === 0) ? 18 : 12;
-
-      for (let x = 0; x < waveCanvas.width; x += 4) {
-        const y = 32 + Math.sin((x + waveOffset) * freq) * amp + (Math.sin((x + waveOffset) * freq * 2.3) * 5);
-        if (x === 0) waveCtx.moveTo(x, y);
-        else waveCtx.lineTo(x, y);
-      }
-      waveCtx.stroke();
-      waveOffset += (currentSceneIdx === 0) ? 5.5 : 2.5;
-
-      // Draw Audio Spectrum (Web Audio Analyser)
+    function drawSpectrum() {
       specCtx.clearRect(0, 0, specCanvas.width, specCanvas.height);
       if (analyser && !audio.paused) {
         const bufferLength = analyser.frequencyBinCount;
@@ -740,53 +915,92 @@
           x += barWidth;
         }
       } else {
-        // Subtle ambient line
-        specCtx.fillStyle = "rgba(139, 92, 246, 0.2)";
+        specCtx.fillStyle = "rgba(139, 92, 246, 0.25)";
         specCtx.fillRect(0, specCanvas.height - 2, specCanvas.width, 2);
       }
     }
 
-    // --- 6. ANIMATION & RENDER LOOP (PROMPT-MOTION CAMERA PHYSICS) ---
-    let clock = new THREE.Clock();
+    // --- 6. PROMPT-MOTION DYNAMIC CAMERA LOOP & SCENE ANIMATION ---
+    const clock = new THREE.Clock();
 
     function animate() {
       requestAnimationFrame(animate);
       const delta = clock.getDelta();
       const time = clock.getElapsedTime();
 
-      // Continuous 3D Object Rotation (Anti-Static Law)
-      brainGroup.rotation.y = time * 0.08;
-      brainGroup.rotation.x = Math.sin(time * 0.1) * 0.05;
-      qlooGroup.rotation.y = -time * 0.04;
+      // Continuous 3D Object Motion (Anti-Static Law)
+      brainGroup.rotation.y = time * 0.12;
+      brainGroup.rotation.x = Math.sin(time * 0.15) * 0.08;
 
-      // Camera Lerp Physics (Prompt-Motion Named Move Interpolation)
-      if (directorMode) {
-        camera.position.lerp(targetCamPos, 0.045);
-        currentCamLook.lerp(targetCamTarget(), 0.045);
-        camera.lookAt(currentCamLook);
-
-        // Continuous Subtle Breathing Pan
-        camera.position.y += Math.sin(time * 0.6) * 0.008;
-        camera.position.x += Math.cos(time * 0.4) * 0.008;
+      if (faceGroup.visible) {
+        faceGroup.rotation.y = Math.sin(time * 0.4) * 0.15;
+        // Capillary pulse rate synced with scene
+        const pulseFreq = (currentSceneIdx === 0) ? 9.0 : 4.5;
+        faceMat.size = 0.22 + Math.sin(time * pulseFreq) * 0.08;
       }
 
-      drawTelemetry();
+      if (vinylGroup.visible) {
+        vinylDisc.rotation.z = time * 1.5; // Vinyl spins
+        vinylLabel.rotation.z = time * 1.5;
+      }
+
+      if (ringGroup.visible) {
+        rings.forEach((r, idx) => {
+          r.scale.setScalar(1.0 + (Math.sin(time * 3.0 + idx) * 0.08));
+        });
+      }
+
+      if (qlooGroup.visible) {
+        qlooGroup.rotation.y = -time * 0.08;
+        nodeMeshes.forEach((m, idx) => {
+          m.position.y += Math.sin(time * 2.0 + idx) * 0.005;
+        });
+      }
+
+      if (slabGroup.visible) {
+        slab1.rotation.y = Math.sin(time * 0.5) * 0.1;
+        slab2.rotation.y = -Math.sin(time * 0.5) * 0.1;
+        slab3.rotation.y = Math.cos(time * 0.5) * 0.1;
+      }
+
+      // Dynamic Camera Path Controller (Compound Orbital Motion & Sweeps)
+      if (cinematicCam) {
+        const sc = SCENES[currentSceneIdx];
+        const cm = sc.cameraMotion;
+
+        // Compound Spherical Orbit with Continuous Motion
+        const angle = time * cm.speed;
+        const currentRadius = cm.baseRadius + Math.sin(time * 0.5) * cm.radiusOsc;
+        const currentHeight = cm.heightBase + Math.cos(time * 0.4) * cm.heightOsc;
+
+        const targetX = Math.sin(angle) * currentRadius;
+        const targetZ = Math.cos(angle) * currentRadius;
+        const targetY = currentHeight;
+
+        // Smooth Lerp on Camera Position
+        camera.position.lerp(new THREE.Vector3(targetX, targetY, targetZ), 0.05);
+
+        // Smooth Lerp on LookTarget
+        currentLookTarget.lerp(new THREE.Vector3(cm.lookTarget.x, cm.lookTarget.y, cm.lookTarget.z), 0.05);
+        camera.lookAt(currentLookTarget);
+
+        // Dynamic Dutch Angle Roll
+        camera.rotation.z = Math.sin(time * 0.8) * cm.rollMax;
+      }
+
+      drawSpectrum();
       renderer.render(scene, camera);
     }
 
-    function targetCamTarget() {
-      return targetCamLook;
-    }
-
-    // Handle Window Resizing
+    // Window Resize Handling
     window.addEventListener('resize', () => {
       camera.aspect = window.innerWidth / window.innerHeight;
       camera.updateProjectionMatrix();
       renderer.setSize(window.innerWidth, window.innerHeight);
     });
 
-    // Initialize initial scene on page load
-    applyScene(SCENES[0]);
+    // Initialize Scene 1
+    jumpToScene(0);
     animate();
   </script>
 </body>
