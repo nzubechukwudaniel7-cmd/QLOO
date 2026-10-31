@@ -47,6 +47,7 @@ def main():
         "generate_voiceovers.py",
         "generate_aligned_voiceovers.py",
         "app/static/audio/scene_timings.json",
+        "app/static/audio/scene_phrases.json",
         "app/static/audio/scene_1.mp3",
         "app/static/audio/scene_2.mp3",
         "app/static/audio/scene_3.mp3",
@@ -65,7 +66,7 @@ def main():
             print(f"[-] Could not add {f}: {e}")
 
     try:
-        commit_id = p.commit(".", message="fix: frame-lock word timestamps using ElevenLabs microsecond alignment for zero-drift pitch sync", author=b"nzubechukwudaniel7-cmd <nzube@example.com>")
+        commit_id = p.commit(".", message="fix: synchronize video camera pacing with voiceover progress and implement phrase-by-phrase kinetic captions", author=b"nzubechukwudaniel7-cmd <nzube@example.com>")
         print(f"[+] Committed: {commit_id}")
     except Exception as e:
         print(f"[*] Commit note: {e}")

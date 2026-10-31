@@ -17,27 +17,26 @@ def get_api_key():
     return ""
 
 API_KEY = get_api_key()
-VOICE_ID = "JBFqnCBsd6RMkjVDRZzb" # George - Warm, Captivating Storyteller
+VOICE_ID = "JBFqnCBsd6RMkjVDRZzb"
 MODEL_ID = "eleven_turbo_v2_5"
 
 AUDIO_DIR = os.path.join("app", "static", "audio")
-os.makedirs(AUDIO_DIR, exist_ok=True)
 
 SCENES = [
     {
         "id": "scene_1",
         "title": "The Sundowning Crisis",
-        "text": "Every evening at sundown, millions of dementia patients experience acute neurological terror. In memory care, it’s known as Sundowning: sudden, overwhelming agitation. For decades, the standard response has been chemical sedation: dangerous antipsychotics that strip away human dignity and violate federal guidelines. What if memory care didn't require pills?"
+        "text": "Every evening at sundown, millions of dementia patients experience acute neurological terror. In memory care, it's known as Sundowning: sudden, overwhelming agitation. For decades, the standard response has been chemical sedation: dangerous antipsychotics that strip away human dignity and violate federal guidelines. What if memory care didn't require pills?"
     },
     {
         "id": "scene_2",
         "title": "Meet NeuroTaste",
-        "text": "Meet NeuroTaste: the world’s first autonomous, contactless memory care de-escalation agent. Using standard RGB computer vision, NeuroTaste reads microscopic arterial blood volume pulses beneath facial skin, calculating autonomic distress without a single wire or wearable. And when agitation strikes, NeuroTaste doesn't call for sedation. It activates something infinitely more powerful."
+        "text": "Meet NeuroTaste: the world's first autonomous, contactless memory care de-escalation agent. Using standard RGB computer vision, NeuroTaste reads microscopic arterial blood volume pulses beneath facial skin, calculating autonomic distress without a single wire or wearable. And when agitation strikes, NeuroTaste doesn't call for sedation. It activates something infinitely more powerful."
     },
     {
         "id": "scene_3",
         "title": "The Dementia Paradox & The Qloo Taste Graph",
-        "text": "Neuroscientists call it the Dementia Paradox: while degenerative illness destroys short-term episodic memory, the brain’s cultural taste cortex remains vividly alive until the end of life. NeuroTaste bridges this gap using the Qloo Taste Graph API, mapping the resident's birth decade, cultural geography, and dormant sensory anchors to surface music, cinema, and scents proven to evoke emotional calm."
+        "text": "Neuroscientists call it the Dementia Paradox: while degenerative illness destroys short-term episodic memory, the brain's cultural taste cortex remains vividly alive until the end of life. NeuroTaste bridges this gap using the Qloo Taste Graph API, mapping the resident's birth decade, cultural geography, and dormant sensory anchors to surface music, cinema, and scents proven to evoke emotional calm."
     },
     {
         "id": "scene_4",
@@ -47,7 +46,7 @@ SCENES = [
     {
         "id": "scene_5",
         "title": "Clinical Proof & Regulatory Moat",
-        "text": "For healthcare facilities, NeuroTaste isn't just compassionate care—it’s an enterprise regulatory shield. Fully compliant with federal CMS F-Tag 758 mandates restricting unnecessary psychotropic medications, it reduces caregiver burnout and institutional liability through continuous, edge-computed twenty-four-seven care."
+        "text": "For healthcare facilities, NeuroTaste isn't just compassionate care—it's an enterprise regulatory shield. Fully compliant with federal CMS F-Tag 758 mandates restricting unnecessary psychotropic medications, it reduces caregiver burnout and institutional liability through continuous, edge-computed twenty-four-seven care."
     },
     {
         "id": "scene_6",
@@ -63,6 +62,12 @@ def chars_to_words(characters, start_times, end_times):
     word_end = None
     
     for i, ch in enumerate(characters):
+        # Replace unicode quotes with standard ascii apostrophe
+        if ch in ['\u2019', '\u2018', '\u201b', '`', '']:
+            ch = "'"
+        elif ch in ['\u2014', '\u2013']:
+            ch = "-"
+            
         if ch.isspace():
             if current_word:
                 words.append({
@@ -113,14 +118,11 @@ def generate_aligned_scene(sc_id, text):
     
     with urllib.request.urlopen(req, timeout=30) as resp:
         res = json.loads(resp.read().decode('utf-8'))
-        
-        # 1. Save Audio MP3
         audio_bytes = base64.b64decode(res["audio_base64"])
         audio_path = os.path.join(AUDIO_DIR, f"{sc_id}.mp3")
         with open(audio_path, "wb") as f:
             f.write(audio_bytes)
             
-        # 2. Extract Alignments
         align = res.get("alignment", {})
         chars = align.get("characters", [])
         starts = align.get("character_start_times_seconds", [])
@@ -129,26 +131,62 @@ def generate_aligned_scene(sc_id, text):
         words = chars_to_words(chars, starts, ends)
         return len(audio_bytes), words
 
+def group_into_phrases(words):
+    phrases = []
+    current_phrase = []
+    
+    for w in words:
+        current_phrase.append(w)
+        word_text = w['word']
+        if any(word_text.endswith(p) for p in ['.', '?', '!', ':', ';']):
+            phrases.append({
+                "start": current_phrase[0]["start"],
+                "end": current_phrase[-1]["end"],
+                "text": " ".join(x["word"] for x in current_phrase),
+                "words": current_phrase
+            })
+            current_phrase = []
+        elif len(current_phrase) >= 8 and any(word_text.endswith(p) for p in [',']):
+            phrases.append({
+                "start": current_phrase[0]["start"],
+                "end": current_phrase[-1]["end"],
+                "text": " ".join(x["word"] for x in current_phrase),
+                "words": current_phrase
+            })
+            current_phrase = []
+            
+    if current_phrase:
+        phrases.append({
+            "start": current_phrase[0]["start"],
+            "end": current_phrase[-1]["end"],
+            "text": " ".join(x["word"] for x in current_phrase),
+            "words": current_phrase
+        })
+        
+    return phrases
+
 def main():
-    print(f"[*] Starting Precision Alignment Generation for all 6 scenes...")
+    print(f"[*] Regenerating clean microsecond word and phrase alignments...")
     timings_data = {}
+    phrases_data = {}
     
     for i, sc in enumerate(SCENES):
-        print(f"[{i+1}/6] Generating {sc['title']} with microsecond timestamps...")
+        print(f"[{i+1}/6] Synthesizing & aligning {sc['id']} ({sc['title']})...")
         try:
             size, words = generate_aligned_scene(sc["id"], sc["text"])
             timings_data[sc["id"]] = words
-            print(f"    [+] Saved {sc['id']}.mp3 ({size} bytes) with {len(words)} aligned words.")
-            if words:
-                print(f"        First word: '{words[0]['word']}' @ {words[0]['start']}s -> Last word: '{words[-1]['word']}' @ {words[-1]['end']}s")
+            phrases_data[sc["id"]] = group_into_phrases(words)
+            print(f"    [+] {sc['id']}: {len(words)} words, {len(phrases_data[sc['id']])} phrases, {size} bytes")
         except Exception as e:
             print(f"    [-] Error on {sc['id']}: {e}")
         time.sleep(0.5)
         
-    timings_path = os.path.join(AUDIO_DIR, "scene_timings.json")
-    with open(timings_path, "w", encoding="utf-8") as f:
+    with open(os.path.join(AUDIO_DIR, "scene_timings.json"), "w", encoding="utf-8") as f:
         json.dump(timings_data, f, indent=2)
-    print(f"\n[+] SUCCESS! Word timings saved to {timings_path}")
+    with open(os.path.join(AUDIO_DIR, "scene_phrases.json"), "w", encoding="utf-8") as f:
+        json.dump(phrases_data, f, indent=2)
+        
+    print("\n[+] SUCCESS! Both scene_timings.json and scene_phrases.json cleanly saved.")
 
 if __name__ == "__main__":
     main()
