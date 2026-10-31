@@ -57,12 +57,10 @@ def main():
         "app/static/audio/neurotaste_full_voiceover.mp3",
         "app/static/js/cortex.js",
         "app/static/js/rppg.js",
-        "screenshots/01_sundowning_crisis.png",
-        "screenshots/02_contactless_rppg_telemetry.png",
-        "screenshots/03_qloo_taste_graph_lattice.png",
-        "screenshots/04_sensory_deescalation_reminiscence.png",
-        "screenshots/05_clinical_proof_cms_compliance.png",
-        "screenshots/06_future_vision_restored_dignity.png"
+        "screenshots/01_Product_Overview_3D_Cortex.png",
+        "screenshots/02_Clinical_Console_rPPG_and_Intake.png",
+        "screenshots/03_Qloo_4Pillar_Protocol_and_Audit.png",
+        "screenshots/04_Prompt_Motion_3D_Cinema.png"
     ]
 
     for f in files_to_add:
@@ -72,7 +70,7 @@ def main():
             print(f"[-] Could not add {f}: {e}")
 
     try:
-        commit_id = p.commit(".", message="docs: add high-res gallery screenshots for Devpost submission", author=b"nzubechukwudaniel7-cmd <nzube@example.com>")
+        commit_id = p.commit(".", message="docs: add comprehensive real UI screenshots for hackathon submission gallery", author=b"nzubechukwudaniel7-cmd <nzube@example.com>")
         print(f"[+] Committed: {commit_id}")
     except Exception as e:
         print(f"[*] Commit note: {e}")
