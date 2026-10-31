@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="color-scheme" content="dark" />
   <title>NeuroTaste Console — Clinical Memory Care & rPPG Station</title>
   <!-- Embedded High-Resolution Brand Favicon (4-Strand Sensory Synapse) -->
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64' fill='none'%3E%3Crect width='64' height='64' rx='16' fill='%2308060F'/%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%2322D3EE'/%3E%3Cstop offset='50%25' stop-color='%238B5CF6'/%3E%3Cstop offset='100%25' stop-color='%23C084FC'/%3E%3C/linearGradient%3E%3C/defs%3E%3Cpath d='M16 46 C6 35 6 17 19 8 C32 -1 52 2 56 19 C60 36 40 54 25 50' stroke='url(%23g)' stroke-width='3.2' stroke-linecap='round' fill='none'/%3E%3Cpath d='M21 42 C14 33 14 20 24 13 C34 7 48 9 51 22 C54 35 39 47 28 44' stroke='url(%23g)' stroke-width='2.6' stroke-linecap='round' fill='none' opacity='0.8'/%3E%3Ccircle cx='35' cy='25' r='5' fill='%23FFB829'/%3E%3Ccircle cx='35' cy='25' r='2' fill='%23FFFFFF'/%3E%3C/svg%3E" />
@@ -40,6 +41,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Playfair+Display:ital,wght@0,600;0,700;0,800;0,900;1,600;1,700&display=swap" rel="stylesheet" />
   <style>
     :root {
+      color-scheme: dark;
       --bg-base: #08060F;
       --border: rgba(255,255,255,0.08);
       --violet: #8B5CF6;
@@ -297,6 +299,12 @@
         <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
         <span>Qloo Connected</span>
       </div>
+
+      <!-- YouTube Pitch MP4 Direct Download -->
+      <a href="/static/video/neurotaste_pitch_demo.mp4" download="NeuroTaste_Official_Hackathon_Pitch.mp4" title="Download Official 1080p 60fps MP4 Pitch Video" class="group relative inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-cyan-400/40 bg-cyan-500/15 hover:bg-cyan-500/30 hover:border-cyan-300 hover:shadow-[0_0_20px_rgba(6,182,212,0.4)] transition-all duration-200">
+        <svg class="w-3.5 h-3.5 text-cyan-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+        <span class="text-xs font-bold text-cyan-200 group-hover:text-white transition-colors">Pitch MP4</span>
+      </a>
 
       <!-- 3D Demo Button -->
       <a href="/demo" class="group relative inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-violet-500/30 bg-violet-600/20 hover:bg-violet-600/35 hover:border-violet-400/60 hover:shadow-[0_0_20px_rgba(139,92,246,0.4)] transition-all duration-200">
@@ -592,14 +600,87 @@
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div>
           <label class="form-label">Birth Decade <span class="text-red-400">*</span></label>
-          <select id="f-decade" class="form-input" style="cursor:pointer; color-scheme:dark; background-color:#0E091E; color:#F8FAFC;">
-            <option value="" style="background-color:#0E091E; color:#94A3B8;">Select decade...</option>
-            <option value="1920s" style="background-color:#0E091E; color:#F8FAFC;">1920s</option>
-            <option value="1930s" style="background-color:#0E091E; color:#F8FAFC;">1930s</option>
-            <option value="1940s" style="background-color:#0E091E; color:#F8FAFC;" selected>1940s</option>
-            <option value="1950s" style="background-color:#0E091E; color:#F8FAFC;">1950s</option>
-            <option value="1960s" style="background-color:#0E091E; color:#F8FAFC;">1960s</option>
+          <div class="relative" id="decade-selector-container">
+          <!-- Hidden standard select element (retains 100% programmatic & DOM compatibility) -->
+          <select id="f-decade" class="sr-only" aria-hidden="true" tabindex="-1">
+            <option value="">Select decade...</option>
+            <option value="1920s">1920s</option>
+            <option value="1930s">1930s</option>
+            <option value="1940s" selected>1940s</option>
+            <option value="1950s">1950s</option>
+            <option value="1960s">1960s</option>
           </select>
+
+          <!-- Custom High-Contrast Dropdown Trigger Button -->
+          <button type="button" id="decade-select-btn" onclick="toggleDecadeDropdown(event)"
+            class="form-input flex items-center justify-between text-left cursor-pointer transition-all duration-200 border-white/10 hover:border-violet-500/50 bg-[#0E091E] hover:bg-[#150E2D] focus:ring-2 focus:ring-violet-500/30"
+            style="min-height: 44px;">
+            <div class="flex items-center gap-2.5 truncate">
+              <span id="decade-badge" class="px-2 py-0.5 rounded text-[11px] font-bold font-mono bg-violet-600/30 border border-violet-500/40 text-violet-200">1940s</span>
+              <span id="decade-text" class="text-white text-sm font-semibold truncate">1940s — WWII Era & Big Band Crooners</span>
+            </div>
+            <svg id="decade-chevron-icon" class="w-4 h-4 text-violet-400 flex-shrink-0 transition-transform duration-200 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7" />
+            </svg>
+          </button>
+
+          <!-- High-Contrast Dropdown Menu (Immune to native OS/browser light-mode bugs) -->
+          <div id="decade-dropdown-menu" class="hidden absolute left-0 right-0 z-50 mt-1.5 rounded-xl border border-violet-500/40 bg-[#0E091E] shadow-[0_20px_50px_rgba(0,0,0,0.95)] backdrop-blur-2xl p-1.5 space-y-1">
+            <div class="px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-gray-400 border-b border-white/5">
+              Select Formative Cultural Decade
+            </div>
+            
+            <div onclick="selectDecadeOption('1920s', '1920s — Roaring Twenties & Early Jazz')" 
+              class="decade-menu-item flex items-center justify-between px-3 py-2 rounded-lg cursor-pointer hover:bg-violet-600/30 border border-transparent hover:border-violet-500/40 transition-all text-sm group"
+              data-val="1920s">
+              <div class="flex items-center gap-2.5">
+                <span class="px-1.5 py-0.5 rounded text-[10px] font-mono font-bold bg-white/5 text-gray-300 group-hover:bg-violet-500/20 group-hover:text-violet-200">1920s</span>
+                <span class="text-gray-200 group-hover:text-white font-medium">Roaring Twenties & Early Jazz</span>
+              </div>
+              <span class="check-indicator text-cyan-400 font-bold opacity-0 group-[.selected]:opacity-100">✓</span>
+            </div>
+
+            <div onclick="selectDecadeOption('1930s', '1930s — Great Depression & Swing Era')" 
+              class="decade-menu-item flex items-center justify-between px-3 py-2 rounded-lg cursor-pointer hover:bg-violet-600/30 border border-transparent hover:border-violet-500/40 transition-all text-sm group"
+              data-val="1930s">
+              <div class="flex items-center gap-2.5">
+                <span class="px-1.5 py-0.5 rounded text-[10px] font-mono font-bold bg-white/5 text-gray-300 group-hover:bg-violet-500/20 group-hover:text-violet-200">1930s</span>
+                <span class="text-gray-200 group-hover:text-white font-medium">Great Depression & Swing Era</span>
+              </div>
+              <span class="check-indicator text-cyan-400 font-bold opacity-0 group-[.selected]:opacity-100">✓</span>
+            </div>
+
+            <div onclick="selectDecadeOption('1940s', '1940s — WWII Era & Big Band Crooners')" 
+              class="decade-menu-item selected flex items-center justify-between px-3 py-2 rounded-lg cursor-pointer bg-violet-600/25 border border-violet-500/40 text-sm group"
+              data-val="1940s">
+              <div class="flex items-center gap-2.5">
+                <span class="px-1.5 py-0.5 rounded text-[10px] font-mono font-bold bg-violet-500/30 text-violet-200">1940s</span>
+                <span class="text-white font-semibold">WWII Era & Big Band Crooners</span>
+              </div>
+              <span class="check-indicator text-cyan-400 font-bold opacity-100">✓</span>
+            </div>
+
+            <div onclick="selectDecadeOption('1950s', '1950s — Post-War Golden Age & Early Rock')" 
+              class="decade-menu-item flex items-center justify-between px-3 py-2 rounded-lg cursor-pointer hover:bg-violet-600/30 border border-transparent hover:border-violet-500/40 transition-all text-sm group"
+              data-val="1950s">
+              <div class="flex items-center gap-2.5">
+                <span class="px-1.5 py-0.5 rounded text-[10px] font-mono font-bold bg-white/5 text-gray-300 group-hover:bg-violet-500/20 group-hover:text-violet-200">1950s</span>
+                <span class="text-gray-200 group-hover:text-white font-medium">Post-War Golden Age & Early Rock</span>
+              </div>
+              <span class="check-indicator text-cyan-400 font-bold opacity-0 group-[.selected]:opacity-100">✓</span>
+            </div>
+
+            <div onclick="selectDecadeOption('1960s', '1960s — Motown, Folk Revival & British Invasion')" 
+              class="decade-menu-item flex items-center justify-between px-3 py-2 rounded-lg cursor-pointer hover:bg-violet-600/30 border border-transparent hover:border-violet-500/40 transition-all text-sm group"
+              data-val="1960s">
+              <div class="flex items-center gap-2.5">
+                <span class="px-1.5 py-0.5 rounded text-[10px] font-mono font-bold bg-white/5 text-gray-300 group-hover:bg-violet-500/20 group-hover:text-violet-200">1960s</span>
+                <span class="text-gray-200 group-hover:text-white font-medium">Motown, Folk Revival & British Invasion</span>
+              </div>
+              <span class="check-indicator text-cyan-400 font-bold opacity-0 group-[.selected]:opacity-100">✓</span>
+            </div>
+          </div>
+        </div>
         </div>
         <div>
           <label class="form-label">Hometown / Cultural Roots <span class="text-red-400">*</span></label>
@@ -1961,10 +2042,84 @@ function scrollToAudit() {
 }
 
 // ─── Demo Sample Case Loader (Eleanor Vance) ─────────────────────────────────
+
+// ─── High-Contrast Custom Decade Dropdown Controller ──────────────────────────
+function toggleDecadeDropdown(e) {
+  if (e) e.stopPropagation();
+  const menu = document.getElementById('decade-dropdown-menu');
+  const chevron = document.getElementById('decade-chevron-icon');
+  if (!menu) return;
+  const isHidden = menu.classList.contains('hidden');
+  if (isHidden) {
+    menu.classList.remove('hidden');
+    if (chevron) chevron.style.transform = 'rotate(180deg)';
+  } else {
+    menu.classList.add('hidden');
+    if (chevron) chevron.style.transform = 'rotate(0deg)';
+  }
+}
+
+function selectDecadeOption(val, label) {
+  const select = document.getElementById('f-decade');
+  if (select) {
+    select.value = val;
+    select.dispatchEvent(new Event('change'));
+  }
+  updateDecadeDisplay(val, label);
+  const menu = document.getElementById('decade-dropdown-menu');
+  const chevron = document.getElementById('decade-chevron-icon');
+  if (menu) menu.classList.add('hidden');
+  if (chevron) chevron.style.transform = 'rotate(0deg)';
+}
+
+function updateDecadeDisplay(val, fullLabel) {
+  const badge = document.getElementById('decade-badge');
+  const text = document.getElementById('decade-text');
+  if (badge) badge.textContent = val || 'None';
+  if (text) {
+    if (fullLabel) {
+      text.textContent = fullLabel;
+    } else {
+      const map = {
+        '1920s': '1920s — Roaring Twenties & Early Jazz',
+        '1930s': '1930s — Great Depression & Swing Era',
+        '1940s': '1940s — WWII Era & Big Band Crooners',
+        '1950s': '1950s — Post-War Golden Age & Early Rock',
+        '1960s': '1960s — Motown, Folk Revival & British Invasion'
+      };
+      text.textContent = map[val] || val || 'Select decade...';
+    }
+  }
+  document.querySelectorAll('.decade-menu-item').forEach(item => {
+    const isCur = item.getAttribute('data-val') === val;
+    item.classList.toggle('selected', isCur);
+    item.classList.toggle('bg-violet-600/25', isCur);
+    item.classList.toggle('border-violet-500/40', isCur);
+    const ind = item.querySelector('.check-indicator');
+    if (ind) {
+      ind.classList.toggle('opacity-100', isCur);
+      ind.classList.toggle('opacity-0', !isCur);
+    }
+  });
+}
+
+document.addEventListener('click', function(e) {
+  const container = document.getElementById('decade-selector-container');
+  const menu = document.getElementById('decade-dropdown-menu');
+  const chevron = document.getElementById('decade-chevron-icon');
+  if (container && !container.contains(e.target)) {
+    if (menu && !menu.classList.contains('hidden')) {
+      menu.classList.add('hidden');
+      if (chevron) chevron.style.transform = 'rotate(0deg)';
+    }
+  }
+});
+
 function loadSampleProfile() {
   document.getElementById('f-name').value = 'Eleanor Vance';
   document.getElementById('f-age').value = 82;
   document.getElementById('f-decade').value = '1940s';
+  updateDecadeDisplay('1940s');
   document.getElementById('f-hometown').value = 'Chicago, IL';
   document.getElementById('f-agitation').value = 8;
   updateAgitationSlider(8);

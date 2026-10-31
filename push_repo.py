@@ -66,7 +66,7 @@ def main():
             print(f"[-] Could not add {f}: {e}")
 
     try:
-        commit_id = p.commit(".", message="fix: synchronize video camera pacing with voiceover progress and implement phrase-by-phrase kinetic captions", author=b"nzubechukwudaniel7-cmd <nzube@example.com>")
+        commit_id = p.commit(".", message="fix: enhance birth decade dropdown with custom high-contrast dark theme and add 1080p MP4 download links", author=b"nzubechukwudaniel7-cmd <nzube@example.com>")
         print(f"[+] Committed: {commit_id}")
     except Exception as e:
         print(f"[*] Commit note: {e}")
